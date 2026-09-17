@@ -91,6 +91,12 @@ function sendConfirmationEmail(data) {
 
   const recipientName = clean(data.name);
   const session = clean(data.session);
+  const sessionTimes = {
+    "Breakfast briefing": "8am – 11am WAT",
+    "Main summit": "11:30am – 4pm WAT",
+    "Full day": "8am – 4pm WAT",
+  };
+  const sessionTime = sessionTimes[session] || "";
   const safeName = escapeHtml(recipientName);
   const safeSession = escapeHtml(session);
 
@@ -103,7 +109,8 @@ Thank you for registering for the OPEX Executive Workshop.
 Your place is confirmed:
 
 Session: ${session}
-Date: Monday 12 October 2026
+Time: ${sessionTime}
+Date: Wednesday 21 October 2026
 Venue: The Wheatbaker, Ikoyi
 
 Please arrive 15 minutes before your session begins.
@@ -128,7 +135,8 @@ ${fromName}`;
           <div style="background:#eff6ff;border:1px solid #d9e1ec;border-radius:8px;padding:18px 20px;margin:24px 0;">
             <div style="font-size:11px;letter-spacing:1px;color:#2563eb;font-weight:bold;margin-bottom:8px;">YOUR SESSION</div>
             <strong style="font-size:20px;">${safeSession}</strong>
-            <div style="margin-top:8px;">Monday 12 October 2026</div>
+            <div style="margin-top:8px;">${sessionTime}</div>
+            <div>Wednesday 21 October 2026</div>
             <div>The Wheatbaker, Ikoyi</div>
           </div>
           <p>Please arrive 15 minutes before your session begins.</p>
