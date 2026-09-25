@@ -126,7 +126,7 @@ export default function App() {
     event.preventDefault(); setSaveState("saving"); setSubmitError("");
     const record = { ref: reference, at: new Date().toISOString(), route, answers, session: session.name, pct: result.pct, band: result.band.label, priority: result.priority, flags: result.flags, ...contact };
     try {
-      const endpoint = import.meta.env.VITE_REGISTRATION_SHEET_ENDPOINT;
+      const endpoint = import.meta.env.REGISTRATION_SHEET_ENDPOINT;
       if (!endpoint) throw new Error("Registration endpoint is not configured");
       await fetch(endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(record) });
       setSaveState("saved");

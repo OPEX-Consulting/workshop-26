@@ -1,9 +1,11 @@
 /**
  * OPEX Executive Workshop registration endpoint.
  *
- * Paste this entire file into the Apps Script project attached to your
- * Google Sheet. Configure the values under Project Settings > Script properties:
+ * Paste this entire file into a standalone Apps Script project created under
+ * the Google Workspace account that must send the confirmation emails.
+ * Configure the values under Project Settings > Script properties:
  *
+ * SPREADSHEET_ID  = the ID of the existing registration spreadsheet
  * EMAIL_FROM_NAME = OPEX Consulting
  * EMAIL_REPLY_TO  = events@yourcompany.com
  * EMAIL_CC        = logistics@yourcompany.com
@@ -92,9 +94,9 @@ function sendConfirmationEmail(data) {
   const recipientName = clean(data.name);
   const session = clean(data.session);
   const sessionTimes = {
-    "Breakfast briefing": "8am – 11am WAT",
-    "Main summit": "11:30am – 4pm WAT",
-    "Full day": "8am – 4pm WAT",
+    "Breakfast briefing": "8am - 11am",
+    "Main summit": "11:30am - 4pm",
+    "Full day": "8am - 4pm",
   };
   const sessionTime = sessionTimes[session] || "";
   const safeName = escapeHtml(recipientName);
@@ -161,7 +163,16 @@ ${fromName}`;
 }
 
 function getSheet() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(TAB_NAME);
+  const spreadsheetId = PropertiesService.getScriptProperties().getProperty("SPREADSHEET_ID");
+  const spreadsheet = spreadsheetId
+    ? SpreadsheetApp.openById(spreadsheetId)
+    : SpreadsheetApp.getActiveSpreadsheet();
+
+  if (!spreadsheet) {
+    throw new Error("SPREADSHEET_ID is not configured");
+  }
+
+  const sheet = spreadsheet.getSheetByName(TAB_NAME);
   if (!sheet) throw new Error(`Missing sheet tab: ${TAB_NAME}`);
   return sheet;
 }
