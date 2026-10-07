@@ -20,7 +20,9 @@ export default function Navbar({ onReserve }: NavbarProps) {
 
     handleScroll();
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
 
     const footer = document.getElementById("footer");
 
@@ -43,7 +45,6 @@ export default function Navbar({ onReserve }: NavbarProps) {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-
       observer.disconnect();
     };
   }, []);
@@ -326,6 +327,7 @@ const DesktopNavigation = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
   gap: 30px;
 
   @media (max-width: 950px) {
@@ -345,10 +347,10 @@ const NavLink = styled.a<{
 
   color: ${({ $atFooter }) => ($atFooter ? "#083672" : "#ffffff")};
 
-  font-family: "Chillen", sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-family: "Mont", sans-serif;
+  font-size: 14px;
+  font-weight: 200;
+  letter-spacing: 0.01em;
 
   border-radius: 6px;
 
@@ -359,7 +361,7 @@ const NavLink = styled.a<{
 
     position: absolute;
     left: 0;
-    bottom: -5px;
+    bottom: -6px;
 
     width: 0;
     height: 1px;
@@ -397,7 +399,8 @@ const DesktopCTA = styled.button<{
   justify-content: center;
 
   min-height: 46px;
-  padding: 0 21px;
+
+  padding: 0 23px;
 
   border: 0;
   border-radius: 100px;
@@ -407,7 +410,7 @@ const DesktopCTA = styled.button<{
   color: ${({ $atFooter }) => ($atFooter ? "#ffffff" : "#083672")};
 
   font-family: "Chillen", sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
 
   white-space: nowrap;
@@ -420,7 +423,9 @@ const DesktopCTA = styled.button<{
   &:hover {
     background: #0067d4;
     color: #ffffff;
+
     transform: translateY(-2px);
+
     box-shadow: 0 8px 20px rgba(0, 103, 212, 0.18);
   }
 
@@ -583,9 +588,10 @@ const MobileLink = styled.a<{
 
   color: ${({ $atFooter }) => ($atFooter ? "#083672" : "#ffffff")};
 
-  font-family: "Chillen", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
+  font-family: "Mont", sans-serif;
+  font-size: 15px;
+  font-weight: 200;
+  letter-spacing: 0.01em;
 
   transition: background 0.2s ease, color 0.2s ease;
 
@@ -622,7 +628,7 @@ const MobileCTA = styled.button<{
   color: ${({ $atFooter }) => ($atFooter ? "#ffffff" : "#083672")};
 
   font-family: "Chillen", sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 400;
 
   cursor: pointer;
@@ -632,6 +638,7 @@ const MobileCTA = styled.button<{
   &:hover {
     background: #0067d4;
     color: #ffffff;
+
     transform: translateY(-1px);
   }
 

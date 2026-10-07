@@ -24,9 +24,7 @@ export default function Footer({ onReserve }: FooterProps) {
 
             <Heading>
               <HeadlineLight>The End</HeadlineLight>
-
               <br />
-
               <HeadlineBrand>
                 of <Accent>Manual.</Accent>
               </HeadlineBrand>
@@ -124,7 +122,6 @@ const Section = styled.footer`
   width: 100%;
 
   background: #083672;
-
   color: #ffffff;
 
   padding: 110px 0 30px;
@@ -246,23 +243,35 @@ const Heading = styled.h2`
 
   color: #ffffff;
 
-  font-size: clamp(58px, 8vw, 108px);
+  letter-spacing: -0.08em;
 
   line-height: 0.84;
 
-  letter-spacing: -0.08em;
+  @media (max-width: 700px) {
+    line-height: 0.86;
+  }
 `;
 
 const HeadlineLight = styled.span`
   font-family: "Mont", sans-serif;
 
+  font-size: clamp(52px, 6vw, 86px);
+
   font-weight: 200;
+
+  letter-spacing: -0.075em;
 `;
 
 const HeadlineBrand = styled.span`
   font-family: "Chillen", sans-serif;
 
+  font-size: clamp(78px, 9vw, 132px);
+
   font-weight: 400;
+
+  line-height: 0.78;
+
+  letter-spacing: -0.08em;
 `;
 
 const Accent = styled.span`
@@ -288,6 +297,8 @@ const Description = styled.p`
 
   @media (max-width: 700px) {
     font-size: 14px;
+
+    margin-top: 30px;
   }
 `;
 
@@ -308,13 +319,13 @@ const ActionLabel = styled.span`
 
   color: #c6e3fb;
 
-  font-family: "Chillen", sans-serif;
+  font-family: "Mont", sans-serif;
 
-  font-size: 9px;
+  font-size: 10px;
 
-  font-weight: 400;
+  font-weight: 200;
 
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
 
   line-height: 1.5;
 `;
@@ -335,11 +346,19 @@ const EventDate = styled.div`
   strong {
     font-family: "Chillen", sans-serif;
 
+    font-size: 27px;
+
     font-weight: 400;
+
+    letter-spacing: -0.02em;
   }
 
   @media (max-width: 700px) {
     font-size: 23px;
+
+    strong {
+      font-size: 24px;
+    }
   }
 `;
 
@@ -365,7 +384,9 @@ const ReserveButton = styled.button`
 
   margin-top: 35px;
 
-  padding: 16px 24px;
+  min-height: 52px;
+
+  padding: 0 28px;
 
   border: 0;
 
@@ -377,7 +398,7 @@ const ReserveButton = styled.button`
 
   font-family: "Chillen", sans-serif;
 
-  font-size: 13px;
+  font-size: 16px;
 
   font-weight: 400;
 
@@ -405,6 +426,14 @@ const ReserveButton = styled.button`
     outline: 3px solid #c6e3fb;
 
     outline-offset: 4px;
+  }
+
+  @media (max-width: 700px) {
+    min-height: 50px;
+
+    padding: 0 26px;
+
+    font-size: 15px;
   }
 `;
 
@@ -439,13 +468,13 @@ const Navigation = styled.div`
 const NavTitle = styled.span`
   color: #c6e3fb;
 
-  font-family: "Chillen", sans-serif;
+  font-family: "Mont", sans-serif;
 
-  font-size: 9px;
+  font-size: 10px;
 
-  font-weight: 400;
+  font-weight: 200;
 
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
 `;
 
 const NavLinks = styled.div`
@@ -459,11 +488,13 @@ const NavLinks = styled.div`
 const NavLink = styled.a`
   color: rgba(255, 255, 255, 0.78);
 
-  font-family: "Chillen", sans-serif;
+  font-family: "Mont", sans-serif;
 
-  font-size: 13px;
+  font-size: 14px;
 
-  font-weight: 400;
+  font-weight: 200;
+
+  letter-spacing: 0.01em;
 
   text-decoration: none;
 
@@ -495,13 +526,13 @@ const Contact = styled.div`
 const ContactTitle = styled.span`
   color: #c6e3fb;
 
-  font-family: "Chillen", sans-serif;
+  font-family: "Mont", sans-serif;
 
-  font-size: 9px;
+  font-size: 10px;
 
-  font-weight: 400;
+  font-weight: 200;
 
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
 `;
 
 const ContactLinks = styled.div`
@@ -509,7 +540,7 @@ const ContactLinks = styled.div`
 
   flex-direction: column;
 
-  gap: 10px;
+  gap: 11px;
 `;
 
 const ContactLink = styled.a`
@@ -519,9 +550,11 @@ const ContactLink = styled.a`
 
   font-family: "Mont", sans-serif;
 
-  font-size: 13px;
+  font-size: 14px;
 
   font-weight: 200;
+
+  letter-spacing: 0.01em;
 
   text-decoration: none;
 
@@ -571,7 +604,7 @@ const Copyright = styled.span`
 
   font-family: "Mont", sans-serif;
 
-  font-size: 9px;
+  font-size: 10px;
 
   font-weight: 200;
 
@@ -583,11 +616,11 @@ const Hosted = styled.span`
 
   font-family: "Mont", sans-serif;
 
-  font-size: 8px;
+  font-size: 9px;
 
   font-weight: 200;
 
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
 
   text-align: center;
 
@@ -615,11 +648,11 @@ const BackToTop = styled.a`
 
   color: #c6e3fb;
 
-  font-family: "Chillen", sans-serif;
+  font-family: "Mont", sans-serif;
 
-  font-size: 10px;
+  font-size: 11px;
 
-  font-weight: 400;
+  font-weight: 200;
 
   text-decoration: none;
 
@@ -647,7 +680,11 @@ const BackToTop = styled.a`
 const TopArrow = styled.span`
   color: #c6e3fb;
 
+  font-family: "Mont", sans-serif;
+
   font-size: 15px;
+
+  font-weight: 200;
 
   transition: transform 0.3s ease, color 0.3s ease;
 

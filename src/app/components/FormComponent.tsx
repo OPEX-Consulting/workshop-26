@@ -361,13 +361,11 @@ const SESSION_DETAILS: Record<
     time: "8am – 11am WAT",
     description: "Consolidation, disclosure and sustainability reporting.",
   },
-
   summit: {
     title: "Main summit",
     time: "11:30am – 4pm WAT",
     description: "Regtech compliance, GRC and AI governance.",
   },
-
   fullDay: {
     title: "Full day",
     time: "8am – 4pm WAT",
@@ -391,8 +389,11 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
   const [answers, setAnswers] = useState<number[]>([]);
 
   const [name, setName] = useState("");
+
   const [email, setEmail] = useState("");
+
   const [role, setRole] = useState("");
+
   const [organisation, setOrganisation] = useState("");
 
   const [reference, setReference] = useState("");
@@ -438,7 +439,6 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
 
     if (questionIndex < route.questions.length - 1) {
       setQuestionIndex((previous) => previous + 1);
-
       return;
     }
 
@@ -468,6 +468,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
 
     if (!endpoint) {
       console.error("NEXT_PUBLIC_REGISTRATION_SHEET_ENDPOINT is missing.");
+
       return;
     }
 
@@ -505,22 +506,18 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
     const payload = {
       ref: newReference,
       submittedAt: new Date().toISOString(),
-
       name: name.trim(),
       email: email.trim(),
       role: role.trim(),
       organisation: organisation.trim(),
-
       route: route.title,
       session: route.session,
-
       score,
       maxScore,
       pct: percentage,
       band,
       priority,
       flags,
-
       answers: finalAnswers,
     };
 
@@ -973,36 +970,33 @@ const FormShell = styled.main`
   width: 100%;
   height: 100dvh;
   min-height: 100dvh;
-
   overflow: hidden;
-
   background: #ffffff;
   color: #111111;
 
   font-family: "Mont", Arial, sans-serif;
+  font-weight: 200;
 `;
 
 const Page = styled.section`
   width: 100%;
   height: 100dvh;
   min-height: 100dvh;
-
   display: flex;
   flex-direction: column;
-
   animation: ${pageIn} 0.45s ease both;
+
+  font-family: "Mont", Arial, sans-serif;
+  font-weight: 200;
 `;
 
 const Header = styled.header`
   width: 100%;
-
   height: 82px;
   min-height: 82px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: 10px 42px 0;
 
   @media (max-width: 700px) {
@@ -1021,11 +1015,8 @@ const Header = styled.header`
 const Logo = styled.img`
   width: 82px;
   height: auto;
-
   display: block;
-
   filter: brightness(0) contrast(1.05);
-
   transform: translateY(6px);
 
   @media (max-width: 700px) {
@@ -1041,7 +1032,6 @@ const Logo = styled.img`
 const HeaderRight = styled.div`
   display: flex;
   align-items: center;
-
   gap: 18px;
 
   @media (max-width: 700px) {
@@ -1050,6 +1040,8 @@ const HeaderRight = styled.div`
 `;
 
 const HeaderText = styled.span`
+  font-family: "Mont", Arial, sans-serif;
+  font-weight: 200;
   font-size: 12px;
   color: #666666;
 
@@ -1060,16 +1052,14 @@ const HeaderText = styled.span`
 
 const CancelButton = styled.button`
   appearance: none;
-
   border: 1px solid #d9dfe5;
   border-radius: 6px;
-
   background: #ffffff;
   color: #083672;
-
   padding: 7px 12px;
 
-  font-family: inherit;
+  font-family: "Mont", Arial, sans-serif;
+  font-weight: 200;
   font-size: 12px;
 
   cursor: pointer;
@@ -1093,11 +1083,9 @@ const CancelButton = styled.button`
 const Main = styled.div`
   flex: 1;
   min-height: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 10px 42px 34px;
 
   @media (max-width: 900px) {
@@ -1116,28 +1104,25 @@ const Main = styled.div`
 const Content = styled.div`
   width: min(760px, 100%);
   margin: 0 auto;
+
+  font-family: "Mont", Arial, sans-serif;
+  font-weight: 200;
 `;
 
 const IntroLayout = styled.div`
   width: min(1160px, 100%);
-
   display: grid;
-
   grid-template-columns:
     minmax(0, 1fr)
     minmax(300px, 430px);
-
   align-items: center;
-
   gap: clamp(40px, 7vw, 100px);
-
   margin: 0 auto;
 
   @media (max-width: 900px) {
     grid-template-columns:
       minmax(0, 1fr)
       minmax(260px, 340px);
-
     gap: 32px;
   }
 
@@ -1148,7 +1133,6 @@ const IntroLayout = styled.div`
 
 const IntroContent = styled(Content)`
   width: 100%;
-
   transform: translateY(-8px);
 
   @media (max-width: 700px) {
@@ -1158,14 +1142,10 @@ const IntroContent = styled(Content)`
 
 const IntroBrand = styled.div`
   font-family: "Mont", Arial, sans-serif;
-
   font-size: 12px;
-  font-weight: 400;
-
+  font-weight: 200;
   letter-spacing: 0.08em;
-
   color: #083672;
-
   margin-bottom: 18px;
 
   @media (max-width: 700px) {
@@ -1182,15 +1162,12 @@ const IntroBrand = styled.div`
 
 const IntroTitle = styled.h1`
   margin: 0;
-
   max-width: 850px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: clamp(42px, 6vw, 72px);
-
   line-height: 0.94;
-
   font-weight: 200;
-
   letter-spacing: -0.055em;
 
   @media (max-width: 900px) {
@@ -1199,7 +1176,6 @@ const IntroTitle = styled.h1`
 
   @media (max-width: 700px) {
     font-size: clamp(38px, 11vw, 52px);
-
     line-height: 0.92;
   }
 
@@ -1209,25 +1185,26 @@ const IntroTitle = styled.h1`
 `;
 
 const IntroTitleBlue = styled.span`
+  font-family: "Mont", Arial, sans-serif;
+  font-weight: 200;
   color: #083672;
 `;
 
 const IntroDescription = styled.p`
   margin: 22px 0 28px;
-
   max-width: 690px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: 17px;
+  font-weight: 200;
   line-height: 1.55;
 
   color: #555555;
 
   @media (max-width: 700px) {
     margin: 14px 0 16px;
-
     font-size: 13px;
     line-height: 1.45;
-
     max-width: 520px;
   }
 
@@ -1240,17 +1217,17 @@ const IntroDescription = styled.p`
 const IntroMeta = styled.div`
   display: flex;
   align-items: center;
-
   gap: 8px;
-
   margin-bottom: 27px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: 13px;
+  font-weight: 200;
+
   color: #111111;
 
   @media (max-width: 700px) {
     margin-bottom: 14px;
-
     font-size: 10px;
     gap: 6px;
   }
@@ -1264,11 +1241,8 @@ const IntroMeta = styled.div`
 const IntroDot = styled.span`
   width: 4px;
   height: 4px;
-
   border-radius: 50%;
-
   background: #0067d4;
-
   flex-shrink: 0;
 
   @media (max-width: 700px) {
@@ -1280,7 +1254,9 @@ const IntroDot = styled.span`
 const IntroNote = styled.p`
   margin: 0 0 25px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: 12px;
+  font-weight: 200;
 
   color: #777777;
 
@@ -1297,20 +1273,17 @@ const IntroNote = styled.p`
 
 const BeginButton = styled.button`
   appearance: none;
-
   min-width: 166px;
   height: 48px;
-
   padding: 0 22px;
-
   border: 0;
   border-radius: 6px;
-
   background: #083672;
   color: #ffffff;
 
-  font-family: inherit;
+  font-family: "Mont", Arial, sans-serif;
   font-size: 13px;
+  font-weight: 200;
 
   cursor: pointer;
 
@@ -1318,26 +1291,20 @@ const BeginButton = styled.button`
 
   &:hover {
     background: #0067d4;
-
     transform: translateY(-1px);
-
     box-shadow: 0 7px 24px rgba(0, 103, 212, 0.15);
   }
 
   @media (max-width: 700px) {
     min-width: 145px;
     height: 43px;
-
     padding: 0 18px;
-
     font-size: 11px;
   }
 
   @media (max-width: 430px) {
     height: 40px;
-
     min-width: 138px;
-
     font-size: 10px;
   }
 `;
@@ -1345,7 +1312,6 @@ const BeginButton = styled.button`
 const FlyerWrap = styled.div`
   width: 100%;
   max-width: 430px;
-
   justify-self: end;
 
   animation: ${flyerIn} 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
@@ -1361,16 +1327,11 @@ const FlyerWrap = styled.div`
 
 const Flyer = styled.img`
   display: block;
-
   width: 100%;
   height: auto;
-
   max-height: min(67vh, 620px);
-
   object-fit: contain;
-
   border-radius: 12px;
-
   box-shadow: 0 24px 70px rgba(8, 54, 114, 0.12);
 `;
 
@@ -1384,15 +1345,12 @@ const RouteContent = styled(Content)`
 
 const RouteTitle = styled.h1`
   margin: 0;
-
   max-width: 680px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: clamp(36px, 5vw, 60px);
-
   font-weight: 200;
-
   line-height: 0.98;
-
   letter-spacing: -0.045em;
 
   @media (max-width: 700px) {
@@ -1402,11 +1360,11 @@ const RouteTitle = styled.h1`
 
 const RouteIntro = styled.p`
   margin: 19px 0 28px;
-
   max-width: 620px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: 15px;
-
+  font-weight: 200;
   line-height: 1.55;
 
   color: #555555;
@@ -1423,33 +1381,26 @@ const RouteList = styled.div`
 
 const RouteItem = styled.button`
   width: 100%;
-
   appearance: none;
-
   border: 0;
-
   border-top: 1px solid #e5e5e5;
-
   background: transparent;
-
   padding: 15px 4px;
 
   display: grid;
-
   grid-template-columns:
     38px
     1fr
     20px;
 
   align-items: center;
-
   gap: 14px;
 
   text-align: left;
-
   cursor: pointer;
 
-  font-family: inherit;
+  font-family: "Mont", Arial, sans-serif;
+  font-weight: 200;
 
   transition: padding 0.3s ease, background 0.3s ease, border-color 0.3s ease;
 
@@ -1460,11 +1411,8 @@ const RouteItem = styled.button`
   &:hover {
     padding-left: 12px;
     padding-right: 12px;
-
     background: #f7faff;
-
     border-color: #cbd6e1;
-
     border-radius: 8px;
   }
 
@@ -1475,14 +1423,14 @@ const RouteItem = styled.button`
       18px;
 
     padding: 13px 3px;
-
     gap: 10px;
   }
 `;
 
 const RouteLetter = styled.span`
+  font-family: "Mont", Arial, sans-serif;
   font-size: 13px;
-
+  font-weight: 200;
   color: #0067d4;
 
   @media (max-width: 700px) {
@@ -1491,8 +1439,9 @@ const RouteLetter = styled.span`
 `;
 
 const RouteName = styled.span`
+  font-family: "Mont", Arial, sans-serif;
   font-size: 17px;
-
+  font-weight: 200;
   color: #111111;
 
   @media (max-width: 700px) {
@@ -1501,8 +1450,9 @@ const RouteName = styled.span`
 `;
 
 const Arrow = styled.span`
+  font-family: "Mont", Arial, sans-serif;
   font-size: 20px;
-
+  font-weight: 200;
   color: #083672;
 
   transition: transform 0.25s ease;
@@ -1514,7 +1464,6 @@ const Arrow = styled.span`
 
 const AssessmentContent = styled(Content)`
   width: min(820px, 100%);
-
   transform: translateY(-4px);
 
   @media (max-width: 700px) {
@@ -1525,7 +1474,9 @@ const AssessmentContent = styled(Content)`
 const QuestionNumber = styled.div`
   margin-bottom: 11px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: 12px;
+  font-weight: 200;
 
   color: #0067d4;
 
@@ -1537,37 +1488,27 @@ const QuestionNumber = styled.div`
 
 const QuestionTitle = styled.h1`
   margin: 0;
-
   max-width: 800px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: clamp(28px, 4vw, 46px);
-
   line-height: 1.08;
-
   font-weight: 200;
-
   letter-spacing: -0.035em;
 
   @media (max-width: 700px) {
     font-size: clamp(25px, 7.5vw, 34px);
-
     line-height: 1.05;
   }
 `;
 
 const Options = styled.div`
   margin-top: 24px;
-
   width: 100%;
-
   border: 1px solid #e0e4e8;
-
   border-radius: 9px;
-
   overflow: hidden;
-
   background: #ffffff;
-
   box-shadow: 0 8px 30px rgba(8, 54, 114, 0.035);
 
   @media (max-width: 700px) {
@@ -1575,15 +1516,10 @@ const Options = styled.div`
   }
 `;
 
-const Option = styled.button<{
-  $selected: boolean;
-}>`
+const Option = styled.button<{ $selected: boolean }>`
   width: 100%;
-
   appearance: none;
-
   border: 0;
-
   border-bottom: 1px solid #e5e5e5;
 
   background: ${({ $selected }) => ($selected ? "#f1f7fd" : "#ffffff")};
@@ -1591,7 +1527,6 @@ const Option = styled.button<{
   color: #111111;
 
   padding: 13px 15px;
-
   min-height: 48px;
 
   display: flex;
@@ -1599,10 +1534,9 @@ const Option = styled.button<{
 
   text-align: left;
 
-  font-family: inherit;
-
+  font-family: "Mont", Arial, sans-serif;
   font-size: 14px;
-
+  font-weight: 200;
   line-height: 1.35;
 
   cursor: pointer;
@@ -1615,15 +1549,12 @@ const Option = styled.button<{
 
   &:hover {
     background: #f7faff;
-
     padding-left: 20px;
   }
 
   @media (max-width: 700px) {
     padding: 11px 12px;
-
     min-height: 46px;
-
     font-size: 12px;
 
     &:hover {
@@ -1632,14 +1563,10 @@ const Option = styled.button<{
   }
 `;
 
-const OptionMark = styled.span<{
-  $selected: boolean;
-}>`
+const OptionMark = styled.span<{ $selected: boolean }>`
   width: 16px;
   height: 16px;
-
   min-width: 16px;
-
   margin-right: 13px;
 
   border: 1px solid ${({ $selected }) => ($selected ? "#0067d4" : "#bdbdbd")};
@@ -1657,7 +1584,6 @@ const OptionMark = styled.span<{
     height: 7px;
 
     border-radius: 50%;
-
     background: #0067d4;
 
     opacity: ${({ $selected }) => ($selected ? 1 : 0)};
@@ -1670,9 +1596,7 @@ const OptionMark = styled.span<{
   @media (max-width: 700px) {
     width: 14px;
     height: 14px;
-
     min-width: 14px;
-
     margin-right: 10px;
 
     &::after {
@@ -1684,13 +1608,10 @@ const OptionMark = styled.span<{
 
 const ActionRow = styled.div`
   width: 100%;
-
   margin-top: 28px;
 
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
 
   gap: 12px;
@@ -1702,23 +1623,19 @@ const ActionRow = styled.div`
 
 const BackButton = styled.button`
   appearance: none;
-
   min-width: 118px;
   height: 46px;
-
   padding: 0 18px;
 
   border: 1px solid #083672;
-
   border-radius: 6px;
 
   background: #ffffff;
-
   color: #083672;
 
-  font-family: inherit;
-
+  font-family: "Mont", Arial, sans-serif;
   font-size: 13px;
+  font-weight: 200;
 
   cursor: pointer;
 
@@ -1726,42 +1643,33 @@ const BackButton = styled.button`
 
   &:hover {
     background: #f1f7fd;
-
     transform: translateY(-1px);
-
     box-shadow: 0 5px 18px rgba(8, 54, 114, 0.06);
   }
 
   @media (max-width: 700px) {
     min-width: 105px;
-
     height: 42px;
-
     padding: 0 14px;
-
     font-size: 11px;
   }
 `;
 
 const NextButton = styled.button`
   appearance: none;
-
   min-width: 142px;
   height: 46px;
-
   padding: 0 21px;
 
   border: 0;
-
   border-radius: 6px;
 
   background: #083672;
-
   color: #ffffff;
 
-  font-family: inherit;
-
+  font-family: "Mont", Arial, sans-serif;
   font-size: 13px;
+  font-weight: 200;
 
   cursor: pointer;
 
@@ -1770,32 +1678,25 @@ const NextButton = styled.button`
 
   &:hover:not(:disabled) {
     background: #0067d4;
-
     transform: translateY(-1px);
-
     box-shadow: 0 6px 20px rgba(0, 103, 212, 0.16);
   }
 
   &:disabled {
     opacity: 0.35;
-
     cursor: not-allowed;
   }
 
   @media (max-width: 700px) {
     min-width: 125px;
-
     height: 42px;
-
     padding: 0 16px;
-
     font-size: 11px;
   }
 `;
 
 const ContactContent = styled(Content)`
   width: min(620px, 100%);
-
   transform: translateY(-3px);
 
   @media (max-width: 700px) {
@@ -1806,12 +1707,10 @@ const ContactContent = styled(Content)`
 const ContactTitle = styled.h1`
   margin: 0;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: clamp(32px, 4.5vw, 50px);
-
   line-height: 1;
-
   font-weight: 200;
-
   letter-spacing: -0.04em;
 
   @media (max-width: 700px) {
@@ -1824,22 +1723,20 @@ const ContactDescription = styled.p`
 
   color: #555555;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: 14px;
-
+  font-weight: 200;
   line-height: 1.5;
 
   @media (max-width: 700px) {
     margin: 12px 0 17px;
-
     font-size: 12px;
   }
 `;
 
 const Fields = styled.div`
   display: flex;
-
   flex-direction: column;
-
   gap: 8px;
 
   @media (max-width: 700px) {
@@ -1849,15 +1746,11 @@ const Fields = styled.div`
 
 const FieldGroup = styled.div`
   position: relative;
-
   width: 100%;
-
   min-height: 56px;
-
   padding: 7px 15px 5px;
 
   border: 1px solid #dcdcdc;
-
   border-radius: 8px;
 
   background: #ffffff;
@@ -1869,10 +1762,8 @@ const FieldGroup = styled.div`
     content: "";
 
     position: absolute;
-
     left: 15px;
     right: 15px;
-
     bottom: -1px;
 
     height: 2px;
@@ -1882,7 +1773,6 @@ const FieldGroup = styled.div`
     background: #0067d4;
 
     opacity: 0;
-
     transform: scaleX(0);
 
     transition: transform 0.35s ease, opacity 0.25s ease;
@@ -1890,31 +1780,28 @@ const FieldGroup = styled.div`
 
   &:focus-within {
     border-color: #aebfd1;
-
     box-shadow: 0 7px 25px rgba(8, 54, 114, 0.06);
-
     transform: translateY(-1px);
   }
 
   &:focus-within::after {
     opacity: 1;
-
     transform: scaleX(1);
   }
 
   @media (max-width: 700px) {
     min-height: 52px;
-
     padding: 6px 13px 4px;
   }
 `;
 
 const FieldLabel = styled.label`
   display: block;
-
   margin-bottom: 2px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: 10px;
+  font-weight: 200;
 
   color: #666666;
 
@@ -1931,18 +1818,15 @@ const FieldInput = styled.input`
   width: 100%;
 
   border: 0;
-
   outline: 0;
-
   padding: 0;
 
   background: transparent;
-
   color: #111111;
 
-  font-family: inherit;
-
+  font-family: "Mont", Arial, sans-serif;
   font-size: 14px;
+  font-weight: 200;
 
   height: 24px;
 
@@ -1960,9 +1844,7 @@ const ContactActions = styled.div`
   margin-top: 22px;
 
   display: flex;
-
   justify-content: space-between;
-
   gap: 12px;
 
   @media (max-width: 700px) {
@@ -1978,12 +1860,13 @@ const ReceiptPage = styled.div`
   background: #f5f7fa;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
   padding: 24px;
+
+  font-family: "Mont", Arial, sans-serif;
+  font-weight: 200;
 
   @media (max-width: 700px) {
     padding: 16px;
@@ -1992,7 +1875,6 @@ const ReceiptPage = styled.div`
 
 const Ticket = styled.div`
   position: relative;
-
   width: min(540px, 100%);
 
   background: #ffffff;
@@ -2008,22 +1890,18 @@ const Ticket = styled.div`
 
 const TicketTop = styled.div`
   min-height: 76px;
-
   padding: 0 32px;
 
   background: #083672;
 
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
 
   gap: 20px;
 
   @media (max-width: 700px) {
     min-height: 64px;
-
     padding: 0 22px;
   }
 `;
@@ -2031,7 +1909,6 @@ const TicketTop = styled.div`
 const TicketLogo = styled.img`
   width: 72px;
   height: auto;
-
   display: block;
 
   filter: brightness(0) invert(1);
@@ -2042,8 +1919,9 @@ const TicketLogo = styled.img`
 `;
 
 const TicketStatus = styled.span`
+  font-family: "Mont", Arial, sans-serif;
   font-size: 9px;
-
+  font-weight: 200;
   letter-spacing: 0.12em;
 
   color: #c6e3fb;
@@ -2066,8 +1944,9 @@ const TicketMain = styled.div`
 const TicketEyebrow = styled.div`
   margin-bottom: 13px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: 9px;
-
+  font-weight: 200;
   letter-spacing: 0.1em;
 
   color: #0067d4;
@@ -2080,12 +1959,10 @@ const TicketEyebrow = styled.div`
 const TicketTitle = styled.h1`
   margin: 0;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: clamp(32px, 5vw, 46px);
-
   line-height: 0.98;
-
   font-weight: 200;
-
   letter-spacing: -0.045em;
 
   color: #111111;
@@ -2093,18 +1970,17 @@ const TicketTitle = styled.h1`
 
 const TicketText = styled.p`
   max-width: 390px;
-
   margin: 14px 0 27px;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: 13px;
-
+  font-weight: 200;
   line-height: 1.55;
 
   color: #666666;
 
   @media (max-width: 700px) {
     font-size: 12px;
-
     margin: 11px 0 22px;
   }
 `;
@@ -2115,13 +1991,10 @@ const TicketDetails = styled.div`
 
 const TicketDetail = styled.div`
   min-height: 46px;
-
   padding: 10px 0;
 
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
 
   gap: 20px;
@@ -2130,14 +2003,14 @@ const TicketDetail = styled.div`
 
   @media (max-width: 700px) {
     min-height: 42px;
-
     padding: 8px 0;
   }
 `;
 
 const TicketLabel = styled.span`
+  font-family: "Mont", Arial, sans-serif;
   font-size: 9px;
-
+  font-weight: 200;
   letter-spacing: 0.08em;
 
   color: #888888;
@@ -2152,7 +2025,9 @@ const TicketValue = styled.span`
 
   text-align: right;
 
+  font-family: "Mont", Arial, sans-serif;
   font-size: 12px;
+  font-weight: 200;
 
   color: #111111;
 
@@ -2163,17 +2038,14 @@ const TicketValue = styled.span`
 
 const TicketDivider = styled.div`
   position: relative;
-
   height: 1px;
 
   display: flex;
-
   align-items: center;
 `;
 
 const TicketDashed = styled.div`
   width: 100%;
-
   border-top: 1px dashed #cfd5db;
 `;
 
@@ -2181,7 +2053,6 @@ const TicketNotch = styled.span<{
   $position: "left" | "right";
 }>`
   position: absolute;
-
   z-index: 2;
 
   width: 22px;
@@ -2211,9 +2082,7 @@ const TicketBottom = styled.div`
   padding: 24px 38px 30px;
 
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
 
   gap: 20px;
@@ -2222,24 +2091,20 @@ const TicketBottom = styled.div`
     padding: 20px 23px 24px;
 
     align-items: stretch;
-
     flex-direction: column;
   }
 `;
 
 const TicketEvent = styled.div`
   display: flex;
-
   align-items: center;
-
   gap: 12px;
 `;
 
 const TicketEventDate = styled.div`
+  font-family: "Mont", Arial, sans-serif;
   font-size: 29px;
-
   line-height: 1;
-
   font-weight: 200;
 
   color: #083672;
@@ -2247,44 +2112,38 @@ const TicketEventDate = styled.div`
 
 const TicketEventInfo = styled.div`
   display: flex;
-
   flex-direction: column;
-
   gap: 4px;
 
   strong {
+    font-family: "Mont", Arial, sans-serif;
     font-size: 9px;
-
     letter-spacing: 0.08em;
-
-    font-weight: 400;
-
+    font-weight: 200;
     color: #111111;
   }
 
   span {
+    font-family: "Mont", Arial, sans-serif;
     font-size: 10px;
-
+    font-weight: 200;
     color: #777777;
   }
 `;
 
 const DoneButton = styled.button`
   min-width: 105px;
-
   height: 42px;
 
   border: 0;
-
   border-radius: 6px;
 
   background: #083672;
-
   color: #ffffff;
 
-  font-family: inherit;
-
+  font-family: "Mont", Arial, sans-serif;
   font-size: 11px;
+  font-weight: 200;
 
   cursor: pointer;
 
@@ -2292,13 +2151,11 @@ const DoneButton = styled.button`
 
   &:hover {
     background: #0067d4;
-
     transform: translateY(-1px);
   }
 
   @media (max-width: 700px) {
     width: 100%;
-
     height: 43px;
   }
 `;
