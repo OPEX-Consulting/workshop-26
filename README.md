@@ -150,7 +150,7 @@ Deployment process:
 
 | Name | Purpose |
 | --- | --- |
-| `NEXT_PUBLIC_REGISTRATION_SHEET_ENDPOINT` | Apps Script web-app URL that receives registrations (see `.env.example`). Required at build time; the form refuses to submit without it. |
+| `REGISTRATION_SHEET_ENDPOINT` | Apps Script web-app URL that receives registrations (see `.env.example`). Read at build time and inlined by `next.config.ts`; the form refuses to submit without it. `NEXT_PUBLIC_REGISTRATION_SHEET_ENDPOINT` also works and takes precedence. |
 
 The Apps Script source is `AppsScript-Code.gs`; setup and Workspace migration notes are in `AppsScript-Workspace-Migration-README.md`.
 
