@@ -54,7 +54,7 @@ const logos = [
   },
   {
     name: "MONIEPOINT",
-    src: "/images/invitees/moniePoint.jpeg",
+    src: "/images/invitees/moniePoint.png",
   },
   {
     name: "SMARTCASH",
