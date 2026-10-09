@@ -83,8 +83,7 @@ function doPost(e) {
 
 function sendConfirmationEmail(data) {
   const properties = PropertiesService.getScriptProperties();
-  const fromName =
-    properties.getProperty("EMAIL_FROM_NAME") || "OPEX Consulting";
+  const fromName = properties.getProperty("EMAIL_FROM_NAME") || "OPEX Consulting";
   const replyTo = properties.getProperty("EMAIL_REPLY_TO");
   const cc = properties.getProperty("EMAIL_CC") || "";
 
@@ -143,9 +142,7 @@ ${fromName}`;
             <div>The Wheatbaker, Ikoyi</div>
           </div>
           <p>Please arrive 15 minutes before your session begins.</p>
-          <p>If you have any questions, reply to this email or contact <a href="mailto:${escapeHtml(
-            replyTo
-          )}">${escapeHtml(replyTo)}</a>.</p>
+          <p>If you have any questions, reply to this email or contact <a href="mailto:${escapeHtml(replyTo)}">${escapeHtml(replyTo)}</a>.</p>
           <p>We look forward to welcoming you.</p>
           <p>Regards,<br>${escapeHtml(fromName)}</p>
         </div>
@@ -166,8 +163,7 @@ ${fromName}`;
 }
 
 function getSheet() {
-  const spreadsheetId =
-    PropertiesService.getScriptProperties().getProperty("SPREADSHEET_ID");
+  const spreadsheetId = PropertiesService.getScriptProperties().getProperty("SPREADSHEET_ID");
   const spreadsheet = spreadsheetId
     ? SpreadsheetApp.openById(spreadsheetId)
     : SpreadsheetApp.getActiveSpreadsheet();
@@ -185,8 +181,7 @@ function validateRegistration(data) {
   const required = ["name", "email", "role", "organisation", "session"];
   const missing = required.filter((key) => !clean(data[key]));
   if (missing.length) throw new Error(`Missing fields: ${missing.join(", ")}`);
-  if (!/^\S+@\S+\.\S+$/.test(clean(data.email)))
-    throw new Error("Invalid email address");
+  if (!/^\S+@\S+\.\S+$/.test(clean(data.email))) throw new Error("Invalid email address");
 }
 
 function clean(value) {
@@ -203,7 +198,7 @@ function escapeHtml(value) {
 }
 
 function json(value) {
-  return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(
-    ContentService.MimeType.JSON
-  );
+  return ContentService
+    .createTextOutput(JSON.stringify(value))
+    .setMimeType(ContentService.MimeType.JSON);
 }
