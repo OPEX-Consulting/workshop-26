@@ -44,6 +44,30 @@ const logos = [
     name: "NITDA",
     src: "/images/invitees/nitda.png",
   },
+  {
+    name: "FIRSTBANK",
+    src: "/images/invitees/fbn.jpeg",
+  },
+  {
+    name: "LETSHEGO",
+    src: "/images/invitees/letshego.png",
+  },
+  {
+    name: "MONIEPOINT",
+    src: "/images/invitees/moniePoint.jpeg",
+  },
+  {
+    name: "SMARTCASH",
+    src: "/images/invitees/smartcash.png",
+  },
+  {
+    name: "REGTECH365",
+    src: "/images/invitees/regtech365.jpeg",
+  },
+  {
+    name: "ACCESSBANK",
+    src: "/images/invitees/access.jpeg",
+  },
 ];
 
 export default function Invitee() {

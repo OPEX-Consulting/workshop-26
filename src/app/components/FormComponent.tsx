@@ -561,8 +561,6 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
           <Main>
             <IntroLayout>
               <IntroContent>
-                <IntroBrand>REGTECH365 · EXECUTIVE WORKSHOP</IntroBrand>
-
                 <IntroTitle>
                   THE END OF
                   <br />
@@ -594,7 +592,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
 
               <FlyerWrap>
                 <Flyer
-                  src="/images/flyer.jpeg"
+                  src="/images/newflier.jpeg"
                   alt="REGTECH365 Executive Workshop"
                 />
               </FlyerWrap>
