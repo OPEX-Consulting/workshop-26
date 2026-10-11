@@ -576,7 +576,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
 
               <FlyerWrap>
                 <Flyer
-                  src="/images/flyer.jpeg"
+                  src="/images/newflierupdate.jpeg"
                   alt="REGTECH365 Executive Workshop"
                 />
               </FlyerWrap>
