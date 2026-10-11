@@ -409,7 +409,7 @@ const DesktopCTA = styled.button<{
 
   color: ${({ $atFooter }) => ($atFooter ? "#ffffff" : "#083672")};
 
-  font-family: "Chillen", sans-serif;
+  font-family: "Mont", sans-serif;
   font-size: 14px;
   font-weight: 400;
 

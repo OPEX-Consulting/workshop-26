@@ -533,7 +533,7 @@ const PrimaryButton = styled.button`
   background: #c6e3fb;
   color: #083672;
 
-  font-family: "Chillen", sans-serif;
+  font-family: "Mont", sans-serif;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: -0.01em;
@@ -577,7 +577,7 @@ const SecondaryButton = styled.a`
 
   color: #eeeeee;
 
-  font-family: "Chillen", sans-serif;
+  font-family: "Mont", sans-serif;
   font-size: 11px;
   font-weight: 400;
 
