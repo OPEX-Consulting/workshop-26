@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     siteName: "OPEX Executive Workshop & Summit 2026",
     images: [
       {
-        url: "/images/newflier.jpeg",
+        url: "/images/newflierupdate.jpeg",
         width: 1200,
         height: 630,
         alt: "OPEX Executive Workshop & Summit 2026",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: "The End of Manual | OPEX Executive Workshop & Summit 2026",
     description:
       "An invitation-only executive workshop and summit on AI, connected systems and the future of financial reporting and compliance.",
-    images: ["/images/newflier.jpeg"],
+    images: ["/images/newflierupdate.jpeg"],
   },
 };
 
