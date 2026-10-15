@@ -116,10 +116,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
 
   const submitRegistration = async (preferences: PrivacyPreferences) => {
     if (!route || submitting) return;
-
-    if (!preferences.personalDataConsent) {
-      return;
-    }
+    if (!preferences.personalDataConsent) return;
 
     const endpoint =
       process.env.NEXT_PUBLIC_REGISTRATION_SHEET_ENDPOINT?.trim();
@@ -129,7 +126,6 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
       setSubmitError(
         "Registration is temporarily unavailable. Please try again later."
       );
-
       console.error("NEXT_PUBLIC_REGISTRATION_SHEET_ENDPOINT is missing.");
       return;
     }
@@ -142,15 +138,12 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
     const payload = {
       ref: newReference,
       submittedAt: new Date().toISOString(),
-
       name: name.trim(),
       email: email.trim(),
       role: role.trim(),
       organisation: organisation.trim(),
-
       route: route.title,
       session: route.session,
-
       score: 0,
       maxScore: 0,
       pct: 0,
@@ -158,8 +151,6 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
       priority: "Nurture",
       flags: 0,
       answers: [],
-
-      // Privacy and consent records
       privacyConsent: preferences.personalDataConsent,
       marketingConsent: preferences.marketingConsent,
     };
@@ -189,6 +180,8 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
     }
   };
 
+  /* INTRO SCREEN */
+
   if (step === "intro") {
     return (
       <FormShell>
@@ -203,7 +196,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
             </HeaderRight>
           </Header>
 
-          <Main>
+          <Main $intro>
             <IntroLayout>
               <IntroContent>
                 <IntroTitle>
@@ -228,9 +221,13 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                   priorities.
                 </IntroNote>
 
-                <BeginButton type="button" onClick={() => setStep("routes")}>
-                  Begin registration
-                </BeginButton>
+                {/* Desktop: normal position.
+                    Mobile: fixed to the bottom of the viewport. */}
+                <IntroButtonBar>
+                  <BeginButton type="button" onClick={() => setStep("routes")}>
+                    Begin registration
+                  </BeginButton>
+                </IntroButtonBar>
               </IntroContent>
 
               <FlyerWrap>
@@ -245,6 +242,8 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
       </FormShell>
     );
   }
+
+  /* SESSION SELECTION SCREEN */
 
   if (step === "routes") {
     return (
@@ -278,7 +277,6 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
               <RouteList>
                 <SessionHeading>
                   <SessionHeadingTitle>Morning Session</SessionHeadingTitle>
-
                   <SessionHeadingTime>
                     8:00 AM – 11:00 AM WAT
                   </SessionHeadingTime>
@@ -296,7 +294,6 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                       <RouteText>
                         <RouteName>{item.title}</RouteName>
                         <RouteDescription>{item.description}</RouteDescription>
-
                         <RouteSession>
                           MORNING SESSION · 8AM–11AM WAT
                         </RouteSession>
@@ -329,7 +326,6 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                       <RouteText>
                         <RouteName>{item.title}</RouteName>
                         <RouteDescription>{item.description}</RouteDescription>
-
                         <RouteSession>
                           AFTERNOON SUMMIT · 11:30AM–4PM WAT
                         </RouteSession>
@@ -346,6 +342,8 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
       </FormShell>
     );
   }
+
+  /* CONTACT FORM SCREEN */
 
   if (step === "contact" && route) {
     const session = SESSION_DETAILS[route.session];
@@ -486,9 +484,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
         <PrivacyModal
           isOpen={privacyOpen}
           onClose={() => {
-            if (!submitting) {
-              setPrivacyOpen(false);
-            }
+            if (!submitting) setPrivacyOpen(false);
           }}
           onSave={(preferences) => {
             void submitRegistration(preferences);
@@ -497,6 +493,8 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
       </FormShell>
     );
   }
+
+  /* SUCCESS TICKET */
 
   if (step === "success" && route) {
     const session = SESSION_DETAILS[route.session];
@@ -577,7 +575,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
   return null;
 }
 
-/* Animations */
+/* ANIMATIONS */
 
 const pageIn = keyframes`
   from {
@@ -624,7 +622,7 @@ const flyerIn = keyframes`
   }
 `;
 
-/* Main layout */
+/* MAIN LAYOUT */
 
 const FormShell = styled.main`
   position: relative;
@@ -644,6 +642,8 @@ const Page = styled.section`
 `;
 
 const Header = styled.header`
+  position: relative;
+  z-index: 2;
   width: 100%;
   min-height: 82px;
   display: flex;
@@ -733,7 +733,7 @@ const CancelButton = styled.button`
   }
 `;
 
-const Main = styled.div`
+const Main = styled.div<{ $intro?: boolean }>`
   flex: 1;
   min-height: 0;
   display: flex;
@@ -746,12 +746,12 @@ const Main = styled.div`
   }
 
   @media (max-width: 700px) {
-    align-items: flex-start;
-    padding: 5px 20px 24px;
+    align-items: ${({ $intro }) => ($intro ? "center" : "flex-start")};
+    padding: ${({ $intro }) => ($intro ? "24px 22px 130px" : "5px 20px 24px")};
   }
 
   @media (max-width: 430px) {
-    padding: 4px 16px 20px;
+    padding: ${({ $intro }) => ($intro ? "28px 20px 125px" : "4px 16px 20px")};
   }
 `;
 
@@ -760,7 +760,7 @@ const Content = styled.div`
   margin: 0 auto;
 `;
 
-/* Intro screen */
+/* INTRO SCREEN */
 
 const IntroLayout = styled.div`
   width: min(1160px, 100%);
@@ -777,6 +777,7 @@ const IntroLayout = styled.div`
 
   @media (max-width: 700px) {
     display: block;
+    width: 100%;
   }
 `;
 
@@ -786,41 +787,35 @@ const IntroContent = styled(Content)`
 
   @media (max-width: 700px) {
     transform: none;
-  }
-`;
-
-const IntroBrand = styled.div`
-  font-size: 12px;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  color: #083672;
-  margin-bottom: 18px;
-
-  @media (max-width: 700px) {
-    font-size: 9px;
-    margin-bottom: 10px;
+    text-align: left;
   }
 `;
 
 const IntroTitle = styled.h1`
   margin: 0;
-  max-width: 850px;
-  font-size: clamp(42px, 6vw, 72px);
-  line-height: 0.94;
+  max-width: 900px;
+  font-size: clamp(58px, 7vw, 92px);
+  line-height: 0.9;
   font-weight: 200;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.065em;
 
   @media (max-width: 900px) {
-    font-size: clamp(40px, 7vw, 62px);
+    font-size: clamp(48px, 6.5vw, 72px);
   }
 
   @media (max-width: 700px) {
-    font-size: clamp(38px, 11vw, 52px);
-    line-height: 0.92;
+    font-size: clamp(54px, 12vw, 76px);
+    line-height: 0.9;
+    letter-spacing: -0.06em;
   }
 
   @media (max-width: 430px) {
-    font-size: 37px;
+    font-size: clamp(46px, 12.5vw, 58px);
+    line-height: 0.92;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 44px;
   }
 `;
 
@@ -829,21 +824,23 @@ const IntroTitleBlue = styled.span`
 `;
 
 const IntroDescription = styled.p`
-  margin: 22px 0 28px;
+  margin: 27px 0 30px;
   max-width: 690px;
-  font-size: 17px;
+  font-size: 19px;
   line-height: 1.55;
   color: #555555;
 
   @media (max-width: 700px) {
-    margin: 14px 0 16px;
-    font-size: 13px;
-    line-height: 1.45;
+    margin: 22px 0 24px;
+    max-width: 540px;
+    font-size: 17px;
+    line-height: 1.55;
   }
 
   @media (max-width: 430px) {
-    margin: 11px 0 13px;
-    font-size: 12px;
+    margin: 20px 0 23px;
+    font-size: 16px;
+    line-height: 1.55;
   }
 `;
 
@@ -851,72 +848,146 @@ const IntroMeta = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 27px;
-  font-size: 13px;
+  gap: 10px;
+  margin-bottom: 26px;
+  font-size: 14px;
+  line-height: 1.6;
   color: #111111;
 
   @media (max-width: 700px) {
-    margin-bottom: 14px;
-    font-size: 10px;
-    gap: 6px;
+    gap: 9px;
+    margin-bottom: 20px;
+    font-size: 13px;
   }
 
   @media (max-width: 430px) {
-    font-size: 9px;
-    margin-bottom: 10px;
+    gap: 8px;
+    margin-bottom: 19px;
+    font-size: 12px;
   }
 `;
 
 const IntroDot = styled.span`
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: #0067d4;
   flex-shrink: 0;
 `;
 
 const IntroNote = styled.p`
-  margin: 0 0 25px;
-  font-size: 12px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
   color: #777777;
 
   @media (max-width: 700px) {
-    margin-bottom: 15px;
-    font-size: 10px;
+    max-width: 420px;
+    font-size: 13px;
+    line-height: 1.7;
   }
 
   @media (max-width: 430px) {
-    margin-bottom: 11px;
-    font-size: 9px;
+    font-size: 12px;
+    line-height: 1.75;
+  }
+`;
+
+/*
+ * Desktop: this bar remains in normal document flow.
+ * Mobile: it becomes a fixed bottom footer.
+ */
+const IntroButtonBar = styled.div`
+  position: static;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  margin-top: 28px;
+
+  @media (max-width: 700px) {
+    position: fixed;
+    z-index: 100;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    justify-content: center;
+    width: auto;
+    margin-top: 0;
+    padding: 12px 22px calc(12px + env(safe-area-inset-bottom));
+
+    border-top: 1px solid rgba(220, 225, 230, 0.8);
+    background: rgba(255, 255, 255, 0.94);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  @media (max-width: 430px) {
+    padding: 10px 20px calc(10px + env(safe-area-inset-bottom));
   }
 `;
 
 const BeginButton = styled.button`
   appearance: none;
-  min-width: 166px;
-  height: 46px;
-  padding: 0 22px;
-  border: 0;
-  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: auto;
+  min-width: 220px;
+  min-height: 54px;
+  padding: 0 24px;
+
+  border: 1px solid #083672;
+  border-radius: 14px;
   background: #083672;
   color: #ffffff;
+
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-align: center;
   cursor: pointer;
-  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+
+  box-shadow: 0 4px 12px rgba(8, 54, 114, 0.08);
+
+  transition: background 0.22s ease, border-color 0.22s ease,
+    transform 0.22s ease, box-shadow 0.22s ease;
 
   &:hover {
     background: #0067d4;
-    transform: translateY(-1px);
-    box-shadow: 0 7px 24px rgba(0, 103, 212, 0.15);
+    border-color: #0067d4;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(8, 54, 114, 0.16);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(8, 54, 114, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(0, 103, 212, 0.3);
+    outline-offset: 4px;
   }
 
   @media (max-width: 700px) {
-    min-width: 145px;
-    height: 43px;
+    width: 100%;
+    max-width: 420px;
+    min-width: 0;
+    min-height: 52px;
+    padding: 0 20px;
+    border-radius: 13px;
+  }
+
+  @media (max-width: 430px) {
+    max-width: none;
+    min-height: 50px;
     padding: 0 18px;
-    font-size: 11px;
+    border-radius: 12px;
   }
 `;
 
@@ -945,7 +1016,7 @@ const Flyer = styled.img`
   box-shadow: 0 24px 70px rgba(8, 54, 114, 0.12);
 `;
 
-/* Session selection */
+/* SESSION SELECTION */
 
 const RouteContent = styled(Content)`
   width: min(900px, 100%);
@@ -992,14 +1063,17 @@ const SessionHeading = styled.div<{ $afternoon?: boolean }>`
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+
   padding: ${({ $afternoon }) =>
     $afternoon ? "30px 4px 12px" : "4px 4px 12px"};
+
   border-bottom: 1px solid #dce3eb;
 
   @media (max-width: 700px) {
     align-items: flex-start;
     flex-direction: column;
     gap: 5px;
+
     padding: ${({ $afternoon }) =>
       $afternoon ? "24px 2px 10px" : "4px 2px 10px"};
   }
@@ -1034,14 +1108,18 @@ const RouteItem = styled.button`
   border: 0;
   border-top: 1px solid #e5e5e5;
   background: transparent;
+
   padding: 22px 4px;
+
   display: grid;
   grid-template-columns: 28px minmax(0, 1fr) 20px;
   align-items: start;
   gap: 14px;
+
   text-align: left;
   cursor: pointer;
   font-family: inherit;
+
   transition: padding 0.25s ease, background 0.25s ease, border-color 0.25s ease;
 
   &:last-child {
@@ -1154,7 +1232,7 @@ const Arrow = styled.span`
   }
 `;
 
-/* Contact form */
+/* CONTACT FORM */
 
 const ContactContent = styled(Content)`
   width: min(620px, 100%);
@@ -1236,6 +1314,7 @@ const FieldGroup = styled.div`
   border: 1px solid #dcdcdc;
   border-radius: 12px;
   background: #ffffff;
+
   transition: border-color 0.3s ease, box-shadow 0.35s ease,
     transform 0.35s ease;
 
@@ -1285,11 +1364,6 @@ const FieldLabel = styled.label`
   }
 `;
 
-/*
- * IMPORTANT:
- * Keep the input font at 16px to prevent automatic
- * focus zoom in Safari on iPhones.
- */
 const FieldInput = styled.input`
   display: block;
   width: 100%;
@@ -1355,6 +1429,7 @@ const BackButton = styled.button`
   font-family: inherit;
   font-size: 12px;
   cursor: pointer;
+
   transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 
   &:hover:not(:disabled) {
@@ -1390,6 +1465,7 @@ const NextButton = styled.button`
   font-family: inherit;
   font-size: 12px;
   cursor: pointer;
+
   transition: background 0.25s ease, transform 0.25s ease, opacity 0.25s ease,
     box-shadow 0.25s ease;
 
@@ -1411,7 +1487,7 @@ const NextButton = styled.button`
   }
 `;
 
-/* Success ticket */
+/* SUCCESS TICKET */
 
 const ReceiptPage = styled.div`
   width: 100%;
