@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import styled, { keyframes } from "styled-components";
+import PrivacyModal, { type PrivacyPreferences } from "./PrivacyModal";
 
 type RouteKey = "financial" | "sustainability" | "regtech" | "fullDay";
 type SessionKey = "breakfast" | "summit";
@@ -80,13 +81,16 @@ const generateReference = () => {
 export default function FormComponent({ onCancel }: FormComponentProps) {
   const [step, setStep] = useState<FormStep>("intro");
   const [route, setRoute] = useState<Route | null>(null);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [organisation, setOrganisation] = useState("");
+
   const [reference, setReference] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   const selectRoute = (selectedRoute: Route) => {
     setRoute(selectedRoute);
@@ -95,23 +99,47 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
   };
 
   const goBackFromContact = () => {
+    if (submitting) return;
+
     setSubmitError("");
     setStep("routes");
   };
 
-  const submitRegistration = async (event: FormEvent<HTMLFormElement>) => {
+  /*
+   * The contact form does not submit immediately.
+   * It opens the privacy modal first.
+   */
+  const handleRegistrationSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!route || submitting) return;
+
+    setSubmitError("");
+    setPrivacyOpen(true);
+  };
+
+  /*
+   * This function is called only after the attendee
+   * checks the required consent and clicks Save preferences.
+   */
+  const submitRegistration = async (preferences: PrivacyPreferences) => {
+    if (!route || submitting) return;
+
+    if (!preferences.personalDataConsent) {
+      return;
+    }
 
     const endpoint =
       process.env.NEXT_PUBLIC_REGISTRATION_SHEET_ENDPOINT?.trim();
 
     if (!endpoint) {
+      setPrivacyOpen(false);
       setSubmitError(
         "Registration is temporarily unavailable. Please try again later."
       );
+
       console.error("NEXT_PUBLIC_REGISTRATION_SHEET_ENDPOINT is missing.");
+
       return;
     }
 
@@ -123,12 +151,15 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
     const payload = {
       ref: newReference,
       submittedAt: new Date().toISOString(),
+
       name: name.trim(),
       email: email.trim(),
       role: role.trim(),
       organisation: organisation.trim(),
+
       route: route.title,
       session: route.session,
+
       score: 0,
       maxScore: 0,
       pct: 0,
@@ -136,6 +167,10 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
       priority: "Nurture",
       flags: 0,
       answers: [],
+
+      // Privacy and consent records
+      privacyConsent: preferences.personalDataConsent,
+      marketingConsent: preferences.marketingConsent,
     };
 
     try {
@@ -149,9 +184,12 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
       });
 
       setReference(newReference);
+      setPrivacyOpen(false);
       setStep("success");
     } catch (error) {
       console.error("Registration submission failed:", error);
+
+      setPrivacyOpen(false);
       setSubmitError(
         "We could not send your registration. Please check your connection and try again."
       );
@@ -166,6 +204,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
         <Page>
           <Header>
             <Logo src="/images/opexwhite.webp" alt="OPEX" />
+
             <HeaderRight>
               <CancelButton type="button" onClick={onCancel}>
                 Cancel
@@ -222,8 +261,10 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
         <Page>
           <Header>
             <Logo src="/images/opexwhite.webp" alt="OPEX" />
+
             <HeaderRight>
               <HeaderText>Executive Workshop</HeaderText>
+
               <CancelButton type="button" onClick={onCancel}>
                 Cancel
               </CancelButton>
@@ -246,6 +287,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
               <RouteList>
                 <SessionHeading>
                   <SessionHeadingTitle>Morning Session</SessionHeadingTitle>
+
                   <SessionHeadingTime>
                     8:00 AM – 11:00 AM WAT
                   </SessionHeadingTime>
@@ -263,6 +305,10 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                       <RouteText>
                         <RouteName>{item.title}</RouteName>
                         <RouteDescription>{item.description}</RouteDescription>
+
+                        <RouteSession>
+                          MORNING SESSION · 8AM–11AM WAT
+                        </RouteSession>
                       </RouteText>
 
                       <Arrow aria-hidden="true">→</Arrow>
@@ -274,6 +320,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                   <SessionHeadingTitle>
                     Afternoon C-Level Technical Summit
                   </SessionHeadingTitle>
+
                   <SessionHeadingTime>
                     11:30 AM – 4:00 PM WAT
                   </SessionHeadingTime>
@@ -291,6 +338,10 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                       <RouteText>
                         <RouteName>{item.title}</RouteName>
                         <RouteDescription>{item.description}</RouteDescription>
+
+                        <RouteSession>
+                          AFTERNOON SUMMIT · 11:30AM–4PM WAT
+                        </RouteSession>
                       </RouteText>
 
                       <Arrow aria-hidden="true">→</Arrow>
@@ -306,14 +357,22 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
   }
 
   if (step === "contact" && route) {
+    const session = SESSION_DETAILS[route.session];
+
     return (
       <FormShell>
         <Page>
           <Header>
             <Logo src="/images/opexwhite.webp" alt="OPEX" />
+
             <HeaderRight>
               <HeaderText>{route.title}</HeaderText>
-              <CancelButton type="button" onClick={onCancel}>
+
+              <CancelButton
+                type="button"
+                onClick={onCancel}
+                disabled={submitting}
+              >
                 Cancel
               </CancelButton>
             </HeaderRight>
@@ -336,17 +395,19 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                 <SelectedSessionLabel>
                   YOUR SELECTED SESSION
                 </SelectedSessionLabel>
+
                 <SelectedSessionTitle>{route.title}</SelectedSessionTitle>
+
                 <SelectedSessionTime>
-                  {SESSION_DETAILS[route.session].title} ·{" "}
-                  {SESSION_DETAILS[route.session].time}
+                  {session.title} · {session.time}
                 </SelectedSessionTime>
               </SelectedSession>
 
-              <form onSubmit={submitRegistration}>
+              <form onSubmit={handleRegistrationSubmit}>
                 <Fields>
                   <FieldGroup>
                     <FieldLabel htmlFor="name">Full name</FieldLabel>
+
                     <FieldInput
                       id="name"
                       name="name"
@@ -356,11 +417,13 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                       autoComplete="name"
                       placeholder="Your full name"
                       required
+                      disabled={submitting}
                     />
                   </FieldGroup>
 
                   <FieldGroup>
                     <FieldLabel htmlFor="email">Work email</FieldLabel>
+
                     <FieldInput
                       id="email"
                       name="email"
@@ -370,11 +433,13 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                       autoComplete="email"
                       placeholder="name@organisation.com"
                       required
+                      disabled={submitting}
                     />
                   </FieldGroup>
 
                   <FieldGroup>
                     <FieldLabel htmlFor="role">Role</FieldLabel>
+
                     <FieldInput
                       id="role"
                       name="role"
@@ -384,11 +449,13 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                       autoComplete="organization-title"
                       placeholder="Your role"
                       required
+                      disabled={submitting}
                     />
                   </FieldGroup>
 
                   <FieldGroup>
                     <FieldLabel htmlFor="organisation">Organisation</FieldLabel>
+
                     <FieldInput
                       id="organisation"
                       name="organisation"
@@ -398,6 +465,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                       autoComplete="organization"
                       placeholder="Organisation name"
                       required
+                      disabled={submitting}
                     />
                   </FieldGroup>
                 </Fields>
@@ -416,13 +484,25 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                   </BackButton>
 
                   <NextButton type="submit" disabled={submitting}>
-                    {submitting ? "Confirming…" : "Confirm registration"}
+                    Confirm registration
                   </NextButton>
                 </ContactActions>
               </form>
             </ContactContent>
           </Main>
         </Page>
+
+        <PrivacyModal
+          isOpen={privacyOpen}
+          onClose={() => {
+            if (!submitting) {
+              setPrivacyOpen(false);
+            }
+          }}
+          onSave={(preferences) => {
+            void submitRegistration(preferences);
+          }}
+        />
       </FormShell>
     );
   }
@@ -486,6 +566,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
             <TicketBottom>
               <TicketEvent>
                 <TicketEventDate>21</TicketEventDate>
+
                 <TicketEventInfo>
                   <strong>OCTOBER 2026</strong>
                   <span>The Wheatbaker · Ikoyi</span>
@@ -504,6 +585,8 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
 
   return null;
 }
+
+/* Animations */
 
 const pageIn = keyframes`
   from {
@@ -545,11 +628,12 @@ const flyerIn = keyframes`
   }
 `;
 
+/* Main layout */
+
 const FormShell = styled.main`
+  position: relative;
   width: 100%;
-  height: 100dvh;
   min-height: 100dvh;
-  overflow: hidden;
   background: #ffffff;
   color: #111111;
   font-family: "Mont", Arial, sans-serif;
@@ -557,7 +641,6 @@ const FormShell = styled.main`
 
 const Page = styled.section`
   width: 100%;
-  height: 100dvh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -611,6 +694,10 @@ const HeaderRight = styled.div`
 `;
 
 const HeaderText = styled.span`
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 12px;
   color: #666666;
 
@@ -622,25 +709,30 @@ const HeaderText = styled.span`
 const CancelButton = styled.button`
   appearance: none;
   border: 1px solid #d9dfe5;
-  border-radius: 6px;
+  border-radius: 999px;
   background: #ffffff;
   color: #083672;
-  padding: 7px 12px;
+  padding: 8px 14px;
   font-family: inherit;
   font-size: 12px;
   cursor: pointer;
   transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease,
     transform 0.25s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     color: #0067d4;
     border-color: #aebfd1;
     background: #f7faff;
     transform: translateY(-1px);
   }
 
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   @media (max-width: 700px) {
-    padding: 6px 10px;
+    padding: 7px 12px;
     font-size: 10px;
   }
 `;
@@ -652,7 +744,6 @@ const Main = styled.div`
   align-items: center;
   justify-content: center;
   padding: 10px 42px 34px;
-  overflow-y: auto;
 
   @media (max-width: 900px) {
     padding: 10px 30px 28px;
@@ -672,6 +763,8 @@ const Content = styled.div`
   width: min(760px, 100%);
   margin: 0 auto;
 `;
+
+/* Intro screen */
 
 const IntroLayout = styled.div`
   width: min(1160px, 100%);
@@ -701,7 +794,6 @@ const IntroContent = styled(Content)`
 `;
 
 const IntroBrand = styled.div`
-  font-family: "Mont", Arial, sans-serif;
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 0.08em;
@@ -710,13 +802,7 @@ const IntroBrand = styled.div`
 
   @media (max-width: 700px) {
     font-size: 9px;
-    letter-spacing: 0.07em;
     margin-bottom: 10px;
-  }
-
-  @media (max-width: 430px) {
-    font-size: 8px;
-    margin-bottom: 8px;
   }
 `;
 
@@ -757,7 +843,6 @@ const IntroDescription = styled.p`
     margin: 14px 0 16px;
     font-size: 13px;
     line-height: 1.45;
-    max-width: 520px;
   }
 
   @media (max-width: 430px) {
@@ -793,11 +878,6 @@ const IntroDot = styled.span`
   border-radius: 50%;
   background: #0067d4;
   flex-shrink: 0;
-
-  @media (max-width: 700px) {
-    width: 3px;
-    height: 3px;
-  }
 `;
 
 const IntroNote = styled.p`
@@ -819,10 +899,10 @@ const IntroNote = styled.p`
 const BeginButton = styled.button`
   appearance: none;
   min-width: 166px;
-  height: 48px;
+  height: 46px;
   padding: 0 22px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 999px;
   background: #083672;
   color: #ffffff;
   font-family: inherit;
@@ -841,12 +921,6 @@ const BeginButton = styled.button`
     height: 43px;
     padding: 0 18px;
     font-size: 11px;
-  }
-
-  @media (max-width: 430px) {
-    height: 40px;
-    min-width: 138px;
-    font-size: 10px;
   }
 `;
 
@@ -874,6 +948,8 @@ const Flyer = styled.img`
   border-radius: 12px;
   box-shadow: 0 24px 70px rgba(8, 54, 114, 0.12);
 `;
+
+/* Session selection */
 
 const RouteContent = styled(Content)`
   width: min(900px, 100%);
@@ -1056,6 +1132,21 @@ const RouteDescription = styled.span`
   }
 `;
 
+const RouteSession = styled.span`
+  display: inline-block;
+  margin-top: 3px;
+  color: #0067d4;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  line-height: 1.6;
+
+  @media (max-width: 430px) {
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+`;
+
 const Arrow = styled.span`
   font-size: 20px;
   color: #083672;
@@ -1067,8 +1158,11 @@ const Arrow = styled.span`
   }
 `;
 
+/* Contact form */
+
 const ContactContent = styled(Content)`
   width: min(620px, 100%);
+  padding: 12px 0;
 `;
 
 const ContactTitle = styled.h1`
@@ -1099,7 +1193,7 @@ const SelectedSession = styled.div`
   margin-bottom: 16px;
   padding: 13px 15px;
   border: 1px solid #dce6f1;
-  border-radius: 8px;
+  border-radius: 12px;
   background: #f7faff;
 `;
 
@@ -1128,22 +1222,23 @@ const SelectedSessionTime = styled.p`
 `;
 
 const Fields = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 
-  @media (max-width: 700px) {
-    gap: 7px;
+  @media (max-width: 520px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
   }
 `;
 
 const FieldGroup = styled.div`
   position: relative;
   width: 100%;
-  min-height: 56px;
-  padding: 7px 15px 5px;
+  min-height: 60px;
+  padding: 8px 14px 5px;
   border: 1px solid #dcdcdc;
-  border-radius: 8px;
+  border-radius: 12px;
   background: #ffffff;
   transition: border-color 0.3s ease, box-shadow 0.35s ease,
     transform 0.35s ease;
@@ -1151,8 +1246,8 @@ const FieldGroup = styled.div`
   &::after {
     content: "";
     position: absolute;
-    left: 15px;
-    right: 15px;
+    left: 14px;
+    right: 14px;
     bottom: -1px;
     height: 2px;
     border-radius: 2px;
@@ -1174,7 +1269,7 @@ const FieldGroup = styled.div`
   }
 
   @media (max-width: 700px) {
-    min-height: 52px;
+    min-height: 55px;
     padding: 6px 13px 4px;
   }
 `;
@@ -1202,11 +1297,16 @@ const FieldInput = styled.input`
   background: transparent;
   color: #111111;
   font-family: inherit;
-  font-size: 14px;
-  height: 24px;
+  font-size: 13px;
+  height: 25px;
 
   &::placeholder {
     color: #a0a0a0;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   @media (max-width: 700px) {
@@ -1239,15 +1339,14 @@ const ContactActions = styled.div`
 
 const BackButton = styled.button`
   appearance: none;
-  min-width: 118px;
-  min-height: 46px;
+  min-height: 44px;
   padding: 0 18px;
-  border: 1px solid #083672;
-  border-radius: 6px;
+  border: 1px solid #d9dfe5;
+  border-radius: 999px;
   background: #ffffff;
   color: #083672;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
 
@@ -1263,7 +1362,6 @@ const BackButton = styled.button`
   }
 
   @media (max-width: 700px) {
-    min-width: 105px;
     min-height: 42px;
     padding: 0 14px;
     font-size: 11px;
@@ -1272,15 +1370,18 @@ const BackButton = styled.button`
 
 const NextButton = styled.button`
   appearance: none;
-  min-width: 142px;
-  min-height: 46px;
-  padding: 0 21px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 20px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 999px;
   background: #083672;
   color: #ffffff;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   transition: background 0.25s ease, transform 0.25s ease, opacity 0.25s ease,
     box-shadow 0.25s ease;
@@ -1297,12 +1398,18 @@ const NextButton = styled.button`
   }
 
   @media (max-width: 700px) {
-    min-width: 125px;
     min-height: 42px;
     padding: 0 16px;
     font-size: 11px;
   }
 `;
+
+const ButtonArrow = styled.span`
+  font-size: 15px;
+  line-height: 1;
+`;
+
+/* Success ticket */
 
 const ReceiptPage = styled.div`
   width: 100%;
@@ -1322,7 +1429,7 @@ const Ticket = styled.div`
   position: relative;
   width: min(540px, 100%);
   background: #ffffff;
-  border-radius: 10px;
+  border-radius: 18px;
   box-shadow: 0 30px 90px rgba(8, 54, 114, 0.12), 0 4px 18px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   animation: ${receiptIn} 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -1534,7 +1641,7 @@ const DoneButton = styled.button`
   min-width: 105px;
   height: 42px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 999px;
   background: #083672;
   color: #ffffff;
   font-family: inherit;

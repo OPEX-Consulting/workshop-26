@@ -173,73 +173,7 @@ export default function Hero({ onReserve }: HeroProps) {
             <SecondaryButton href="#agenda">View the agenda</SecondaryButton>
           </Actions>
         </HeroContent>
-
-        <QRCodeCard
-          type="button"
-          onClick={() => setQrOpen(true)}
-          aria-label="Open reservation QR code"
-        >
-          <QRGlow />
-
-          <QRImage
-            src="/images/qrcode.png"
-            alt="Scan to reserve your seat"
-            width={72}
-            height={72}
-          />
-
-          <QRText>SCAN TO RESERVE</QRText>
-        </QRCodeCard>
       </HeroComponent>
-
-      {qrOpen && (
-        <QRModalOverlay onClick={() => setQrOpen(false)}>
-          <QRModal
-            onClick={(event) => event.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Reservation QR code"
-          >
-            <CloseButton
-              type="button"
-              onClick={() => setQrOpen(false)}
-              aria-label="Close QR code"
-            >
-              <CloseLine />
-              <CloseLine />
-            </CloseButton>
-
-            <ModalEyebrow>OPEX EXECUTIVE WORKSHOP & SUMMIT 2026</ModalEyebrow>
-
-            <ModalTitle>
-              Reserve
-              <br />
-              your <ModalAccent>seat.</ModalAccent>
-            </ModalTitle>
-
-            <ModalDescription>
-              Scan the QR code with your phone to reserve your seat for the
-              executive workshop and summit.
-            </ModalDescription>
-
-            <LargeQRWrapper>
-              <LargeQR
-                src="/images/qrcode.png"
-                alt="QR code to reserve your seat"
-                width={181}
-                height={181}
-              />
-            </LargeQRWrapper>
-
-            <ModalHint>SCAN WITH YOUR PHONE CAMERA</ModalHint>
-
-            <ModalLink type="button" onClick={handleReserve}>
-              Open reservation form
-              <ModalArrow>↗</ModalArrow>
-            </ModalLink>
-          </QRModal>
-        </QRModalOverlay>
-      )}
     </Container>
   );
 }
