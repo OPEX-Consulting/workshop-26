@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import styled from "styled-components";
 
@@ -19,9 +20,7 @@ export default function PrivacyModal({
   onSave,
 }: PrivacyModalProps) {
   const [personalDataConsent, setPersonalDataConsent] = useState(false);
-
   const [marketingConsent, setMarketingConsent] = useState(false);
-
   const [showError, setShowError] = useState(false);
 
   if (!isOpen) return null;
@@ -85,7 +84,7 @@ export default function PrivacyModal({
 
         <ConsentSection>
           <SectionHeading>
-            <SectionTitle>Personal data & event media</SectionTitle>
+            <SectionTitle>Personal data &amp; event media</SectionTitle>
             <RequiredBadge>REQUIRED</RequiredBadge>
           </SectionHeading>
 
@@ -126,8 +125,7 @@ export default function PrivacyModal({
 
         <ConsentSection>
           <SectionHeading>
-            <SectionTitle>Marketing & exclusive rewards</SectionTitle>
-
+            <SectionTitle>Marketing &amp; exclusive rewards</SectionTitle>
             <OptionalBadge>OPTIONAL</OptionalBadge>
           </SectionHeading>
 
@@ -167,6 +165,7 @@ export default function PrivacyModal({
             type="button"
             onClick={handleSave}
             $disabled={!personalDataConsent}
+            disabled={!personalDataConsent}
           >
             Save preferences
           </SaveButton>
@@ -176,13 +175,11 @@ export default function PrivacyModal({
   );
 }
 
-/* Icons */
-
 function ShieldIcon() {
   return (
     <svg
-      width="23"
-      height="23"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
@@ -205,7 +202,7 @@ function ShieldIcon() {
   );
 }
 
-/* Apple-inspired modal styling */
+/* Overlay */
 
 const Overlay = styled.div`
   position: fixed;
@@ -216,7 +213,7 @@ const Overlay = styled.div`
   justify-content: center;
   padding: 22px;
   overflow-y: auto;
-  background: rgba(15, 15, 17, 0.48);
+  background: rgba(15, 15, 17, 0.52);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   animation: overlayIn 180ms ease both;
@@ -231,35 +228,51 @@ const Overlay = styled.div`
     }
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 600px) {
     align-items: flex-start;
-    padding: 14px;
+    justify-content: center;
+    padding: 12px;
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
 `;
+
+/* Modal */
 
 const Modal = styled.div`
   position: relative;
   width: 100%;
-  max-width: 560px;
+  max-width: 590px;
   max-height: calc(100dvh - 44px);
   overflow-y: auto;
-  padding: 30px 34px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 24px;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 32px 36px 26px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 25px;
   background: #ffffff;
   color: #1d1d1f;
   box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2), 0 3px 12px rgba(0, 0, 0, 0.04);
   scrollbar-width: thin;
   scrollbar-color: #d2d2d7 transparent;
 
-  @media (max-width: 500px) {
-    max-height: calc(100dvh - 28px);
-    padding: 23px 20px 20px;
-    border-radius: 20px;
+  @media (max-width: 600px) {
+    max-height: calc(
+      100dvh - max(24px, env(safe-area-inset-top)) -
+        max(24px, env(safe-area-inset-bottom))
+    );
+    padding: 24px 22px 22px;
+    border-radius: 21px;
   }
 
-  @media (max-width: 360px) {
-    padding: 20px 16px 17px;
+  @media (max-width: 380px) {
+    padding: 20px 17px 18px;
+    border-radius: 18px;
+  }
+
+  @media (max-height: 700px) and (min-width: 601px) {
+    padding-top: 23px;
+    padding-bottom: 20px;
   }
 `;
 
@@ -267,33 +280,43 @@ const ModalHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 23px;
+  margin-bottom: 25px;
+
+  @media (max-width: 600px) {
+    margin-bottom: 21px;
+  }
 `;
 
 const PrivacyIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border: 1px solid rgba(0, 113, 227, 0.1);
-  border-radius: 14px;
+  border-radius: 15px;
   background: #f0f6ff;
   color: #0071e3;
+
+  @media (max-width: 600px) {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+  }
 `;
 
 const CloseButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: #f5f5f7;
   color: #6e6e73;
-  font-size: 22px;
+  font-size: 25px;
   font-weight: 400;
   line-height: 1;
   cursor: pointer;
@@ -303,23 +326,42 @@ const CloseButton = styled.button`
     background: #e8e8ed;
     color: #1d1d1f;
   }
+
+  &:focus-visible {
+    outline: 3px solid rgba(0, 113, 227, 0.35);
+    outline-offset: 3px;
+  }
 `;
 
 const Eyebrow = styled.p`
   margin: 0 0 12px;
   color: #0071e3;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.13em;
+
+  @media (max-width: 600px) {
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
 `;
 
 const Title = styled.h2`
   margin: 0;
   color: #1d1d1f;
-  font-size: clamp(34px, 6vw, 47px);
-  font-weight: 600;
+  font-size: clamp(36px, 6vw, 48px);
+  font-weight: 650;
   line-height: 1.08;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.06em;
+
+  @media (max-width: 600px) {
+    font-size: clamp(34px, 9vw, 42px);
+    line-height: 1.1;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 32px;
+  }
 `;
 
 const TitleAccent = styled.span`
@@ -327,78 +369,118 @@ const TitleAccent = styled.span`
 `;
 
 const Description = styled.p`
-  max-width: 440px;
-  margin: 16px 0 23px;
-  color: #6e6e73;
-  font-size: 12px;
-  line-height: 1.9;
+  max-width: 460px;
+  margin: 17px 0 25px;
+  color: #626267;
+  font-size: 14px;
+  line-height: 1.8;
+
+  @media (max-width: 600px) {
+    margin: 14px 0 21px;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 13px;
+  }
 `;
 
 const Divider = styled.div`
   height: 1px;
-  margin: 20px 0;
+  margin: 22px 0;
   background: #e8e8ed;
+
+  @media (max-width: 600px) {
+    margin: 19px 0;
+  }
 `;
 
 const ConsentSection = styled.section`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 13px;
+
+  @media (max-width: 600px) {
+    gap: 12px;
+  }
 `;
 
 const SectionHeading = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
+
+  @media (max-width: 360px) {
+    align-items: flex-start;
+  }
 `;
 
 const SectionTitle = styled.h3`
   margin: 0;
   color: #1d1d1f;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 650;
   line-height: 1.5;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+
+  @media (max-width: 600px) {
+    font-size: 15px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 14px;
+  }
 `;
 
 const RequiredBadge = styled.span`
   flex-shrink: 0;
-  padding: 6px 8px;
+  padding: 6px 9px;
   border-radius: 999px;
   background: #f0f6ff;
   color: #0066cc;
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 0.07em;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
 `;
 
 const OptionalBadge = styled.span`
   flex-shrink: 0;
-  padding: 6px 8px;
+  padding: 6px 9px;
   border: 1px solid #e5e5ea;
   border-radius: 999px;
   background: #fafafa;
   color: #6e6e73;
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 0.07em;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
 `;
 
 const ConsentText = styled.p`
   margin: 0;
-  color: #626267;
-  font-size: 11px;
-  line-height: 1.9;
+  color: #505055;
+  font-size: 13px;
+  line-height: 1.85;
+
+  @media (max-width: 600px) {
+    font-size: 13.5px;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 13px;
+    line-height: 1.75;
+  }
 `;
 
 const CheckboxLabel = styled.label`
   display: flex;
   align-items: flex-start;
-  gap: 11px;
-  padding: 13px;
+  gap: 12px;
+  padding: 15px;
   border: 1px solid #e8e8ed;
-  border-radius: 12px;
+  border-radius: 13px;
   background: #fafafa;
   cursor: pointer;
   transition: background 160ms ease, border-color 160ms ease;
@@ -407,59 +489,96 @@ const CheckboxLabel = styled.label`
     border-color: #c8d9f0;
     background: #f7faff;
   }
+
+  &:focus-within {
+    border-color: #0071e3;
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+  }
+
+  @media (max-width: 600px) {
+    gap: 12px;
+    padding: 14px 13px;
+    border-radius: 12px;
+  }
 `;
 
 const Checkbox = styled.input`
   flex-shrink: 0;
-  width: 17px;
-  height: 17px;
-  margin: 1px 0 0;
+  width: 19px;
+  height: 19px;
+  margin: 2px 0 0;
   accent-color: #0071e3;
   cursor: pointer;
+
+  @media (max-width: 600px) {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 const CheckboxCopy = styled.span`
-  color: #424245;
-  font-size: 10px;
-  line-height: 1.8;
+  color: #38383c;
+  font-size: 12px;
+  line-height: 1.75;
+
+  @media (max-width: 600px) {
+    font-size: 13px;
+    line-height: 1.7;
+  }
 `;
 
 const ErrorText = styled.p`
   margin: -3px 0 0;
   color: #b42318;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.7;
+
+  @media (max-width: 600px) {
+    font-size: 12px;
+  }
 `;
 
 const OptionalNote = styled.p`
   margin: -2px 0 0;
-  color: #86868b;
-  font-size: 10px;
+  color: #747479;
+  font-size: 12px;
   line-height: 1.7;
+
+  @media (max-width: 600px) {
+    font-size: 12px;
+  }
 `;
+
+/* Actions */
 
 const Actions = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 27px;
+  margin-top: 29px;
 
-  @media (max-width: 400px) {
+  @media (max-width: 600px) {
     flex-direction: column-reverse;
     align-items: stretch;
+    gap: 10px;
+    margin-top: 24px;
   }
 `;
 
 const CancelButton = styled.button`
-  min-height: 44px;
-  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-height: 47px;
+  padding: 0 22px;
   border: 1px solid #e5e5ea;
   border-radius: 999px;
   background: #ffffff;
   color: #424245;
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 550;
   cursor: pointer;
   transition: background 160ms ease, border-color 160ms ease;
 
@@ -467,21 +586,32 @@ const CancelButton = styled.button`
     border-color: #d2d2d7;
     background: #f5f5f7;
   }
+
+  &:focus-visible {
+    outline: 3px solid rgba(0, 113, 227, 0.3);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
+    min-height: 48px;
+    font-size: 14px;
+  }
 `;
 
 const SaveButton = styled.button<{ $disabled: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 17px;
-  min-height: 44px;
-  padding: 0 19px;
+  gap: 14px;
+  min-height: 47px;
+  padding: 0 22px;
   border: 0;
   border-radius: 999px;
   background: ${({ $disabled }) => ($disabled ? "#a7c9ee" : "#0071e3")};
   color: #ffffff;
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
   transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 
@@ -495,21 +625,34 @@ const SaveButton = styled.button<{ $disabled: boolean }>`
     transform: ${({ $disabled }) => ($disabled ? "none" : "scale(0.98)")};
   }
 
-  @media (max-width: 400px) {
+  &:focus-visible {
+    outline: 3px solid rgba(0, 113, 227, 0.3);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 600px) {
     width: 100%;
+    min-height: 50px;
+    padding: 0 18px;
+    font-size: 14px;
   }
 `;
 
 const ButtonArrow = styled.span`
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1;
 `;
 
 const FooterNote = styled.p`
-  margin: 22px 0 0;
-  color: #a1a1a6;
-  font-size: 8px;
-  font-weight: 500;
+  margin: 23px 0 0;
+  color: #929298;
+  font-size: 9px;
+  font-weight: 550;
   letter-spacing: 0.1em;
   text-align: center;
+
+  @media (max-width: 600px) {
+    margin-top: 19px;
+    font-size: 9px;
+  }
 `;
