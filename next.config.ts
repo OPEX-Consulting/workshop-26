@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       process.env.REGISTRATION_SHEET_ENDPOINT ??
       "",
   },
+
   async redirects() {
     return [
       {
