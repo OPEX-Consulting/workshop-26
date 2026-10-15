@@ -105,10 +105,6 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
     setStep("routes");
   };
 
-  /*
-   * The contact form does not submit immediately.
-   * It opens the privacy modal first.
-   */
   const handleRegistrationSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -118,10 +114,6 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
     setPrivacyOpen(true);
   };
 
-  /*
-   * This function is called only after the attendee
-   * checks the required consent and clicks Save preferences.
-   */
   const submitRegistration = async (preferences: PrivacyPreferences) => {
     if (!route || submitting) return;
 
@@ -139,7 +131,6 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
       );
 
       console.error("NEXT_PUBLIC_REGISTRATION_SHEET_ENDPOINT is missing.");
-
       return;
     }
 
@@ -593,6 +584,7 @@ const pageIn = keyframes`
     opacity: 0;
     transform: translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -604,13 +596,16 @@ const receiptIn = keyframes`
     opacity: 0;
     transform: translateY(32px) scale(.94);
   }
+
   55% {
     opacity: 1;
     transform: translateY(-5px) scale(1.008);
   }
+
   75% {
     transform: translateY(2px) scale(.998);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -622,6 +617,7 @@ const flyerIn = keyframes`
     opacity: 0;
     transform: translateX(24px) scale(.98);
   }
+
   to {
     opacity: 1;
     transform: translateX(0) scale(1);
@@ -1289,19 +1285,30 @@ const FieldLabel = styled.label`
   }
 `;
 
+/*
+ * IMPORTANT:
+ * Keep the input font at 16px to prevent automatic
+ * focus zoom in Safari on iPhones.
+ */
 const FieldInput = styled.input`
+  display: block;
   width: 100%;
+  min-width: 0;
   border: 0;
   outline: 0;
   padding: 0;
   background: transparent;
   color: #111111;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 16px;
+  line-height: 1.4;
   height: 25px;
+  -webkit-appearance: none;
+  appearance: none;
 
   &::placeholder {
     color: #a0a0a0;
+    opacity: 1;
   }
 
   &:disabled {
@@ -1310,8 +1317,8 @@ const FieldInput = styled.input`
   }
 
   @media (max-width: 700px) {
-    font-size: 12px;
-    height: 22px;
+    font-size: 16px;
+    height: 24px;
   }
 `;
 
@@ -1402,11 +1409,6 @@ const NextButton = styled.button`
     padding: 0 16px;
     font-size: 11px;
   }
-`;
-
-const ButtonArrow = styled.span`
-  font-size: 15px;
-  line-height: 1;
 `;
 
 /* Success ticket */
