@@ -1,615 +1,410 @@
 "use client";
-import styled from "styled-components";
+
+import { useEffect, useRef, useState } from "react";
+import styled, { keyframes } from "styled-components";
+
 type AgendaProps = {
   onReserve: () => void;
 };
 
-const agenda = [
+type AgendaItem = {
+  time: string;
+  title: string;
+  description?: string;
+  type?: string;
+};
+
+const morningAgenda: AgendaItem[] = [
   {
-    time: "08:30",
-    end: "11:00",
-    type: "MORNING · BY INVITATION",
-    title: "Finance Executive Workshop",
-    description:
-      "A closed-door conversation for Group CFOs, CFOs and senior finance leaders on the risks of manual reporting, disconnected data and the practical role of AI in finance.",
-    audience: "Group CFOs · CFOs · Senior Finance Leaders",
+    time: "09:15 – 09:30",
+    title: "Registration, Breakfast and Executive Networking",
+    type: "Networking",
   },
   {
-    time: "11:30",
-    end: "12:00",
-    type: "NETWORKING",
-    title: "Refreshments & Networking",
-    description:
-      "An informal opportunity for delegates to connect, exchange perspectives and continue the morning conversation.",
-    audience: "Morning Workshop Delegates",
+    time: "09:30 – 09:40",
+    title: "Welcome Address: The End of Manual Finance",
   },
   {
-    time: "12:00",
-    end: "16:00",
-    type: "AFTERNOON · EXECUTIVE",
-    title: "C-Level Summit",
-    description:
-      "A broader executive conversation exploring connected systems, governance, risk, compliance and what AI means for the future of financial reporting.",
-    audience:
-      "CIOs · CTOs · Chief Compliance Officers · Chief Risk Officers · Chief Information Security Officers · Chief Audit Executives · Senior Technology, Risk & Compliance Leaders",
+    time: "09:40 – 10:00",
+    title:
+      "From Digitisation to Trust: Building AI-Enabled Reporting and Compliance for the Future",
   },
   {
-    time: "14:00",
-    end: "14:30",
-    type: "MIDDAY",
-    title: "Executive Lunch",
+    time: "10:00 – 10:20",
+    title:
+      "Reporting Integrity, Governance and Assurance Readiness in the New Compliance Environment",
+  },
+  {
+    time: "10:20 – 10:40",
+    title: "ESG and Disclosure Management",
     description:
-      "Lunch and continued conversations between senior leaders across finance, technology, risk and compliance.",
-    audience: "All Delegates",
+      "A solution showcase exploring how technology can simplify sustainability reporting, disclosure management, and access to reliable ESG data.",
+    type: "Solution showcase",
+  },
+  {
+    time: "10:40 – 11:00",
+    title:
+      "Sustainability Disclosure: From Regulatory Expectations to Decision-Grade Data",
+  },
+  {
+    time: "11:00 – 11:20",
+    title: "Finnivo Financial Consolidation",
+    description:
+      "A solution showcase demonstrating how financial consolidation can be streamlined through connected data, automated workflows, and more reliable reporting.",
+    type: "Solution showcase",
+  },
+  {
+    time: "11:20 – 11:50",
+    title:
+      "CFO Panel: Is Your Finance Function Ready for the Next Reporting Cycle?",
+    type: "Executive panel",
+  },
+  {
+    time: "11:50 – 12:00",
+    title: "Closing Remarks and Next Steps",
   },
 ];
 
-export default function Agenda({ onReserve }: AgendaProps) {
-  return (
-    <Section id="agenda">
-      <Container>
-        <Header>
-          <HeaderLeft>
-            <Eyebrow>THE AGENDA</Eyebrow>
+const afternoonAgenda: AgendaItem[] = [
+  {
+    time: "12:00 – 12:10",
+    title: "The New Technology Governance Mandate",
+  },
+  {
+    time: "12:10 – 12:30",
+    title:
+      "From Reform to Results: Why Nigeria’s Next Phase of Growth Depends on Intelligent, Transparent Enterprises",
+  },
+  {
+    time: "12:30 – 13:00",
+    title:
+      "From Data to Intelligence: The Infrastructure Powering the Enterprise of Tomorrow",
+  },
+  {
+    time: "13:00 – 13:20",
+    title: "From Software Development to Intelligent Systems Assurance",
+  },
+  {
+    time: "13:20 – 13:45",
+    title: "Unitellas Edge Cloud Solution",
+    description:
+      "An introduction to edge cloud capabilities and how modern infrastructure can support secure, connected, and intelligent enterprise operations.",
+    type: "Solution showcase",
+  },
+  {
+    time: "13:45 – 14:05",
+    title: "From Periodic Compliance to Continuous Compliance",
+  },
+  {
+    time: "14:05 – 14:30",
+    title:
+      "From Fragmented IT GRC to Connected Governance and Continuous Regulatory Readiness",
+    description:
+      "A live demonstration of how connected governance, risk, and compliance processes can improve visibility and regulatory readiness.",
+    type: "Live demonstration",
+  },
+  {
+    time: "14:30 – 14:45",
+    title: "Networking and Refreshment Break",
+    type: "Networking",
+  },
+  {
+    time: "14:45 – 15:05",
+    title:
+      "Technology, Integrity and Investor Protection in Capital Market 2.0",
+  },
+  {
+    time: "15:05 – 15:25",
+    title: "From Periodic Privacy Compliance to Continuous Data Governance",
+  },
+  {
+    time: "15:35 – 15:55",
+    title:
+      "Connected Compliance: Governing AI and Autonomous Systems in a Real-Time Regulatory Environment",
+  },
+  {
+    time: "15:55 – 16:00",
+    title: "Executive Action Points and Closing",
+  },
+];
 
-            <Heading>
-              <HeadingLight>One day.</HeadingLight>
-              <br />
-              <HeadingBrand>
-                <Accent>Two conversations.</Accent>
-              </HeadingBrand>
-            </Heading>
-          </HeaderLeft>
+const fadeUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
 
-          <HeaderRight>
-            <Intro>
-              A focused programme designed around the decisions financial,
-              technology, risk and compliance leaders are making now.
-            </Intro>
-
-            <Date>
-              <DateLabel>WEDNESDAY</DateLabel>
-              <DateValue>21 OCTOBER 2026</DateValue>
-            </Date>
-          </HeaderRight>
-        </Header>
-
-        <Timeline>
-          {agenda.map((item, index) => (
-            <AgendaItem key={`${item.time}-${item.title}`}>
-              <TimeColumn>
-                <Time>{item.time}</Time>
-                <EndTime>{item.end}</EndTime>
-              </TimeColumn>
-
-              <DotColumn>
-                <Dot />
-                {index !== agenda.length - 1 && <Line />}
-              </DotColumn>
-
-              <Content>
-                <TopRow>
-                  <Type>{item.type}</Type>
-                  <Index>{String(index + 1).padStart(2, "0")}</Index>
-                </TopRow>
-
-                <Title>{item.title}</Title>
-
-                <Description>{item.description}</Description>
-
-                <Audience>
-                  <AudienceLabel>FOR</AudienceLabel>
-                  <AudienceText>{item.audience}</AudienceText>
-                </Audience>
-              </Content>
-
-              <HoverGlow />
-            </AgendaItem>
-          ))}
-        </Timeline>
-
-        <Bottom>
-          <BottomLeft>
-            <BottomNumber>01 / 02</BottomNumber>
-
-            <BottomText>
-              Morning workshop delegates may register
-              <br />
-              for both sessions.
-            </BottomText>
-          </BottomLeft>
-
-          <BottomActions>
-            <FullAgendaLink href="/agenda">View full agenda</FullAgendaLink>
-            <BottomCTA type="button" onClick={onReserve}>
-              Reserve your seat
-            </BottomCTA>
-          </BottomActions>
-        </Bottom>
-      </Container>
-    </Section>
-  );
-}
-
-const Section = styled.section`
-  width: 100%;
-  background: #f7faff;
-  padding: 125px 0 130px;
-
-  @media (max-width: 700px) {
-    padding: 90px 0 100px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 `;
 
-const Container = styled.div`
-  width: min(1200px, 90vw);
+const softReveal = keyframes`
+  from {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+`;
+
+const AgendaSection = styled.section`
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 108px 24px 110px;
+  background: #f5f7fa;
+  color: #083672;
+  font-family: "Mont", sans-serif;
+
+  &,
+  & * {
+    box-sizing: border-box;
+  }
+
+  @media (max-width: 768px) {
+    padding: 76px 18px 82px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 60px 15px 66px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    scroll-behavior: auto;
+  }
+`;
+
+const AgendaContainer = styled.div`
+  width: 100%;
+  max-width: 1160px;
   margin: 0 auto;
 `;
 
-const Header = styled.div`
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 100px;
-  align-items: end;
-  margin-bottom: 100px;
-
-  @media (max-width: 850px) {
-    grid-template-columns: 1fr;
-    gap: 30px;
-    margin-bottom: 70px;
-  }
-`;
-
-const HeaderLeft = styled.div``;
-
-const Eyebrow = styled.span`
-  display: block;
-  margin-bottom: 22px;
-  color: #0067d4;
-  font-family: "Chillen", sans-serif;
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-`;
-
-const Heading = styled.h2`
-  margin: 0;
-  color: #083672;
-  font-size: clamp(52px, 6vw, 82px);
-  line-height: 0.9;
-  letter-spacing: -0.075em;
-
-  @media (max-width: 700px) {
-    font-size: clamp(46px, 13vw, 68px);
-  }
-`;
-
-const HeadingLight = styled.span`
-  font-family: "Mont", sans-serif;
-  font-weight: 200;
-`;
-
-const HeadingBrand = styled.span`
-  font-family: "Chillen", sans-serif;
-  font-weight: 400;
-`;
-
-const Accent = styled.span`
-  color: #0067d4;
-`;
-
-const HeaderRight = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 35px;
-  padding-bottom: 5px;
-`;
-
-const Intro = styled.p`
-  max-width: 430px;
-  color: #555555;
-  font-family: "Mont", sans-serif;
-  font-size: 13px;
-  font-weight: 200;
-  line-height: 1.7;
-  letter-spacing: -0.015em;
-`;
-
-const Date = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 14px;
-`;
-
-const DateLabel = styled.span`
-  color: #0067d4;
-  font-family: "Chillen", sans-serif;
-  font-size: 8px;
-  font-weight: 400;
-  letter-spacing: 0.16em;
-`;
-
-const DateValue = styled.span`
-  color: #083672;
-  font-family: "Chillen", sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-`;
-
-const Timeline = styled.div`
-  position: relative;
-`;
-
-const AgendaItem = styled.div`
-  position: relative;
-  display: grid;
-  grid-template-columns: 100px 30px 1fr;
-  min-height: 220px;
-
-  transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-
-  @media (max-width: 700px) {
-    grid-template-columns: 65px 20px 1fr;
-    min-height: 250px;
-  }
+const RevealBlock = styled.div<{ $visible: boolean; $delay?: number }>`
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  animation: ${({ $visible }) => ($visible ? softReveal : "none")} 0.75s
+    cubic-bezier(0.2, 0.65, 0.3, 1) both;
+  animation-delay: ${({ $delay = 0 }) => `${$delay}ms`};
 
   @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`;
-
-const HoverGlow = styled.div`
-  position: absolute;
-  z-index: 0;
-  top: -15px;
-  right: -25px;
-  bottom: 15px;
-  left: 75px;
-  border-radius: 22px;
-
-  background: radial-gradient(
-    circle at 20% 50%,
-    rgba(0, 103, 212, 0.09),
-    transparent 45%
-  );
-
-  opacity: 0;
-  pointer-events: none;
-
-  transition: opacity 0.5s ease;
-
-  ${AgendaItem}:hover & {
     opacity: 1;
-  }
-
-  @media (max-width: 700px) {
-    left: 40px;
-    right: -10px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
+    animation: none;
   }
 `;
 
-const TimeColumn = styled.div`
-  position: relative;
-  z-index: 2;
-  padding-top: 3px;
-  padding-right: 25px;
-  text-align: right;
+const SectionHeader = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.65fr);
+  align-items: end;
+  gap: 36px;
+  margin-bottom: 50px;
 
-  @media (max-width: 700px) {
-    padding-right: 15px;
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 34px;
   }
 `;
 
-const Time = styled.span`
-  display: block;
-  color: #083672;
-  font-family: "Chillen", sans-serif;
-  font-size: 18px;
-  font-weight: 400;
-  letter-spacing: -0.04em;
-
-  transition: font-size 0.45s cubic-bezier(0.22, 1, 0.36, 1), color 0.4s ease;
-
-  ${AgendaItem}:hover & {
-    color: #0067d4;
-    font-size: 20px;
-  }
-
-  @media (max-width: 700px) {
-    font-size: 14px;
-
-    ${AgendaItem}:hover & {
-      font-size: 15px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: color 0.2s ease;
-  }
+const HeaderMain = styled.div`
+  min-width: 0;
 `;
 
-const EndTime = styled.span`
-  display: block;
-  margin-top: 3px;
-  color: #666666;
-  font-family: "Mont", sans-serif;
-  font-size: 9px;
-  font-weight: 200;
-
-  transition: color 0.4s ease;
-
-  ${AgendaItem}:hover & {
-    color: #555555;
-  }
-`;
-
-const DotColumn = styled.div`
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-`;
-
-const Dot = styled.span`
-  position: relative;
-  z-index: 2;
-  width: 9px;
-  height: 9px;
-  margin-top: 7px;
-  border-radius: 50%;
-  background: #0067d4;
-
-  box-shadow: 0 0 0 5px rgba(0, 103, 212, 0.08),
-    0 3px 10px rgba(0, 103, 212, 0.16);
-
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-
-  ${AgendaItem}:hover & {
-    transform: scale(1.35);
-
-    box-shadow: 0 0 0 6px rgba(0, 103, 212, 0.12),
-      0 4px 15px rgba(0, 103, 212, 0.22);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`;
-
-const Line = styled.div`
-  position: absolute;
-  top: 20px;
-  bottom: 0;
-  width: 1px;
-  background: #c6e3fb;
-`;
-
-const Content = styled.div`
-  position: relative;
-  z-index: 2;
-  padding: 0 0 70px 35px;
-  border-bottom: 1px solid #c6e3fb;
-
-  @media (max-width: 700px) {
-    padding: 0 0 55px 20px;
-  }
-`;
-
-const TopRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 17px;
-`;
-
-const Type = styled.span`
-  color: #0067d4;
-  font-family: "Chillen", sans-serif;
-  font-size: 8px;
-  font-weight: 400;
-  letter-spacing: 0.16em;
-
-  transition: letter-spacing 0.4s ease, color 0.4s ease;
-
-  ${AgendaItem}:hover & {
-    letter-spacing: 0.2em;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: color 0.2s ease;
-  }
-`;
-
-const Index = styled.span`
-  color: #666666;
-  font-family: "Chillen", sans-serif;
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-
-  transition: color 0.4s ease, transform 0.4s ease;
-
-  ${AgendaItem}:hover & {
-    color: #0067d4;
-    transform: translateX(-5px);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: color 0.2s ease;
-  }
-`;
-
-const Title = styled.h3`
-  margin: 0;
-  color: #083672;
-  font-family: "Chillen", sans-serif;
-  font-size: clamp(28px, 3vw, 42px);
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.055em;
-
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    letter-spacing 0.5s ease, color 0.35s ease;
-
-  ${AgendaItem}:hover & {
-    color: #0067d4;
-    transform: translateX(5px);
-    letter-spacing: -0.065em;
-  }
-
-  @media (max-width: 700px) {
-    font-size: 27px;
-    line-height: 1.02;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: color 0.2s ease;
-  }
-`;
-
-const Description = styled.p`
-  max-width: 650px;
-  margin-top: 18px;
-  color: #555555;
-  font-family: "Mont", sans-serif;
-  font-size: 12px;
-  font-weight: 200;
-  line-height: 1.7;
-  letter-spacing: -0.01em;
-
-  transition: color 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-
-  ${AgendaItem}:hover & {
-    color: #333333;
-    transform: translateX(5px);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: color 0.2s ease;
-  }
-`;
-
-const Audience = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 27px;
-
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-
-  ${AgendaItem}:hover & {
-    transform: translateX(5px);
-  }
-
-  @media (max-width: 600px) {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`;
-
-const AudienceLabel = styled.span`
-  color: #0067d4;
-  font-family: "Chillen", sans-serif;
-  font-size: 7px;
-  font-weight: 400;
-  letter-spacing: 0.16em;
-`;
-
-const AudienceText = styled.span`
-  color: #083672;
-  font-family: "Mont", sans-serif;
-  font-size: 9px;
-  font-weight: 200;
-  letter-spacing: 0.01em;
-`;
-
-const Bottom = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 55px;
-
-  @media (max-width: 600px) {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 30px;
-  }
-`;
-
-const BottomLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 18px;
-`;
-
-const BottomNumber = styled.span`
-  color: #0067d4;
-  font-family: "Chillen", sans-serif;
-  font-size: 8px;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-`;
-
-const BottomText = styled.p`
-  color: #555555;
-  font-family: "Mont", sans-serif;
-  font-size: 10px;
-  font-weight: 200;
-  line-height: 1.5;
-`;
-
-const BottomCTA = styled.button`
+const Eyebrow = styled.div`
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 9px;
+  margin-bottom: 18px;
+  color: #0067d4;
+  font-family: "Mont", sans-serif;
+  font-size: 0.73rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 
-  min-height: 48px;
-  padding: 0 24px;
+  &::before {
+    width: 22px;
+    height: 1px;
+    background: #0067d4;
+    content: "";
+  }
+`;
 
-  border: 0;
-  border-radius: 999px;
-
-  background: #083672;
-  color: #ffffff;
-
-  font-family: "Chillen", sans-serif;
-  font-size: 11px;
+const SectionTitle = styled.h2`
+  max-width: 680px;
+  margin: 0;
+  color: #102d50;
+  font-family: "Chillen", "Mont", sans-serif;
+  font-size: clamp(2.7rem, 5.2vw, 4.25rem);
   font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
 
-  cursor: pointer;
+  span {
+    color: #0067d4;
+  }
 
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    background 0.3s ease, box-shadow 0.35s ease;
+  @media (max-width: 760px) {
+    font-size: clamp(2.4rem, 8vw, 3.3rem);
+  }
+`;
+
+const SectionDescription = styled.p`
+  max-width: 450px;
+  margin: 0 0 5px;
+  color: #697789;
+  font-family: "Mont", sans-serif;
+  font-size: 0.94rem;
+  font-weight: 400;
+  line-height: 1.9;
+
+  @media (max-width: 760px) {
+    max-width: 620px;
+    font-size: 0.9rem;
+    line-height: 1.8;
+  }
+`;
+
+const ProgrammeSection = styled.section`
+  margin-top: 48px;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+`;
+
+const ProgrammeHeader = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 22px;
+  margin-bottom: 21px;
+
+  @media (max-width: 560px) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+`;
+
+const ProgrammeHeaderMain = styled.div`
+  min-width: 0;
+`;
+
+const ProgrammeLabel = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+  color: #0067d4;
+  font-family: "Mont", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
+  &::before {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #0067d4;
+    content: "";
+  }
+`;
+
+const ProgrammeTitle = styled.h3`
+  margin: 0;
+  color: #102d50;
+  font-family: "Chillen", "Mont", sans-serif;
+  font-size: clamp(1.7rem, 3vw, 2.15rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+`;
+
+const ProgrammeSubtitle = styled.p`
+  max-width: 600px;
+  margin: 7px 0 0;
+  color: #748195;
+  font-family: "Mont", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.8;
+`;
+
+const ProgrammeTime = styled.span`
+  flex-shrink: 0;
+  padding: 8px 11px;
+  border: 1px solid #e2e9f1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #53718f;
+  font-family: "Mont", sans-serif;
+  font-size: 0.73rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+`;
+
+const AgendaGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 15px;
+
+  @media (max-width: 960px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 11px;
+  }
+`;
+
+const SessionCard = styled.article<{ $delay: number }>`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: 188px;
+  padding: 21px;
+  border: 1px solid rgba(17, 48, 82, 0.09);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 1px 2px rgba(16, 45, 80, 0.02),
+    0 4px 16px rgba(16, 45, 80, 0.025);
+  opacity: 0;
+  animation: ${fadeUp} 0.65s cubic-bezier(0.2, 0.65, 0.3, 1) forwards;
+  animation-delay: ${({ $delay }) => `${$delay}ms`};
+  transition: border-color 0.28s ease, box-shadow 0.28s ease,
+    transform 0.28s cubic-bezier(0.2, 0.65, 0.3, 1), background 0.28s ease;
 
   &:hover {
-    transform: translateY(-3px) scale(1.02);
-    background: #0067d4;
-    box-shadow: 0 12px 30px rgba(0, 103, 212, 0.2);
+    border-color: rgba(0, 103, 212, 0.25);
+    background: #ffffff;
+    box-shadow: 0 3px 8px rgba(16, 45, 80, 0.035),
+      0 12px 30px rgba(16, 45, 80, 0.06);
+    transform: translateY(-4px);
   }
 
-  &:focus-visible {
-    outline: 3px solid #0067d4;
-    outline-offset: 4px;
-  }
-
-  &:active {
-    transform: translateY(0) scale(0.98);
+  @media (max-width: 600px) {
+    min-height: 0;
+    padding: 19px;
+    border-radius: 12px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    transition: background 0.2s ease;
+    opacity: 1;
+    animation: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
     &:hover {
       transform: none;
@@ -617,30 +412,297 @@ const BottomCTA = styled.button`
   }
 `;
 
-const BottomActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-`;
-
-const FullAgendaLink = styled.a`
+const SessionTime = styled.span`
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 0 24px;
-  border: 1px solid #083672;
-  border-radius: 999px;
-  color: #083672;
-  font-family: "Chillen", sans-serif;
-  font-size: 11px;
-  font-weight: 400;
-  text-decoration: none;
-  transition: background 0.3s ease, color 0.3s ease;
+  width: fit-content;
+  margin-bottom: 15px;
+  padding: 6px 9px;
+  border: 1px solid #e3edf8;
+  border-radius: 7px;
+  background: #f3f8fe;
+  color: #386c9f;
+  font-family: "Mont", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+`;
 
-  &:hover {
-    background: #083672;
-    color: #ffffff;
+const SessionTitle = styled.h4`
+  margin: 0;
+  color: #29435f;
+  font-family: "Mont", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.75;
+  letter-spacing: -0.012em;
+  overflow-wrap: anywhere;
+  transition: color 0.25s ease;
+
+  ${SessionCard}:hover & {
+    color: #0067d4;
   }
 `;
+
+const SessionDescription = styled.p`
+  margin: 10px 0 0;
+  color: #748195;
+  font-family: "Mont", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+`;
+
+const SessionType = styled.span`
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 15px;
+  padding: 5px 8px;
+  border: 1px solid #e4eaf2;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #617991;
+  font-family: "Mont", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 400;
+  line-height: 1.5;
+`;
+
+const AgendaFooter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin-top: 42px;
+  padding: 30px;
+  border: 1px solid #dce7f3;
+  border-radius: 14px;
+  background: #edf5fd;
+  box-shadow: 0 3px 14px rgba(16, 45, 80, 0.025);
+
+  @media (max-width: 680px) {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 21px;
+    padding: 23px 20px;
+    border-radius: 12px;
+  }
+`;
+
+const FooterText = styled.div`
+  min-width: 0;
+
+  h3 {
+    margin: 0 0 8px;
+    color: #102d50;
+    font-family: "Chillen", "Mont", sans-serif;
+    font-size: clamp(1.55rem, 2.5vw, 1.9rem);
+    font-weight: 400;
+    line-height: 1.35;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    max-width: 620px;
+    margin: 0;
+    color: #5e7288;
+    font-family: "Mont", sans-serif;
+    font-size: 0.87rem;
+    font-weight: 400;
+    line-height: 1.85;
+  }
+`;
+
+const ReserveButton = styled.button`
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 13px 22px;
+  border: 1px solid #083672;
+  border-radius: 9px;
+  background: #083672;
+  color: #ffffff;
+  font-family: "Mont", sans-serif;
+  font-size: 0.83rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.25s ease, transform 0.25s ease;
+
+  &:hover {
+    border-color: #0067d4;
+    background: #0067d4;
+    box-shadow: 0 5px 14px rgba(0, 103, 212, 0.16);
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid #91c7fa;
+    outline-offset: 3px;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  @media (max-width: 680px) {
+    width: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+`;
+
+function AgendaCards({
+  items,
+  startDelay = 0,
+}: {
+  items: AgendaItem[];
+  startDelay?: number;
+}) {
+  return (
+    <AgendaGrid>
+      {items.map((item, index) => (
+        <SessionCard
+          key={`${item.time}-${item.title}`}
+          $delay={startDelay + index * 65}
+        >
+          <SessionTime>{item.time}</SessionTime>
+
+          <SessionTitle>{item.title}</SessionTitle>
+
+          {item.description && (
+            <SessionDescription>{item.description}</SessionDescription>
+          )}
+
+          {item.type && <SessionType>{item.type}</SessionType>}
+        </SessionCard>
+      ))}
+    </AgendaGrid>
+  );
+}
+
+export default function Agenda({ onReserve }: AgendaProps) {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) return;
+
+    if (typeof window !== "undefined" && !("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.05,
+        rootMargin: "0px 0px 40px 0px",
+      }
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <AgendaSection id="agenda" ref={sectionRef}>
+      <AgendaContainer>
+        <RevealBlock $visible={isVisible}>
+          <SectionHeader>
+            <HeaderMain>
+              <Eyebrow>Agenda</Eyebrow>
+
+              <SectionTitle>
+                A day built around <span>what comes next.</span>
+              </SectionTitle>
+            </HeaderMain>
+
+            <SectionDescription>
+              Explore the programme for the OPEX Executive Workshop &amp; Summit
+              2026, with conversations spanning finance, sustainability,
+              governance, compliance, and intelligent enterprise technology.
+            </SectionDescription>
+          </SectionHeader>
+        </RevealBlock>
+
+        <ProgrammeSection>
+          <RevealBlock $visible={isVisible}>
+            <ProgrammeHeader>
+              <ProgrammeHeaderMain>
+                <ProgrammeLabel>Morning programme</ProgrammeLabel>
+                <ProgrammeTitle>Finance &amp; Sustainability</ProgrammeTitle>
+                <ProgrammeSubtitle>
+                  Reporting, disclosure and the changing role of finance.
+                </ProgrammeSubtitle>
+              </ProgrammeHeaderMain>
+
+              <ProgrammeTime>09:15 – 12:00</ProgrammeTime>
+            </ProgrammeHeader>
+          </RevealBlock>
+
+          <AgendaCards items={morningAgenda} startDelay={isVisible ? 80 : 0} />
+        </ProgrammeSection>
+
+        <ProgrammeSection>
+          <RevealBlock $visible={isVisible} $delay={120}>
+            <ProgrammeHeader>
+              <ProgrammeHeaderMain>
+                <ProgrammeLabel>Afternoon programme</ProgrammeLabel>
+                <ProgrammeTitle>Technology &amp; Governance</ProgrammeTitle>
+                <ProgrammeSubtitle>
+                  Connected systems, intelligent operations and continuous
+                  compliance.
+                </ProgrammeSubtitle>
+              </ProgrammeHeaderMain>
+
+              <ProgrammeTime>12:00 – 16:00</ProgrammeTime>
+            </ProgrammeHeader>
+          </RevealBlock>
+
+          <AgendaCards
+            items={afternoonAgenda}
+            startDelay={isVisible ? 250 : 0}
+          />
+        </ProgrammeSection>
+
+        <RevealBlock $visible={isVisible} $delay={180}>
+          <AgendaFooter>
+            <FooterText>
+              <h3>Be part of the conversation.</h3>
+              <p>
+                Join business leaders and decision-makers exploring the future
+                of reporting, compliance and enterprise technology.
+              </p>
+            </FooterText>
+
+            <ReserveButton type="button" onClick={onReserve}>
+              Reserve your seat
+            </ReserveButton>
+          </AgendaFooter>
+        </RevealBlock>
+      </AgendaContainer>
+    </AgendaSection>
+  );
+}
