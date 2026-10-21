@@ -76,6 +76,9 @@ export default async function AgendaPage() {
           <p className={styles.meta}>
             Wednesday, 21 October 2026 · The Wheatbaker, Ikoyi, Lagos
           </p>
+          <a href="/agenda/pdf" className={styles.pdfButton} download>
+            Download agenda (PDF)
+          </a>
           <p className={styles.theme}>
             AI, Connected Systems and the Future of Financial Reporting and
             Compliance

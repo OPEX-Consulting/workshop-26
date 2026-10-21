@@ -39,3 +39,6 @@
   .docWrap { padding: 16px 10px; }
   .docBody :global(td) { font-size: 12px; }
 }
+
+.pdfButton { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 22px; margin: 6px 0 18px; border-radius: 999px; background: #fff; color: #083672; font-size: 14px; font-weight: 600; text-decoration: none; }
+.pdfButton:hover { background: #c6e3fb; }
