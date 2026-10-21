@@ -119,9 +119,12 @@ export default function Agenda({ onReserve }: AgendaProps) {
             </BottomText>
           </BottomLeft>
 
-          <BottomCTA type="button" onClick={onReserve}>
-            Reserve your seat
-          </BottomCTA>
+          <BottomActions>
+            <FullAgendaLink href="/agenda">View full agenda</FullAgendaLink>
+            <BottomCTA type="button" onClick={onReserve}>
+              Reserve your seat
+            </BottomCTA>
+          </BottomActions>
         </Bottom>
       </Container>
     </Section>
@@ -611,5 +614,33 @@ const BottomCTA = styled.button`
     &:hover {
       transform: none;
     }
+  }
+`;
+
+const BottomActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+`;
+
+const FullAgendaLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 1px solid #083672;
+  border-radius: 999px;
+  color: #083672;
+  font-family: "Chillen", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background: #083672;
+    color: #ffffff;
   }
 `;
