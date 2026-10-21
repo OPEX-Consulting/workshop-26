@@ -28,3 +28,14 @@
   .row { grid-template-columns: 1fr; gap: 6px; }
   .block { padding: 22px 18px; }
 }
+
+.docWrap { background: #fff; border-radius: 18px; padding: 24px 18px; margin-bottom: 28px; box-shadow: 0 24px 80px rgba(8, 54, 114, 0.08); overflow-x: auto; }
+.docBody { font-family: Arial, sans-serif; color: #111; }
+.docBody :global(.doc-content) { max-width: 100% !important; padding: 0 !important; }
+.docBody :global(table) { width: 100% !important; max-width: 100%; border-collapse: collapse; margin-left: 0 !important; }
+.docBody :global(td), .docBody :global(th) { width: auto !important; vertical-align: top; padding: 6px !important; word-break: break-word; }
+.docBody :global(img) { max-width: 100%; height: auto; }
+@media (max-width: 600px) {
+  .docWrap { padding: 16px 10px; }
+  .docBody :global(td) { font-size: 12px; }
+}

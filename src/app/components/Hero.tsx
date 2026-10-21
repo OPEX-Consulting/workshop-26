@@ -170,7 +170,7 @@ export default function Hero({ onReserve }: HeroProps) {
               Reserve your seat
             </PrimaryButton>
 
-            <SecondaryButton href="#agenda">View the agenda</SecondaryButton>
+            <SecondaryButton href="/agenda">View the agenda</SecondaryButton>
           </Actions>
         </HeroContent>
       </HeroComponent>

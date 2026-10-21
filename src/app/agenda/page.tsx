@@ -10,19 +10,55 @@ import { agendaBlocks } from "./agendaData";
 const PUBLISHED_DOC_URL =
   "https://docs.google.com/document/d/e/2PACX-1vQq0ctbhKmJCwvTF3tFPmacJyrXgPqavbdMniUFDiT7Bsu4jmGBML1KezCqU7rVMiFh6Rq75EYQb7JO/pub";
 
+// Re-fetch the published doc at most once a minute, so doc edits reach the page
+// without a redeploy (Google itself republishes within ~5 minutes).
+export const revalidate = 60;
+
+async function loadPublishedDoc(url: string): Promise<{ css: string; html: string } | null> {
+  try {
+    const res = await fetch(url, { next: { revalidate: 60 } });
+    if (!res.ok) return null;
+    const page = await res.text();
+    const open = '<div id="contents">';
+    const start = page.indexOf(open);
+    if (start === -1) return null;
+    const scriptAt = page.indexOf("<script", start);
+    let inner = page.slice(start + open.length, scriptAt === -1 ? undefined : scriptAt).trim();
+
+    // Drop closing </div> tags that belong to Google's wrappers, not the doc.
+    const count = (re: RegExp) => (inner.match(re) || []).length;
+    while (inner.endsWith("</div>") && count(/<\/div>/g) > count(/<div[\s>]/g)) {
+      inner = inner.slice(0, -"</div>".length).trimEnd();
+    }
+
+    // Pull out Google's stylesheet and scope every rule to .gdoc so it can't restyle the site.
+    let css = "";
+    inner = inner.replace(/<style[^>]*>([\s\S]*?)<\/style>/g, (_m, c: string) => {
+      css += c;
+      return "";
+    });
+    css = css
+      .replace(/@import[^;]+;/g, "")
+      .replace(/(^|})([^{}@]+)\{/g, (_m, b: string, sel: string) =>
+        b + sel.split(",").map((x) => `.gdoc ${x.trim()}`).join(",") + "{"
+      );
+
+    if (!inner.includes("<")) return null;
+    return { css, html: inner };
+  } catch {
+    return null;
+  }
+}
+
 export const metadata: Metadata = {
   title: "Agenda | OPEX Executive Workshop & Summit 2026",
   description:
     "Full agenda for the OPEX Executive Workshop & Summit 2026, Wednesday 21 October 2026, The Wheatbaker, Ikoyi, Lagos.",
 };
 
-function embedUrl(url: string) {
-  const u = new URL(url);
-  u.searchParams.set("embedded", "true");
-  return u.toString();
-}
+export default async function AgendaPage() {
+  const doc = PUBLISHED_DOC_URL ? await loadPublishedDoc(PUBLISHED_DOC_URL) : null;
 
-export default function AgendaPage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -48,21 +84,13 @@ export default function AgendaPage() {
       </header>
 
       <div className={styles.container}>
-        {PUBLISHED_DOC_URL ? (
-          <div className={styles.embedWrap}>
-            <iframe
-              src={embedUrl(PUBLISHED_DOC_URL)}
-              title="OPEX Summit 2026 agenda"
-              className={styles.embed}
+        {doc ? (
+          <div className={styles.docWrap}>
+            <style dangerouslySetInnerHTML={{ __html: doc.css }} />
+            <div
+              className={`gdoc ${styles.docBody}`}
+              dangerouslySetInnerHTML={{ __html: doc.html }}
             />
-            <a
-              href={PUBLISHED_DOC_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.openFull}
-            >
-              Open agenda in full screen
-            </a>
           </div>
         ) : (
           agendaBlocks.map((block) => (
