@@ -12,6 +12,7 @@ import Venue from "./components/Venue";
 import Faq from "./components/Faq";
 import Footer from "./components/Footer";
 import FormComponent from "./components/FormComponent";
+import BrochureFab from "./components/BrochureFab";
 
 export default function Home() {
   const [showForm, setShowForm] = useState(false);
@@ -40,6 +41,7 @@ export default function Home() {
       <Venue />
       <Faq />
       <Footer onReserve={openForm} />
+      <BrochureFab />
     </>
   );
 }
