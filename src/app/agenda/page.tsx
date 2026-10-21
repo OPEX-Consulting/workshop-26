@@ -7,7 +7,8 @@ import { agendaBlocks } from "./agendaData";
 // Paste the Google Docs "Publish to the web" link here (File > Share > Publish to web).
 // When set, the page shows the live doc and updates on its own whenever the doc is edited.
 // When empty, the page shows the snapshot in agendaData.ts.
-const PUBLISHED_DOC_URL = "";
+const PUBLISHED_DOC_URL =
+  "https://docs.google.com/document/d/e/2PACX-1vQq0ctbhKmJCwvTF3tFPmacJyrXgPqavbdMniUFDiT7Bsu4jmGBML1KezCqU7rVMiFh6Rq75EYQb7JO/pub";
 
 export const metadata: Metadata = {
   title: "Agenda | OPEX Executive Workshop & Summit 2026",
