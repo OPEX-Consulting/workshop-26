@@ -2,8 +2,5 @@
 // "OPEX Conference 2026" sheet. Source: AppsScript-FollowUp.gs in the repo root.
 export const FOLLOW_UP_ENDPOINT = "";
 
-// Link to the presentation slides, revealed after someone submits the assessment.
-export const SLIDES_URL = "";
-
 // Discovery call booking link (from the assessment doc).
 export const CALENDLY_URL = "https://calendly.com/business-regtech365/regtech365-discovery-call";

@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { questions } from "../../assessment/questions";
-import { FOLLOW_UP_ENDPOINT, SLIDES_URL } from "../../assessment/config";
+import { FOLLOW_UP_ENDPOINT } from "../../assessment/config";
 
 // Validates an assessment submission, saves it to the "Follow Up" sheet through the
-// Apps Script endpoint, and returns the slides link only once the row is saved.
+// Apps Script endpoint. Slides are emailed separately by the OPEX team.
 export async function POST(req: Request) {
   let body: Record<string, unknown>;
   try {
@@ -58,5 +58,5 @@ export async function POST(req: Request) {
     console.error("Assessment submission failed:", e);
     return NextResponse.json({ ok: false, error: "We couldn't save your answers. Please try again." }, { status: 502 });
   }
-  return NextResponse.json({ ok: true, slidesUrl: SLIDES_URL });
+  return NextResponse.json({ ok: true });
 }

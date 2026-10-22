@@ -16,7 +16,6 @@ export default function AssessmentForm() {
   const [missing, setMissing] = useState<string[]>([]);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [error, setError] = useState("");
-  const [slidesUrl, setSlidesUrl] = useState("");
 
   // Pre-fill from the email link, e.g. /assessment?email=jane@bank.com&name=Jane%20Doe&src=email
   useEffect(() => {
@@ -71,7 +70,6 @@ export default function AssessmentForm() {
       });
       const out = await res.json().catch(() => null);
       if (!res.ok || !out?.ok) throw new Error(out?.error || "Something went wrong.");
-      setSlidesUrl(out.slidesUrl || "");
       setStatus("done");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
@@ -101,7 +99,7 @@ export default function AssessmentForm() {
           <p className={styles.lead}>
             {status === "done"
               ? "Thank you. Your answers have been received."
-              : "Thank you for joining us on 21 October 2026. Answer a few short questions (3–5 minutes) and get the presentation slides straight away."}
+              : "Thank you for joining us on 21 October 2026. Answer a few short questions (3–5 minutes) and we\u2019ll email you the presentation slides with the results of your diagnostic."}
           </p>
         </div>
       </header>
@@ -109,17 +107,11 @@ export default function AssessmentForm() {
       <div className={styles.container}>
         {status === "done" ? (
           <section className={styles.card}>
-            <h2 className={styles.cardTitle}>Your presentation slides</h2>
-            {slidesUrl ? (
-              <>
-                <p className={styles.text}>Download the slides from the summit sessions below.</p>
-                <a href={slidesUrl} target="_blank" rel="noopener noreferrer" className={styles.primary}>
-                  Get the presentation slides
-                </a>
-              </>
-            ) : (
-              <p className={styles.text}>We&apos;ll email the slides to {String(answers.email || "you")} shortly.</p>
-            )}
+            <h2 className={styles.cardTitle}>What happens next</h2>
+            <p className={styles.text}>
+              We&apos;ll reply to {String(answers.email || "your email")} with the presentation
+              slides and the results of your diagnostic assessment.
+            </p>
             <hr className={styles.rule} />
             <h2 className={styles.cardTitle}>Book your discovery call</h2>
             <p className={styles.text}>
@@ -213,7 +205,7 @@ export default function AssessmentForm() {
 
             {error && <p className={styles.error} role="alert">{error}</p>}
             <button type="submit" className={styles.primary} disabled={status === "sending"}>
-              {status === "sending" ? "Submitting…" : "Submit and get the slides"}
+              {status === "sending" ? "Submitting…" : "Submit assessment"}
             </button>
           </form>
         )}
