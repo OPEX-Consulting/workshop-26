@@ -99,7 +99,7 @@ export default function AssessmentForm() {
           <p className={styles.lead}>
             {status === "done"
               ? "Thank you. Your answers have been received."
-              : "Thank you for joining us on 21 October 2026. Answer a few short questions (3–5 minutes) and we\u2019ll email you the presentation slides with the results of your diagnostic."}
+              : "Thank you for joining us on 21 October 2026. Answer a few short questions (3–5 minutes) and we\u2019ll email you the presentation slides."}
           </p>
         </div>
       </header>
@@ -110,7 +110,7 @@ export default function AssessmentForm() {
             <h2 className={styles.cardTitle}>What happens next</h2>
             <p className={styles.text}>
               We&apos;ll reply to {String(answers.email || "your email")} with the presentation
-              slides and the results of your diagnostic assessment.
+              slides.
             </p>
             <hr className={styles.rule} />
             <h2 className={styles.cardTitle}>Book your discovery call</h2>
