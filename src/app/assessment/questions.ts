@@ -136,13 +136,6 @@ export const questions: Question[] = [
     "column": "Q6 Next step"
   },
   {
-    "key": "q7",
-    "title": "What could we improve or include in future OPEX events?",
-    "type": "paragraph",
-    "required": false,
-    "column": "Q7 Improvements"
-  },
-  {
     "key": "q8",
     "title": "Which part of managing compliance and risk causes your organisation the most effort or problems today?",
     "hint": "Select one.",
@@ -201,6 +194,13 @@ export const questions: Question[] = [
       "Budget or management priority"
     ],
     "column": "Q10 Main blockers"
+  },
+  {
+    "key": "q7",
+    "title": "What could we improve or include in future OPEX events?",
+    "type": "paragraph",
+    "required": false,
+    "column": "Q7 Improvements"
   },
   {
     "key": "consent",
