@@ -4,4 +4,4 @@ export const FOLLOW_UP_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbyDgk1rgBVB36dsvYKzENWhzgRbDeZublUha8x6MRf1MxvR8TsKRiCIO6kl-NLZj7eg/exec";
 
 // Discovery call booking link (from the assessment doc).
-export const CALENDLY_URL = "https://calendly.com/business-regtech365/regtech365-discovery-call";
+export const CALENDLY_URL = "https://calendly.com/opexconsult/disc_mgt_session";
