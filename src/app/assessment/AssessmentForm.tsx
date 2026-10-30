@@ -4,12 +4,13 @@ import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./assessment.module.css";
-import { questions, type Question } from "./questions";
+import { questionsFor, MATERIALS_ONLY, type Question, type Track } from "./questions";
 import { CALENDLY_URL } from "./config";
 
 type Answers = Record<string, string | string[]>;
 
 export default function AssessmentForm() {
+  const [track, setTrack] = useState<Track | null>(null);
   const [answers, setAnswers] = useState<Answers>({});
   const [other, setOther] = useState<Record<string, string>>({});
   const [source, setSource] = useState("");
@@ -27,6 +28,10 @@ export default function AssessmentForm() {
     });
     if (Object.keys(pre).length) setAnswers((a) => ({ ...pre, ...a }));
     setSource(p.get("src") || p.get("utm_source") || "");
+    // /assessment?attended=no (or yes) skips the entry question, e.g. from the email blast.
+    const att = (p.get("attended") || "").toLowerCase();
+    if (att === "yes") setTrack("attendee");
+    if (att === "no") setTrack("non_attendee");
   }, []);
 
   const set = (key: string, value: string | string[]) => {
@@ -37,8 +42,10 @@ export default function AssessmentForm() {
   const toggle = (q: Question, value: string) => {
     const cur = (answers[q.key] as string[]) || [];
     if (cur.includes(value)) return set(q.key, cur.filter((v) => v !== value));
-    if (q.max && cur.length >= q.max) return;
-    set(q.key, [...cur, value]);
+    if (q.exclusive && value === q.exclusive) return set(q.key, [value]);
+    const base = q.exclusive ? cur.filter((v) => v !== q.exclusive) : cur;
+    if (q.max && base.length >= q.max) return;
+    set(q.key, [...base, value]);
   };
 
   const isEmpty = (q: Question) => {
@@ -48,9 +55,19 @@ export default function AssessmentForm() {
     return vals.includes("__other__") && !(other[q.key] || "").trim();
   };
 
+  const questions = questionsFor(track || "attendee");
+
+  const choose = (t: Track | null) => {
+    if (t !== track) setAnswers(({ role, consent, ...keep }) => keep);
+    setTrack(t);
+    setMissing([]);
+    setError("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (status === "sending") return;
+    if (status === "sending" || !track) return;
     const miss = questions.filter((q) => q.required && isEmpty(q)).map((q) => q.key);
     const email = String(answers.email || "");
     if (email && !/^\S+@\S+\.\S+$/.test(email)) miss.push("email");
@@ -66,7 +83,7 @@ export default function AssessmentForm() {
       const res = await fetch("/api/assessment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...answers, _other: other, source }),
+        body: JSON.stringify({ ...answers, _other: other, source, track }),
       });
       const out = await res.json().catch(() => null);
       if (!res.ok || !out?.ok) throw new Error(out?.error || "Something went wrong.");
@@ -80,6 +97,8 @@ export default function AssessmentForm() {
 
   const contact = questions.filter((q) => q.section === "contact");
   const survey = questions.filter((q) => q.section !== "contact");
+  const isAttendee = track === "attendee";
+  const showCalendly = isAttendee || answers.n5 !== MATERIALS_ONLY;
   let n = 0;
 
   return (
@@ -89,7 +108,9 @@ export default function AssessmentForm() {
           <Link href="/" className={styles.back}>
             ← Back to summit
           </Link>
-          <span className={styles.eyebrow}>POST-CONFERENCE ASSESSMENT</span>
+          <span className={styles.eyebrow}>
+            {track === "non_attendee" ? "1-MINUTE READINESS ASSESSMENT" : "POST-CONFERENCE ASSESSMENT"}
+          </span>
           <h1 className={styles.heading}>
             <span className={styles.light}>The End</span>{" "}
             <span className={styles.brand}>
@@ -99,7 +120,11 @@ export default function AssessmentForm() {
           <p className={styles.lead}>
             {status === "done"
               ? "Thank you. Your answers have been received."
-              : "Thank you for joining us on 21 October 2026. Answer a few short questions (3–5 minutes) and we\u2019ll email you the presentation slides."}
+              : track === "attendee"
+                ? "Thank you for joining us on 21 October 2026. Answer a few short questions (3\u20135 minutes) and we\u2019ll email you the presentation slides."
+                : track === "non_attendee"
+                  ? "Missed the summit on 21 October 2026? Answer a few quick questions (about a minute) and we\u2019ll email you the slides, session recordings and insights relevant to your organisation."
+                  : "The End of Manual: OPEX Executive Workshop & Summit 2026 took place on 21 October 2026. Answer a few short questions and we\u2019ll email you the summit materials."}
           </p>
         </div>
       </header>
@@ -109,21 +134,41 @@ export default function AssessmentForm() {
           <section className={styles.card}>
             <h2 className={styles.cardTitle}>What happens next</h2>
             <p className={styles.text}>
-              We&apos;ll reply to {String(answers.email || "your email")} with the presentation
-              slides.
+              {isAttendee
+                ? <>We&apos;ll reply to {String(answers.email || "your email")} with the presentation slides.</>
+                : <>We&apos;ll reply to {String(answers.email || "your email")} with the summit slides, session recordings and insights relevant to your organisation.</>}
             </p>
-            <hr className={styles.rule} />
-            <h2 className={styles.cardTitle}>Book your discovery call</h2>
-            <p className={styles.text}>
-              Schedule a convenient time to speak with our team about your organisation&apos;s
-              priorities and see how our solutions may help address them.
-            </p>
-            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className={styles.secondary}>
-              Book a discovery call
-            </a>
+            {showCalendly && (
+              <>
+                <hr className={styles.rule} />
+                <h2 className={styles.cardTitle}>Book your discovery call</h2>
+                <p className={styles.text}>
+                  Schedule a convenient time to speak with our team about your organisation&apos;s
+                  priorities and see how our solutions may help address them.
+                </p>
+                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className={styles.secondary}>
+                  Book a discovery call
+                </a>
+              </>
+            )}
+          </section>
+        ) : !track ? (
+          <section className={styles.card}>
+            <h2 className={styles.cardTitle}>Were you at The End of Manual summit on 21 October 2026?</h2>
+            <div className={styles.choices}>
+              <button type="button" className={styles.primary} onClick={() => choose("attendee")}>
+                Yes, I was there
+              </button>
+              <button type="button" className={styles.secondary} onClick={() => choose("non_attendee")}>
+                No, I couldn&apos;t make it
+              </button>
+            </div>
           </section>
         ) : (
-          <form onSubmit={submit} noValidate>
+          <form key={track} onSubmit={submit} noValidate>
+            <button type="button" className={styles.switch} onClick={() => choose(null)}>
+              {isAttendee ? "\u2190 Didn\u2019t attend? Change answer" : "\u2190 Attended the summit? Change answer"}
+            </button>
             <section className={styles.card}>
               <h2 className={styles.cardTitle}>About you</h2>
               <div className={styles.grid}>
@@ -146,7 +191,8 @@ export default function AssessmentForm() {
 
             {survey.map((q) => {
               const isConsent = q.key === "consent";
-              if (!isConsent) n += 1;
+              const numbered = !isConsent && q.key !== "role";
+              if (numbered) n += 1;
               const bad = missing.includes(q.key);
               const val = answers[q.key];
               const vals = Array.isArray(val) ? val : val ? [val] : [];
@@ -155,7 +201,7 @@ export default function AssessmentForm() {
                 <fieldset key={q.key} id={`q-${q.key}`} className={`${styles.card} ${bad ? styles.cardInvalid : ""}`}>
                   {!isConsent && (
                     <legend className={styles.question}>
-                      <span className={styles.num}>{n}.</span> {q.title}{" "}
+                      {numbered && <span className={styles.num}>{n}.</span>} {q.title}{" "}
                       {q.required && <span className={styles.req}>*</span>}
                     </legend>
                   )}
@@ -171,7 +217,9 @@ export default function AssessmentForm() {
                     <div className={styles.options}>
                       {opts.map((o) => {
                         const checked = vals.includes(o);
-                        const disabled = q.type === "checkbox" && !!q.max && !checked && vals.length >= q.max;
+                        const counted = q.exclusive ? vals.filter((v) => v !== q.exclusive) : vals;
+                        const disabled =
+                          q.type === "checkbox" && !!q.max && !checked && o !== q.exclusive && counted.length >= q.max;
                         return (
                           <label key={o} className={`${styles.option} ${checked ? styles.checked : ""} ${disabled ? styles.disabled : ""}`}>
                             <input

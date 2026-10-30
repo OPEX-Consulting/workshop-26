@@ -38,6 +38,9 @@
 .rule { border: 0; border-top: 1px solid #e5eef9; margin: 26px 0; }
 .footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 28px 0 48px; color: #666; font-size: 12px; }
 .logo { background: #083672; padding: 6px 8px; border-radius: 6px; box-sizing: content-box; }
+.choices { display: flex; flex-wrap: wrap; gap: 12px; }
+.switch { background: none; border: 0; padding: 0; margin: 0 0 16px; color: #0067d4; font: inherit; font-size: 13px; cursor: pointer; }
+.switch:hover { text-decoration: underline; }
 @media (max-width: 600px) {
   .grid { grid-template-columns: 1fr; }
   .card { padding: 20px 16px; }
