@@ -623,6 +623,7 @@ const Field = styled.label`
 const Input = styled.input`
   display: block;
   width: 100%;
+  min-width: 0;
   height: 48px;
   padding: 0 13px;
   color: #1d2939;
@@ -630,13 +631,19 @@ const Input = styled.input`
   border: 1px solid #d0d5dd;
   border-radius: 9px;
   outline: none;
-  font-size: 13px;
+
+  /* Prevent automatic zoom on iOS Safari */
+  font-family: inherit;
+  font-size: 16px;
   font-weight: 450;
+  line-height: normal;
+
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.025);
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
 
   &::placeholder {
     color: #98a2b3;
+    opacity: 1;
   }
 
   &:hover:not(:focus) {
@@ -657,6 +664,7 @@ const Input = styled.input`
 const Select = styled.select`
   display: block;
   width: 100%;
+  min-width: 0;
   height: 48px;
   padding: 0 13px;
   color: #344054;
@@ -664,8 +672,13 @@ const Select = styled.select`
   border: 1px solid #d0d5dd;
   border-radius: 9px;
   outline: none;
-  font-size: 13px;
+
+  /* Prevent automatic zoom on iOS Safari */
+  font-family: inherit;
+  font-size: 16px;
   font-weight: 450;
+  line-height: normal;
+
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
 
   &:hover:not(:focus) {
