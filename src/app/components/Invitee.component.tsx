@@ -6,11 +6,12 @@ import styled from "styled-components";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 const NAVY = "#07152F";
-const MUTED_NAVY = "#315Caa";
+const MUTED_NAVY = "#315CAA";
 
 const speakers = [
   {
@@ -22,7 +23,7 @@ const speakers = [
   },
   {
     name: "Ayomide Osuntoye",
-    role: "Speakr",
+    role: "Speaker",
     image: "/images/invitees/simeon.png",
     position: "center 25%",
     number: "02",
@@ -51,8 +52,8 @@ export default function Speakers() {
 
           <IntroText>
             Meet the voices bringing fresh perspectives, practical experience,
-            and forward-thinking conversations to the OPEX Executive Workshop &
-            Summit.
+            and forward-thinking conversations to the OPEX Executive Workshop
+            &amp; Summit.
           </IntroText>
         </Intro>
 
@@ -62,7 +63,7 @@ export default function Speakers() {
               <ImageFrame>
                 <SpeakerImage
                   src={speaker.image}
-                  alt={speaker.name}
+                  alt={`${speaker.name}, ${speaker.role} at OPEX`}
                   fill
                   sizes="(max-width: 640px) 100vw, 50vw"
                   style={{ objectPosition: speaker.position }}
@@ -98,7 +99,9 @@ const Section = styled.section`
   font-family: inherit;
   overflow: hidden;
 
-  * {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
     font-family: inherit;
   }
@@ -135,6 +138,7 @@ const SectionLabel = styled.div`
 
 const LabelLine = styled.span`
   display: inline-block;
+  flex-shrink: 0;
   width: 25px;
   height: 2px;
   background: ${MUTED_NAVY};
@@ -145,6 +149,7 @@ const Edition = styled.span`
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.14em;
+  white-space: nowrap;
 
   @media (max-width: 480px) {
     font-size: 9px;
@@ -172,7 +177,7 @@ const Heading = styled.h2`
   font-size: clamp(43px, 6.7vw, 88px);
   font-weight: 600;
   line-height: 0.99;
-  letter-spacing: -0.075em;
+  letter-spacing: -0.065em;
 
   @media (max-width: 480px) {
     font-size: clamp(42px, 12vw, 62px);
@@ -231,10 +236,17 @@ const ImageFrame = styled.div`
     aspect-ratio: 0.95 / 1;
     border-radius: 15px;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover img {
+      transform: none;
+    }
+  }
 `;
 
 const SpeakerImage = styled(Image)`
   object-fit: cover;
+  object-position: center;
   filter: grayscale(100%);
   transform: scale(1);
   transition: filter 650ms ease,
@@ -288,6 +300,7 @@ const SpeakerIndex = styled.span`
   justify-content: center;
   width: 35px;
   height: 35px;
+  flex-shrink: 0;
   border: 1px solid rgba(255, 255, 255, 0.75);
   border-radius: 50%;
   color: #fff;
@@ -311,14 +324,14 @@ const SpeakerBottom = styled.div`
 const SpeakerName = styled.h3`
   margin: 0;
   color: #fff;
-  font-size: clamp(36px, 5vw, 64px);
+  font-size: clamp(30px, 4.5vw, 64px);
   font-weight: 600;
-  letter-spacing: -0.065em;
-  line-height: 1;
-  text-transform: capitalize;
+  letter-spacing: -0.055em;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
 
   @media (max-width: 640px) {
-    font-size: 46px;
+    font-size: clamp(34px, 9vw, 46px);
   }
 `;
 
