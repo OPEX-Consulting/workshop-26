@@ -1,410 +1,524 @@
 "use client";
+
 import styled from "styled-components";
-import VenueMap from "./VenueMap";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export default function Venue() {
   return (
-    <Section id="venue">
+    <Section id="venue" className={montserrat.className}>
       <Container>
         <Header>
-          <Left>
-            <Eyebrow>THE VENUE</Eyebrow>
+          <Heading>
+            Great ideas.
+            <br />
+            <Accent>One connection.</Accent>
+          </Heading>
 
-            <Heading>
-              <HeadingLight>Meet at</HeadingLight>
-              <br />
-              <Accent>The Wheatbaker.</Accent>
-            </Heading>
-          </Left>
-
-          <Right>
-            <Description>
-              A private setting in the heart of Ikoyi, Lagos, designed for
-              focused conversations between senior executives.
-            </Description>
-          </Right>
+          <Description>
+            Join the OPEX Summit 2026 online for fresh perspectives on business,
+            finance, and technology. Connect with industry leaders and be part
+            of the conversation from anywhere.
+          </Description>
         </Header>
 
-        <VenueLayout>
-          <VenueInfo>
-            <Top>
-              <VenueNumber>01</VenueNumber>
+        <EventCard>
+          <VisualPanel>
+            <VisualTop>
+              <BrandMark>O</BrandMark>
 
-              <VenueTitle>
-                The
-                <br />
-                Wheatbaker
-              </VenueTitle>
+              <PlatformTag>
+                <ZoomCamera />
+                <span>Zoom meeting</span>
+              </PlatformTag>
+            </VisualTop>
 
-              <VenueLocation>
-                4 Onitolo Road
-                <br />
-                Ikoyi, Lagos, Nigeria
-              </VenueLocation>
-            </Top>
+            <VisualCenter>
+              <SmallTitle>OPEX SUMMIT 2026</SmallTitle>
+              <ZoomWord>Zoom.</ZoomWord>
+              <VisualDescription>
+                A meeting of ideas.
+                <br />A future in motion.
+              </VisualDescription>
+            </VisualCenter>
 
-            <Bottom>
-              <VenueMeta>
-                <MetaItem>
-                  <MetaLabel>DATE</MetaLabel>
-                  <MetaValue>Wednesday, 21 October 2026</MetaValue>
-                </MetaItem>
+            <VisualBottom>
+              <span>CONNECT FROM ANYWHERE</span>
+              <DecorativeLine />
+            </VisualBottom>
 
-                <MetaItem>
-                  <MetaLabel>ACCESS</MetaLabel>
-                  <MetaValue>Parking available on site</MetaValue>
-                </MetaItem>
-              </VenueMeta>
+            <Orbit orbit="one" />
+            <Orbit orbit="two" />
+            <Orbit orbit="three" />
+          </VisualPanel>
 
-              <Directions
-                href="https://www.google.com/maps/search/?api=1&query=The+Wheatbaker+Ikoyi+Lagos"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Open in Maps
-                <Arrow>↗</Arrow>
-              </Directions>
-            </Bottom>
+          <DetailsPanel>
+            <DetailsHeading>
+              Everything starts
+              <br />
+              with a connection.
+            </DetailsHeading>
 
-            <CardGlow />
-          </VenueInfo>
+            <DetailsIntro>
+              Here are the details for joining us online.
+            </DetailsIntro>
 
-          <MapWrapper>
-            <VenueMap />
-          </MapWrapper>
-        </VenueLayout>
+            <Detail>
+              <DetailIcon>
+                <CalendarIcon />
+              </DetailIcon>
+
+              <DetailContent>
+                <DetailLabel>Date</DetailLabel>
+                <DetailValue>Thursday, 19 November 2026</DetailValue>
+              </DetailContent>
+            </Detail>
+
+            <Detail>
+              <DetailIcon>
+                <ClockIcon />
+              </DetailIcon>
+
+              <DetailContent>
+                <DetailLabel>Time</DetailLabel>
+                <DetailValue>11:00 AM WAT</DetailValue>
+              </DetailContent>
+            </Detail>
+
+            <Detail>
+              <DetailIcon>
+                <MonitorIcon />
+              </DetailIcon>
+
+              <DetailContent>
+                <DetailLabel>Event format</DetailLabel>
+                <DetailValue>Online via Zoom</DetailValue>
+              </DetailContent>
+            </Detail>
+
+            <AccessNote>
+              Zoom joining details will be shared with you after you register
+              for the event.
+            </AccessNote>
+          </DetailsPanel>
+        </EventCard>
       </Container>
     </Section>
   );
 }
 
+const NAVY = "#083672";
+const BLUE = "#1769d2";
+const LIGHT_BLUE = "#c9e4ff";
+
 const Section = styled.section`
   width: 100%;
-  background: #f7faff;
-  padding: 125px 0;
+  padding: 112px 24px 100px;
   overflow: hidden;
+  background: #ffffff;
+  color: ${NAVY};
 
-  @media (max-width: 700px) {
-    padding: 90px 0;
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  @media (max-width: 768px) {
+    padding: 76px 18px 76px;
   }
 `;
 
 const Container = styled.div`
-  width: min(1200px, 90vw);
+  width: 100%;
+  max-width: 1160px;
   margin: 0 auto;
 `;
 
 const Header = styled.div`
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 100px;
+  grid-template-columns: 1.1fr 0.7fr;
   align-items: end;
-  margin-bottom: 75px;
+  gap: 58px;
+  margin-bottom: 58px;
 
-  @media (max-width: 850px) {
+  @media (max-width: 800px) {
     grid-template-columns: 1fr;
-    gap: 30px;
-    margin-bottom: 55px;
+    gap: 20px;
+    margin-bottom: 38px;
   }
-`;
-
-const Left = styled.div`
-  min-width: 0;
-`;
-
-const Eyebrow = styled.span`
-  display: block;
-  margin-bottom: 22px;
-
-  color: #0067d4;
-
-  font-family: "Chillen", sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
 `;
 
 const Heading = styled.h2`
   margin: 0;
+  color: ${NAVY};
+  font-size: clamp(44px, 6.3vw, 78px);
+  font-weight: 600;
+  letter-spacing: -4.8px;
+  line-height: 1.04;
 
-  color: #083672;
-
-  font-size: clamp(54px, 6vw, 84px);
-  line-height: 0.9;
-  letter-spacing: -0.075em;
-
-  @media (max-width: 700px) {
-    font-size: clamp(48px, 13vw, 70px);
+  @media (max-width: 600px) {
+    font-size: clamp(39px, 10vw, 57px);
+    letter-spacing: -2.8px;
   }
-`;
-
-const HeadingLight = styled.span`
-  font-family: "Mont", sans-serif;
-  font-weight: 200;
 `;
 
 const Accent = styled.span`
-  color: #0067d4;
-  font-family: "Chillen", sans-serif;
-  font-weight: 400;
-`;
-
-const Right = styled.div`
-  padding-bottom: 6px;
+  color: ${BLUE};
 `;
 
 const Description = styled.p`
-  max-width: 480px;
-  margin: 0;
+  max-width: 410px;
+  margin: 0 0 5px;
+  color: #68778b;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.95;
 
-  color: #555555;
-
-  font-family: "Mont", sans-serif;
-  font-size: 15px;
-  font-weight: 200;
-  line-height: 1.7;
-  letter-spacing: -0.018em;
-
-  @media (max-width: 700px) {
-    font-size: 14px;
-    line-height: 1.6;
+  @media (max-width: 600px) {
+    font-size: 13px;
+    line-height: 1.9;
   }
 `;
 
-const VenueLayout = styled.div`
+const EventCard = styled.div`
   display: grid;
-  grid-template-columns: 0.7fr 1.3fr;
-  gap: 35px;
-  align-items: stretch;
+  grid-template-columns: 1fr 0.92fr;
+  overflow: hidden;
+  border: 1px solid #e5eaf1;
+  border-radius: 28px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(8, 54, 114, 0.06),
+    0 2px 8px rgba(8, 54, 114, 0.025);
 
-  @media (max-width: 850px) {
+  @media (max-width: 800px) {
     grid-template-columns: 1fr;
-    gap: 25px;
+    border-radius: 23px;
   }
 `;
 
-const VenueInfo = styled.div`
+const VisualPanel = styled.div`
   position: relative;
-  min-width: 0;
-  min-height: 500px;
-  height: 100%;
-
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
+  min-height: 490px;
+  padding: 34px;
   overflow: hidden;
+  isolation: isolate;
+  background: ${NAVY};
 
-  padding: 44px;
-
-  border: 1px solid #c6e3fb;
-  border-radius: 24px;
-
-  background: #ffffff;
-
-  box-shadow: 0 25px 70px rgba(8, 54, 114, 0.06),
-    0 2px 10px rgba(8, 54, 114, 0.025);
-
-  @media (max-width: 850px) {
-    min-height: 500px;
+  @media (max-width: 800px) {
+    min-height: 350px;
+    padding: 27px;
   }
 
-  @media (max-width: 600px) {
-    min-height: 480px;
-    padding: 30px;
-    border-radius: 20px;
+  @media (max-width: 480px) {
+    min-height: 315px;
+    padding: 23px;
   }
 `;
 
-const Top = styled.div`
+const VisualTop = styled.div`
   position: relative;
   z-index: 2;
-`;
-
-const Bottom = styled.div`
-  position: relative;
-  z-index: 2;
-`;
-
-const VenueNumber = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 38px;
-  height: 38px;
-
-  border: 1px solid rgba(0, 103, 212, 0.3);
-  border-radius: 50%;
-
-  color: #0067d4;
-
-  font-family: "Chillen", sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-`;
-
-const VenueTitle = styled.h3`
-  margin: 58px 0 0;
-
-  color: #083672;
-
-  font-family: "Chillen", sans-serif;
-  font-size: clamp(42px, 4vw, 58px);
-  font-weight: 400;
-  line-height: 0.92;
-  letter-spacing: -0.07em;
-
-  @media (max-width: 850px) {
-    margin-top: 45px;
-  }
-
-  @media (max-width: 600px) {
-    font-size: 42px;
-  }
-`;
-
-const VenueLocation = styled.p`
-  margin: 24px 0 0;
-
-  color: #555555;
-
-  font-family: "Mont", sans-serif;
-  font-size: 14px;
-  font-weight: 200;
-  line-height: 1.65;
-  letter-spacing: -0.01em;
-`;
-
-const VenueMeta = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-
-  padding-top: 28px;
-
-  border-top: 1px solid #c6e3fb;
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-`;
-
-const MetaItem = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 7px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 `;
 
-const MetaLabel = styled.span`
-  color: #0067d4;
-
-  font-family: "Chillen", sans-serif;
-  font-size: 8px;
-  font-weight: 400;
-  letter-spacing: 0.16em;
+const BrandMark = styled.div`
+  display: grid;
+  width: 43px;
+  height: 43px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 14px;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -2px;
 `;
 
-const MetaValue = styled.span`
-  color: #083672;
-
-  font-family: "Mont", sans-serif;
-  font-size: 12px;
-  font-weight: 200;
-  line-height: 1.4;
-`;
-
-const Directions = styled.a`
-  width: fit-content;
-
+const PlatformTag = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 14px;
-
-  margin-top: 28px;
-  padding: 14px 20px;
-
-  border-radius: 999px;
-
-  background: #083672;
+  gap: 9px;
+  padding: 10px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 100px;
   color: #ffffff;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
 
-  font-family: "Chillen", sans-serif;
-  font-size: 11px;
+  svg {
+    flex-shrink: 0;
+    color: ${LIGHT_BLUE};
+  }
+`;
+
+const VisualCenter = styled.div`
+  position: relative;
+  z-index: 2;
+  padding: 48px 0 40px;
+`;
+
+const SmallTitle = styled.p`
+  margin: 0 0 19px;
+  color: ${LIGHT_BLUE};
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 2.4px;
+`;
+
+const ZoomWord = styled.h3`
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(70px, 9vw, 112px);
+  font-weight: 600;
+  letter-spacing: -7px;
+  line-height: 0.98;
+
+  @media (max-width: 480px) {
+    font-size: 78px;
+    letter-spacing: -5px;
+  }
+`;
+
+const VisualDescription = styled.p`
+  margin: 25px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
   font-weight: 400;
-
-  text-decoration: none;
-
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.35s ease, background 0.3s ease;
-
-  &:hover {
-    transform: translateY(-3px);
-    background: #0067d4;
-    box-shadow: 0 12px 25px rgba(0, 103, 212, 0.2);
-  }
-
-  &:focus-visible {
-    outline: 3px solid #0067d4;
-    outline-offset: 4px;
-  }
+  line-height: 1.9;
 `;
 
-const Arrow = styled.span`
-  font-size: 16px;
-  line-height: 1;
-
-  transition: transform 0.3s ease;
-
-  ${Directions}:hover & {
-    transform: translate(2px, -2px);
-  }
+const VisualBottom = styled.div`
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 1.4px;
 `;
 
-const CardGlow = styled.div`
+const DecorativeLine = styled.span`
+  width: 40px;
+  height: 1px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.5);
+`;
+
+const Orbit = styled.div<{ orbit: "one" | "two" | "three" }>`
   position: absolute;
-
-  width: 280px;
-  height: 280px;
-
-  right: -120px;
-  bottom: -130px;
-
+  z-index: 0;
+  top: ${({ orbit }) =>
+    orbit === "one" ? "-170px" : orbit === "two" ? "-105px" : "-40px"};
+  right: ${({ orbit }) =>
+    orbit === "one" ? "-180px" : orbit === "two" ? "-115px" : "-50px"};
+  width: ${({ orbit }) =>
+    orbit === "one" ? "450px" : orbit === "two" ? "320px" : "190px"};
+  height: ${({ orbit }) =>
+    orbit === "one" ? "450px" : orbit === "two" ? "320px" : "190px"};
+  border: 1px solid rgba(201, 228, 255, 0.14);
   border-radius: 50%;
-
-  background: radial-gradient(
-    circle,
-    rgba(0, 103, 212, 0.14) 0%,
-    rgba(198, 227, 251, 0.18) 38%,
-    transparent 70%
-  );
-
   pointer-events: none;
 `;
 
-const MapWrapper = styled.div`
+const DetailsPanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 46px 40px;
+
+  @media (max-width: 800px) {
+    padding: 35px 28px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 28px 22px;
+  }
+`;
+
+const DetailsHeading = styled.h3`
+  margin: 0;
+  color: ${NAVY};
+  font-size: clamp(27px, 3.3vw, 37px);
+  font-weight: 600;
+  letter-spacing: -1.8px;
+  line-height: 1.24;
+`;
+
+const DetailsIntro = styled.p`
+  margin: 14px 0 25px;
+  color: #7a8799;
+  font-size: 12px;
+  line-height: 1.8;
+`;
+
+const Detail = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 19px 0;
+  border-top: 1px solid #edf0f5;
+`;
+
+const DetailIcon = styled.div`
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid #e8eef7;
+  border-radius: 13px;
+  background: #f7faff;
+  color: ${BLUE};
+`;
+
+const CalendarIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <rect
+      x="3.5"
+      y="5"
+      width="17"
+      height="15"
+      rx="3"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M7.5 3.5V7M16.5 3.5V7M3.5 9.5H20.5"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <path
+      d="M8 13H8.01M12 13H12.01M16 13H16.01M8 16.5H8.01M12 16.5H12.01"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const ClockIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.5" />
+    <path
+      d="M12 7V12L15.5 14"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const MonitorIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <rect
+      x="3"
+      y="4"
+      width="18"
+      height="13"
+      rx="2.5"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M8 21H16M12 17V21"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const ZoomCamera = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <rect
+      x="3"
+      y="6"
+      width="12"
+      height="12"
+      rx="3"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    />
+    <path
+      d="M15 10L21 7V17L15 14"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const DetailContent = styled.div`
   min-width: 0;
-  min-height: 500px;
-  height: 100%;
+`;
 
-  overflow: hidden;
+const DetailLabel = styled.p`
+  margin: 0 0 5px;
+  color: #8a96a7;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+`;
 
-  border-radius: 24px;
+const DetailValue = styled.p`
+  margin: 0;
+  color: ${NAVY};
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+`;
 
-  box-shadow: 0 25px 70px rgba(8, 54, 114, 0.08),
-    0 2px 10px rgba(8, 54, 114, 0.025);
-
-  @media (max-width: 850px) {
-    min-height: 430px;
-    height: 430px;
-  }
-
-  @media (max-width: 600px) {
-    min-height: 350px;
-    height: 350px;
-    border-radius: 20px;
-  }
+const AccessNote = styled.p`
+  margin: 21px 0 0;
+  padding: 16px;
+  border: 1px solid #e8eef7;
+  border-radius: 14px;
+  background: #f8faff;
+  color: #5f7087;
+  font-size: 11px;
+  line-height: 1.9;
 `;

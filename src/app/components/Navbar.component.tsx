@@ -36,9 +36,7 @@ export default function Navbar({ onReserve }: NavbarProps) {
       ([entry]) => {
         setAtFooter(entry.isIntersecting);
       },
-      {
-        threshold: 0.05,
-      }
+      { threshold: 0.05 }
     );
 
     observer.observe(footer);
@@ -49,11 +47,25 @@ export default function Navbar({ onReserve }: NavbarProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
+
   const closeMenu = () => {
     setMenuOpen(false);
   };
 
-  const handleReserve = () => {
+  const handleJoin = () => {
     closeMenu();
     onReserve();
   };
@@ -86,12 +98,8 @@ export default function Navbar({ onReserve }: NavbarProps) {
             Agenda
           </NavLink>
 
-          <NavLink href="#sessions" $scrolled={scrolled} $atFooter={atFooter}>
-            Sessions
-          </NavLink>
-
-          <NavLink href="#invitees" $scrolled={scrolled} $atFooter={atFooter}>
-            Invitees
+          <NavLink href="#speakers" $scrolled={scrolled} $atFooter={atFooter}>
+            Speakers
           </NavLink>
 
           <NavLink href="#faq" $scrolled={scrolled} $atFooter={atFooter}>
@@ -101,11 +109,11 @@ export default function Navbar({ onReserve }: NavbarProps) {
 
         <DesktopCTA
           type="button"
-          onClick={handleReserve}
+          onClick={handleJoin}
           $scrolled={scrolled}
           $atFooter={atFooter}
         >
-          Reserve your seat
+          Join now
         </DesktopCTA>
 
         <MobileMenuButton
@@ -117,17 +125,8 @@ export default function Navbar({ onReserve }: NavbarProps) {
           $scrolled={scrolled}
           $atFooter={atFooter}
         >
-          <MenuLine
-            $open={menuOpen}
-            $scrolled={scrolled}
-            $atFooter={atFooter}
-          />
-
-          <MenuLine
-            $open={menuOpen}
-            $scrolled={scrolled}
-            $atFooter={atFooter}
-          />
+          <MenuLine $open={menuOpen} $atFooter={atFooter} />
+          <MenuLine $open={menuOpen} $atFooter={atFooter} />
         </MobileMenuButton>
       </NavbarContainer>
 
@@ -135,7 +134,10 @@ export default function Navbar({ onReserve }: NavbarProps) {
         id="mobile-navigation"
         $open={menuOpen}
         $atFooter={atFooter}
+        $scrolled={scrolled}
         aria-label="Mobile navigation"
+        aria-hidden={!menuOpen}
+        inert={!menuOpen}
       >
         <MobileLink href="#about" onClick={closeMenu} $atFooter={atFooter}>
           About
@@ -145,41 +147,36 @@ export default function Navbar({ onReserve }: NavbarProps) {
           Agenda
         </MobileLink>
 
-        <MobileLink href="#sessions" onClick={closeMenu} $atFooter={atFooter}>
-          Sessions
-        </MobileLink>
-
-        <MobileLink href="#invitees" onClick={closeMenu} $atFooter={atFooter}>
-          Invitees
+        <MobileLink href="#speakers" onClick={closeMenu} $atFooter={atFooter}>
+          Speakers
         </MobileLink>
 
         <MobileLink href="#faq" onClick={closeMenu} $atFooter={atFooter}>
           FAQ
         </MobileLink>
 
-        <MobileCTA type="button" onClick={handleReserve} $atFooter={atFooter}>
-          Reserve your seat
+        <MobileCTA type="button" onClick={handleJoin} $atFooter={atFooter}>
+          Join now
         </MobileCTA>
       </MobileMenu>
     </NavWrapper>
   );
 }
 
+/* Navbar wrapper */
+
 const NavWrapper = styled.header<{
   $scrolled: boolean;
   $atFooter: boolean;
 }>`
   position: ${({ $scrolled }) => ($scrolled ? "fixed" : "absolute")};
-
   top: ${({ $scrolled }) => ($scrolled ? "14px" : "0")};
-
   left: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 99999;
 
   display: flex;
   justify-content: center;
-
   padding: ${({ $scrolled }) => ($scrolled ? "0" : "0 7vw")};
 
   pointer-events: none;
@@ -188,59 +185,44 @@ const NavWrapper = styled.header<{
 
   @media (max-width: 768px) {
     top: ${({ $scrolled }) => ($scrolled ? "12px" : "0")};
-
     padding: ${({ $scrolled }) => ($scrolled ? "0" : "0 5vw")};
   }
 `;
+
+/* Main navbar */
 
 const NavbarContainer = styled.nav<{
   $scrolled: boolean;
   $atFooter: boolean;
 }>`
   position: relative;
+  z-index: 2;
 
   width: ${({ $scrolled }) => ($scrolled ? "min(920px, 92vw)" : "100%")};
-
   max-width: ${({ $scrolled }) => ($scrolled ? "760px" : "1320px")};
-
   height: ${({ $scrolled }) => ($scrolled ? "58px" : "76px")};
 
   margin: 0 auto;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
 
   padding: ${({ $scrolled }) => ($scrolled ? "0 18px" : "0")};
-
   border-radius: ${({ $scrolled }) => ($scrolled ? "100px" : "0")};
 
   background: ${({ $atFooter, $scrolled }) => {
-    if ($atFooter) {
-      return "#c6e3fb";
-    }
-
-    if ($scrolled) {
-      return "#083672";
-    }
-
+    if ($atFooter) return "#c6e3fb";
+    if ($scrolled) return "#083672";
     return "transparent";
   }};
 
   box-shadow: ${({ $atFooter, $scrolled }) => {
-    if ($atFooter) {
-      return "0 14px 45px rgba(8, 54, 114, 0.12)";
-    }
-
-    if ($scrolled) {
-      return "0 14px 45px rgba(0, 0, 0, 0.25)";
-    }
-
+    if ($atFooter) return "0 14px 45px rgba(8, 54, 114, 0.12)";
+    if ($scrolled) return "0 14px 45px rgba(0, 0, 0, 0.25)";
     return "none";
   }};
 
   backdrop-filter: ${({ $scrolled }) => ($scrolled ? "blur(20px)" : "none")};
-
   -webkit-backdrop-filter: ${({ $scrolled }) =>
     $scrolled ? "blur(20px)" : "none"};
 
@@ -252,40 +234,26 @@ const NavbarContainer = styled.nav<{
 
   @media (max-width: 768px) {
     width: ${({ $scrolled }) => ($scrolled ? "92vw" : "100%")};
-
     max-width: none;
-
     height: ${({ $scrolled }) => ($scrolled ? "56px" : "68px")};
-
     padding: ${({ $scrolled }) => ($scrolled ? "0 15px" : "0")};
-
     border-radius: ${({ $scrolled }) => ($scrolled ? "100px" : "0")};
 
     background: ${({ $atFooter, $scrolled }) => {
-      if ($atFooter) {
-        return "#c6e3fb";
-      }
-
-      if ($scrolled) {
-        return "#083672";
-      }
-
+      if ($atFooter) return "#c6e3fb";
+      if ($scrolled) return "#083672";
       return "transparent";
     }};
 
     box-shadow: ${({ $atFooter, $scrolled }) => {
-      if ($atFooter) {
-        return "0 12px 35px rgba(8, 54, 114, 0.12)";
-      }
-
-      if ($scrolled) {
-        return "0 12px 35px rgba(0, 0, 0, 0.28)";
-      }
-
+      if ($atFooter) return "0 12px 35px rgba(8, 54, 114, 0.12)";
+      if ($scrolled) return "0 12px 35px rgba(0, 0, 0, 0.28)";
       return "none";
     }};
   }
 `;
+
+/* Logo */
 
 const Logo = styled.a<{
   $scrolled: boolean;
@@ -294,25 +262,21 @@ const Logo = styled.a<{
   display: flex;
   align-items: center;
   flex-shrink: 0;
-
   border-radius: 8px;
 
   img {
     display: block;
-
     width: ${({ $scrolled }) => ($scrolled ? "60px" : "68px")};
-
     height: auto;
 
     filter: ${({ $atFooter }) =>
       $atFooter ? "brightness(0) contrast(1.05)" : "none"};
 
-    transition: width 0.35s ease, filter 0.35s ease, opacity 0.35s ease;
+    transition: width 0.35s ease, filter 0.35s ease;
   }
 
   &:focus-visible {
     outline: 3px solid ${({ $atFooter }) => ($atFooter ? "#083672" : "#c6e3fb")};
-
     outline-offset: 5px;
   }
 
@@ -323,11 +287,12 @@ const Logo = styled.a<{
   }
 `;
 
+/* Desktop navigation */
+
 const DesktopNavigation = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 30px;
 
   @media (max-width: 950px) {
@@ -347,22 +312,21 @@ const NavLink = styled.a<{
 
   color: ${({ $atFooter }) => ($atFooter ? "#083672" : "#ffffff")};
 
-  font-family: "Mont", sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 14px;
-  font-weight: 200;
+  font-weight: 400;
   letter-spacing: 0.01em;
 
   border-radius: 6px;
+  text-decoration: none;
 
   transition: color 0.25s ease, transform 0.25s ease;
 
   &::after {
     content: "";
-
     position: absolute;
     left: 0;
     bottom: -6px;
-
     width: 0;
     height: 1px;
 
@@ -373,7 +337,6 @@ const NavLink = styled.a<{
 
   &:hover {
     color: ${({ $atFooter }) => ($atFooter ? "#0067d4" : "#c6e3fb")};
-
     transform: translateY(-1px);
   }
 
@@ -383,12 +346,11 @@ const NavLink = styled.a<{
 
   &:focus-visible {
     outline: 3px solid ${({ $atFooter }) => ($atFooter ? "#083672" : "#c6e3fb")};
-
     outline-offset: 5px;
-
-    color: ${({ $atFooter }) => ($atFooter ? "#0067d4" : "#c6e3fb")};
   }
 `;
+
+/* Desktop Join Now button */
 
 const DesktopCTA = styled.button<{
   $scrolled: boolean;
@@ -398,40 +360,35 @@ const DesktopCTA = styled.button<{
   align-items: center;
   justify-content: center;
 
-  min-height: 46px;
+  min-height: 42px;
+  padding: 0 22px;
 
-  padding: 0 23px;
-
-  border: 0;
+  border: 1px solid ${({ $atFooter }) => ($atFooter ? "#083672" : "#c6e3fb")};
   border-radius: 100px;
 
   background: ${({ $atFooter }) => ($atFooter ? "#083672" : "#c6e3fb")};
-
   color: ${({ $atFooter }) => ($atFooter ? "#ffffff" : "#083672")};
 
-  font-family: "Mont", sans-serif;
-  font-size: 14px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
   font-weight: 400;
+  letter-spacing: 0.01em;
 
   white-space: nowrap;
-
   cursor: pointer;
 
-  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease,
-    box-shadow 0.25s ease;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
+    transform 0.25s ease;
 
   &:hover {
     background: #0067d4;
+    border-color: #0067d4;
     color: #ffffff;
-
-    transform: translateY(-2px);
-
-    box-shadow: 0 8px 20px rgba(0, 103, 212, 0.18);
+    transform: translateY(-1px);
   }
 
   &:focus-visible {
-    outline: 3px solid ${({ $atFooter }) => ($atFooter ? "#083672" : "#c6e3fb")};
-
+    outline: 2px solid ${({ $atFooter }) => ($atFooter ? "#083672" : "#c6e3fb")};
     outline-offset: 4px;
   }
 
@@ -440,61 +397,43 @@ const DesktopCTA = styled.button<{
   }
 `;
 
+/* Mobile menu toggle */
+
 const MobileMenuButton = styled.button<{
   $scrolled: boolean;
   $atFooter: boolean;
 }>`
+  position: relative;
   display: none;
+  flex-shrink: 0;
 
   width: 42px;
   height: 42px;
+  padding: 0;
 
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-
-  gap: 6px;
-
-  padding: 0;
 
   border: 0;
   border-radius: 50%;
 
   background: ${({ $atFooter, $scrolled }) => {
-    if ($atFooter) {
-      return "rgba(8, 54, 114, 0.08)";
-    }
-
-    if ($scrolled) {
-      return "rgba(198, 227, 251, 0.14)";
-    }
-
+    if ($atFooter) return "rgba(8, 54, 114, 0.08)";
+    if ($scrolled) return "rgba(198, 227, 251, 0.14)";
     return "rgba(255, 255, 255, 0.1)";
   }};
 
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 
   transition: background 0.25s ease, transform 0.25s ease;
 
   &:hover {
     transform: scale(1.04);
-
-    background: ${({ $atFooter, $scrolled }) => {
-      if ($atFooter) {
-        return "rgba(8, 54, 114, 0.14)";
-      }
-
-      if ($scrolled) {
-        return "rgba(198, 227, 251, 0.24)";
-      }
-
-      return "rgba(255, 255, 255, 0.18)";
-    }};
   }
 
   &:focus-visible {
     outline: 3px solid ${({ $atFooter }) => ($atFooter ? "#083672" : "#c6e3fb")};
-
     outline-offset: 3px;
   }
 
@@ -505,52 +444,67 @@ const MobileMenuButton = styled.button<{
 
 const MenuLine = styled.span<{
   $open: boolean;
-  $scrolled: boolean;
   $atFooter: boolean;
 }>`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
   display: block;
+  width: 18px;
+  height: 2px;
+  margin: 0;
 
-  width: 17px;
-  height: 1.5px;
-
-  border-radius: 10px;
-
+  border-radius: 999px;
   background: ${({ $atFooter }) => ($atFooter ? "#083672" : "#ffffff")};
 
-  transition: background 0.3s ease, transform 0.3s ease, width 0.3s ease;
+  transform-origin: center;
+  backface-visibility: hidden;
+
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.25s ease, width 0.25s ease;
 
   &:first-child {
     transform: ${({ $open }) =>
-      $open ? "translateY(3.75px) rotate(45deg)" : "none"};
+      $open
+        ? "translate(-50%, -50%) rotate(45deg)"
+        : "translate(-50%, calc(-50% - 3.5px)) rotate(0deg)"};
   }
 
   &:last-child {
     transform: ${({ $open }) =>
-      $open ? "translateY(-3.75px) rotate(-45deg)" : "none"};
+      $open
+        ? "translate(-50%, -50%) rotate(-45deg)"
+        : "translate(-50%, calc(-50% + 3.5px)) rotate(0deg)"};
   }
 `;
+
+/* Mobile menu */
 
 const MobileMenu = styled.div<{
   $open: boolean;
   $atFooter: boolean;
+  $scrolled: boolean;
 }>`
   display: none;
 
   @media (max-width: 768px) {
     position: absolute;
-
-    top: 76px;
+    z-index: 3;
+    top: ${({ $scrolled }) => ($scrolled ? "64px" : "76px")};
     left: 4vw;
 
     width: 92vw;
-
+    box-sizing: border-box;
     padding: 20px;
 
     display: flex;
     flex-direction: column;
-
     gap: 4px;
 
+    border: 1px solid
+      ${({ $atFooter }) =>
+        $atFooter ? "rgba(8, 54, 114, 0.08)" : "rgba(255, 255, 255, 0.08)"};
     border-radius: 24px;
 
     background: ${({ $atFooter }) => ($atFooter ? "#c6e3fb" : "#083672")};
@@ -561,7 +515,6 @@ const MobileMenu = styled.div<{
         : "0 20px 60px rgba(0, 0, 0, 0.3)"};
 
     opacity: ${({ $open }) => ($open ? 1 : 0)};
-
     visibility: ${({ $open }) => ($open ? "visible" : "hidden")};
 
     transform: ${({ $open }) =>
@@ -574,6 +527,8 @@ const MobileMenu = styled.div<{
   }
 `;
 
+/* Mobile navigation links */
+
 const MobileLink = styled.a<{
   $atFooter: boolean;
 }>`
@@ -581,17 +536,16 @@ const MobileLink = styled.a<{
   align-items: center;
 
   min-height: 46px;
-
   padding: 0 14px;
-
   border-radius: 10px;
 
   color: ${({ $atFooter }) => ($atFooter ? "#083672" : "#ffffff")};
 
-  font-family: "Mont", sans-serif;
-  font-size: 15px;
-  font-weight: 200;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
   letter-spacing: 0.01em;
+  text-decoration: none;
 
   transition: background 0.2s ease, color 0.2s ease;
 
@@ -604,10 +558,11 @@ const MobileLink = styled.a<{
 
   &:focus-visible {
     outline: 2px solid ${({ $atFooter }) => ($atFooter ? "#083672" : "#c6e3fb")};
-
     outline-offset: 2px;
   }
 `;
+
+/* Mobile Join Now button */
 
 const MobileCTA = styled.button<{
   $atFooter: boolean;
@@ -616,35 +571,35 @@ const MobileCTA = styled.button<{
   align-items: center;
   justify-content: center;
 
-  min-height: 50px;
-
+  min-height: 46px;
   margin-top: 10px;
+  padding: 0 20px;
 
-  border: 0;
+  border: 1px solid ${({ $atFooter }) => ($atFooter ? "#083672" : "#c6e3fb")};
   border-radius: 100px;
 
   background: ${({ $atFooter }) => ($atFooter ? "#083672" : "#c6e3fb")};
-
   color: ${({ $atFooter }) => ($atFooter ? "#ffffff" : "#083672")};
 
-  font-family: "Chillen", sans-serif;
-  font-size: 15px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
   font-weight: 400;
+  letter-spacing: 0.01em;
 
   cursor: pointer;
 
-  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease,
+    transform 0.25s ease;
 
   &:hover {
     background: #0067d4;
+    border-color: #0067d4;
     color: #ffffff;
-
     transform: translateY(-1px);
   }
 
   &:focus-visible {
     outline: 3px solid ${({ $atFooter }) => ($atFooter ? "#083672" : "#ffffff")};
-
     outline-offset: 3px;
   }
 `;

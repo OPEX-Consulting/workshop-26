@@ -1,158 +1,1154 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import styled, { keyframes } from "styled-components";
-import PrivacyModal, { type PrivacyPreferences } from "./PrivacyModal";
+import Image from "next/image";
+import { FormEvent, useEffect, useState } from "react";
+import styled, { createGlobalStyle, keyframes } from "styled-components";
 
-type RouteKey = "financial" | "sustainability" | "regtech" | "fullDay";
-type SessionKey = "breakfast" | "summit";
-type FormStep = "intro" | "routes" | "contact" | "success";
-
-type Route = {
-  key: RouteKey;
-  letter: string;
-  title: string;
-  description: string;
-  session: SessionKey;
+const EVENT = {
+  title: "From Manual Risk Assessment to Intelligent Risk Operations",
+  description:
+    "Explore how AI is transforming enterprise risk management in financial institutions.",
+  date: "Thursday, 19 November 2026",
+  time: "11:00 AM",
+  venue: "Live on Zoom",
+  flyer: "/images/webinarflyer.jpeg",
+  logo: "/images/opexwhite.webp",
 };
+
+const ZOOM_LINK = "https://bit.ly/4ku1L8s";
+const REDIRECT_DELAY = 5000;
 
 type FormComponentProps = {
   onCancel: () => void;
 };
 
-const ROUTES: Route[] = [
-  {
-    key: "financial",
-    letter: "A",
-    title: "Financial Reporting & Regulatory Readiness",
-    description:
-      "IFRS 18 Implementation • Sustainability Disclosures (IFRS S1/S2) • FRCN/SEC/NGX RegCo Requirements • Reporting Accuracy • Data Integrity • Audit Assurance • Investor Confidence • Cost of Capital.",
-    session: "breakfast",
-  },
-  {
-    key: "sustainability",
-    letter: "B",
-    title: "Financial Automation & Consolidation",
-    description:
-      "Automated Group Financial Consolidation • Multi-Entity Reporting • Data Integration • Intercompany Reconciliation • Faster Close Cycles • Standardised Reporting • Reduced Manual Errors • Real-Time Financial Visibility.",
-    session: "breakfast",
-  },
-  {
-    key: "regtech",
-    letter: "C",
-    title: "AI Governance, Integrated GRC & Regulatory Compliance",
-    description:
-      "Responsible AI • Regulatory Compliance Automation • Enterprise GRC Integration • Continuous Controls Monitoring • Cybersecurity • Technology Risk • Auditability • Regulatory Reporting.",
-    session: "summit",
-  },
-  {
-    key: "fullDay",
-    letter: "D",
-    title: "Digital Trust, Resilience & Intelligent Operations",
-    description:
-      "AML Reporting Automation • Operational Resilience • Software Quality Assurance • Data Governance • Risk Intelligence • Automated Control Testing • Continuous Regulatory Readiness.",
-    session: "summit",
-  },
-];
-
-const SESSION_DETAILS: Record<
-  SessionKey,
-  { title: string; time: string; description: string }
-> = {
-  breakfast: {
-    title: "Morning Financial Reporting & Automation Briefing",
-    time: "8am – 11am WAT",
-    description:
-      "Financial reporting, regulatory readiness, automation and consolidation.",
-  },
-  summit: {
-    title: "Afternoon C-Level Technical Summit",
-    time: "11:30am – 4pm WAT",
-    description:
-      "AI governance, integrated GRC, regulatory compliance, digital trust and resilience.",
-  },
+type FormValues = {
+  fullName: string;
+  email: string;
+  referralSource: string;
+  consent: boolean;
 };
 
-const generateReference = () => {
-  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return `RDX-2026-${random}`;
-};
+type FormStep = "overview" | "details" | "success";
+
+const GlobalStyles = createGlobalStyle`
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: "Montserrat", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Montserrat", sans-serif;
+  }
+
+  button, input, select {
+    font: inherit;
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: #dce8f7;
+    color: #142b49;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const flyerFloat = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+`;
+
+const lightSweep = keyframes`
+  0% { transform: translateX(-150%) rotate(18deg); opacity: 0; }
+  15% { opacity: 0.2; }
+  55% { opacity: 0.12; }
+  100% { transform: translateX(180%) rotate(18deg); opacity: 0; }
+`;
+
+const pillReveal = keyframes`
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const successEnter = keyframes`
+  from { opacity: 0; transform: scale(1.015); }
+  to { opacity: 1; transform: scale(1); }
+`;
+
+const checkCircle = keyframes`
+  0% { opacity: 0; transform: scale(0.65); }
+  65% { opacity: 1; transform: scale(1.07); }
+  100% { opacity: 1; transform: scale(1); }
+`;
+
+const checkDraw = keyframes`
+  to { stroke-dashoffset: 0; }
+`;
+
+const successText = keyframes`
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const spinnerRotate = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const Spinner = styled.span`
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: ${spinnerRotate} 0.7s linear infinite;
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 28px;
+  background: rgba(20, 27, 37, 0.46);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  @media (max-width: 600px) {
+    align-items: flex-start;
+    padding: 10px;
+  }
+`;
+
+const Modal = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1020px;
+  height: min(760px, calc(100vh - 56px));
+  height: min(760px, calc(100dvh - 56px));
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e8ebef;
+  border-radius: 14px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.16);
+  animation: ${fadeIn} 0.28s ease both;
+
+  @media (max-width: 760px) {
+    height: auto;
+    max-height: calc(100vh - 20px);
+    max-height: calc(100dvh - 20px);
+    overflow-y: auto;
+  }
+
+  @media (max-width: 600px) {
+    border-radius: 11px;
+  }
+`;
+
+const Header = styled.header`
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  min-height: 72px;
+  padding: 16px 34px;
+  background: #ffffff;
+  border-bottom: 1px solid #eaecf0;
+
+  @media (max-width: 600px) {
+    min-height: 62px;
+    padding: 12px 18px;
+  }
+`;
+
+const Logo = styled(Image)`
+  display: block;
+  width: 88px;
+  height: 32px;
+  object-fit: contain;
+  object-position: left center;
+  filter: brightness(0) saturate(100%) invert(12%) sepia(16%) saturate(2126%)
+    hue-rotate(176deg) brightness(91%) contrast(92%);
+
+  @media (max-width: 600px) {
+    width: 76px;
+    height: 28px;
+  }
+`;
+
+const CloseButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: #667085;
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: #f7f8fa;
+    border-color: #d0d5dd;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #b2ccf2;
+    outline-offset: 2px;
+  }
+`;
+
+const Content = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+
+  @media (max-width: 760px) {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+`;
+
+const MainPanel = styled.main`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 38px 40px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  @media (max-width: 760px) {
+    flex: 0 0 auto;
+    padding: 30px 24px;
+    overflow: visible;
+  }
+
+  @media (max-width: 400px) {
+    padding: 26px 17px;
+  }
+`;
+
+const SidePanel = styled.aside`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: stretch;
+  min-width: 0;
+  min-height: 0;
+  padding: 24px 27px;
+  overflow: hidden;
+  background: #f7f8fa;
+  border-left: 1px solid #eaecf0;
+
+  @media (max-width: 760px) {
+    flex: 0 0 auto;
+    padding: 22px 24px 26px;
+    overflow: visible;
+    border-top: 1px solid #eaecf0;
+    border-left: none;
+  }
+
+  @media (max-width: 400px) {
+    padding: 18px 17px 22px;
+  }
+`;
+
+const Heading = styled.h1`
+  margin: 0;
+  color: #142b49;
+  font-size: clamp(29px, 3vw, 37px);
+  font-weight: 700;
+  line-height: 1.24;
+  letter-spacing: -1.3px;
+
+  @media (max-width: 400px) {
+    font-size: 28px;
+    letter-spacing: -0.9px;
+  }
+`;
+
+const Description = styled.p`
+  max-width: 470px;
+  margin: 14px 0 0;
+  color: #667085;
+  font-size: 13px;
+  font-weight: 450;
+  line-height: 1.85;
+`;
+
+const MetaList = styled.div`
+  display: grid;
+  gap: 14px;
+  margin-top: 25px;
+`;
+
+const MetaItem = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+`;
+
+const IconBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  color: #344054;
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 9px;
+`;
+
+const MetaCopy = styled.div`
+  min-width: 0;
+  padding-top: 1px;
+`;
+
+const MetaLabel = styled.p`
+  margin: 0 0 5px;
+  color: #7a8494;
+  font-size: 11px;
+  font-weight: 500;
+`;
+
+const MetaValue = styled.p`
+  margin: 0;
+  color: #26364b;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+`;
+
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  margin: 24px 0 18px;
+  background: #eaecf0;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+      min-height: 48px;
+    }
+  }
+`;
+
+const PrimaryButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 47px;
+  padding: 0 20px;
+  color: #ffffff;
+  background: #142b49;
+  border: 1px solid #142b49;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #203e62;
+    box-shadow: 0 5px 14px rgba(20, 43, 73, 0.12);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.985);
+  }
+
+  &:disabled {
+    opacity: 0.75;
+    cursor: wait;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #b2ccf2;
+    outline-offset: 2px;
+  }
+`;
+
+const SecondaryButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 47px;
+  padding: 0 18px;
+  color: #344054;
+  background: #ffffff;
+  border: 1px solid #e0e4e9;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #f8f9fb;
+    border-color: #d0d5dd;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #b2ccf2;
+    outline-offset: 2px;
+  }
+`;
+
+const FlyerFrame = styled.div`
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 11px;
+  box-shadow: 0 10px 28px rgba(20, 43, 73, 0.07);
+  animation: ${flyerFloat} 6s ease-in-out infinite;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+
+  img {
+    object-fit: contain;
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  &::after {
+    position: absolute;
+    z-index: 1;
+    top: -30%;
+    bottom: -30%;
+    left: 0;
+    width: 35%;
+    content: "";
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.34),
+      transparent
+    );
+    transform: translateX(-150%) rotate(18deg);
+    animation: ${lightSweep} 7s ease-in-out 1.5s infinite;
+  }
+
+  &:hover {
+    border-color: #d2dae5;
+    box-shadow: 0 18px 38px rgba(20, 43, 73, 0.12);
+  }
+
+  &:hover img {
+    transform: scale(1.015);
+  }
+
+  @media (max-width: 760px) {
+    max-width: 360px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 10;
+  }
+`;
+
+const PillRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+`;
+
+const Pill = styled.span<{
+  $variant?: "dark" | "light";
+  $delay?: number;
+}>`
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 31px;
+  padding: 7px 11px;
+  color: ${({ $variant }) => ($variant === "dark" ? "#ffffff" : "#344054")};
+  background: ${({ $variant }) =>
+    $variant === "dark" ? "#142b49" : "#ffffff"};
+  border: 1px solid
+    ${({ $variant }) => ($variant === "dark" ? "#142b49" : "#e2e7ed")};
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+  animation: ${pillReveal} 0.45s ease both;
+  animation-delay: ${({ $delay = 0 }) => `${$delay}ms`};
+
+  svg {
+    flex: 0 0 auto;
+  }
+`;
+
+const LiveDot = styled.span`
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #82d6a5;
+  box-shadow: 0 0 0 3px rgba(130, 214, 165, 0.12);
+`;
+
+const SideHeading = styled.h2`
+  margin: 20px 0 7px;
+  color: #142b49;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: -0.4px;
+`;
+
+const SideDescription = styled.p`
+  margin: 0;
+  color: #667085;
+  font-size: 12px;
+  font-weight: 450;
+  line-height: 1.8;
+`;
+
+const SideFooter = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 17px;
+  padding-top: 15px;
+  border-top: 1px solid #e4e7ec;
+  color: #596579;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.7;
+
+  svg {
+    flex: 0 0 auto;
+    margin-top: 1px;
+  }
+`;
+
+const FormTitle = styled.h2`
+  margin: 0;
+  color: #142b49;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -1px;
+
+  @media (max-width: 400px) {
+    font-size: 27px;
+  }
+`;
+
+const FormDescription = styled.p`
+  margin: 11px 0 25px;
+  color: #667085;
+  font-size: 13px;
+  font-weight: 450;
+  line-height: 1.85;
+`;
+
+const Fields = styled.div`
+  display: grid;
+  gap: 19px;
+`;
+
+const Field = styled.label`
+  display: grid;
+  gap: 8px;
+  color: #344054;
+  font-size: 12px;
+  font-weight: 600;
+`;
+
+const Input = styled.input`
+  display: block;
+  width: 100%;
+  height: 48px;
+  padding: 0 13px;
+  color: #1d2939;
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  border-radius: 9px;
+  outline: none;
+  font-size: 13px;
+  font-weight: 450;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.025);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+
+  &::placeholder {
+    color: #98a2b3;
+  }
+
+  &:hover:not(:focus) {
+    border-color: #b8c0cc;
+  }
+
+  &:focus {
+    border-color: #667f9f;
+    box-shadow: 0 0 0 3px rgba(51, 83, 122, 0.09);
+  }
+
+  &:disabled {
+    background: #f9fafb;
+    cursor: not-allowed;
+  }
+`;
+
+const Select = styled.select`
+  display: block;
+  width: 100%;
+  height: 48px;
+  padding: 0 13px;
+  color: #344054;
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  border-radius: 9px;
+  outline: none;
+  font-size: 13px;
+  font-weight: 450;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+
+  &:hover:not(:focus) {
+    border-color: #b8c0cc;
+  }
+
+  &:focus {
+    border-color: #667f9f;
+    box-shadow: 0 0 0 3px rgba(51, 83, 122, 0.09);
+  }
+
+  &:disabled {
+    background: #f9fafb;
+    cursor: not-allowed;
+  }
+`;
+
+const ConsentRow = styled.label`
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 21px;
+  color: #667085;
+  font-size: 11px;
+  font-weight: 450;
+  line-height: 1.85;
+  cursor: pointer;
+
+  input {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    margin: 3px 0 0;
+    accent-color: #142b49;
+    cursor: pointer;
+  }
+`;
+
+const ErrorMessage = styled.p`
+  margin: 15px 0 0;
+  padding: 12px 13px;
+  color: #912018;
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+  border-radius: 9px;
+  font-size: 12px;
+  line-height: 1.7;
+`;
+
+const SuccessScreen = styled.section`
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 30px 22px;
+  overflow-y: auto;
+  color: #ffffff;
+  background: #142b49;
+  animation: ${successEnter} 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+
+  &::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    pointer-events: none;
+    background: radial-gradient(
+        ellipse at 50% 34%,
+        rgba(100, 139, 185, 0.17),
+        transparent 48%
+      ),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.025), transparent 45%);
+  }
+`;
+
+const SuccessContent = styled.div`
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 560px;
+  margin: auto;
+  text-align: center;
+`;
+
+const SuccessBrand = styled.div`
+  position: absolute;
+  top: 34px;
+  left: 38px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+
+  @media (max-width: 600px) {
+    top: 22px;
+    left: 20px;
+    font-size: 10px;
+  }
+`;
+
+const SuccessClose = styled.button`
+  position: absolute;
+  top: 26px;
+  right: 30px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.16);
+    transform: rotate(5deg);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.6);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 600px) {
+    top: 14px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+  }
+`;
+
+const SuccessMark = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 94px;
+  height: 94px;
+  margin-bottom: 30px;
+  color: #142b49;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.055),
+    0 18px 60px rgba(0, 0, 0, 0.15);
+  animation: ${checkCircle} 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+  svg {
+    width: 43px;
+    height: 43px;
+  }
+
+  path {
+    stroke-dasharray: 42;
+    stroke-dashoffset: 42;
+    animation: ${checkDraw} 0.55s 0.32s ease-out forwards;
+  }
+
+  @media (max-width: 600px) {
+    width: 82px;
+    height: 82px;
+    margin-bottom: 26px;
+  }
+`;
+
+const SuccessEyebrow = styled.p`
+  margin: 0 0 15px;
+  color: #a9c9ef;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  animation: ${successText} 0.5s 0.15s ease both;
+`;
+
+const SuccessHeading = styled.h1`
+  max-width: 500px;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(32px, 5vw, 49px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -1.8px;
+  animation: ${successText} 0.55s 0.22s ease both;
+
+  @media (max-width: 400px) {
+    font-size: 32px;
+    letter-spacing: -1.1px;
+  }
+`;
+
+const SuccessDescription = styled.p`
+  max-width: 410px;
+  margin: 17px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.9;
+  animation: ${successText} 0.55s 0.3s ease both;
+`;
+
+const SuccessReference = styled.div`
+  width: 100%;
+  max-width: 390px;
+  margin-top: 31px;
+  padding: 18px 20px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.065);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 13px;
+  animation: ${successText} 0.55s 0.38s ease both;
+`;
+
+const SuccessReferenceLabel = styled.p`
+  margin: 0 0 9px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+`;
+
+const SuccessReferenceValue = styled.p`
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(17px, 3vw, 21px);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  overflow-wrap: anywhere;
+`;
+
+const SuccessEvent = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 23px;
+  animation: ${successText} 0.55s 0.44s ease both;
+`;
+
+const SuccessPill = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 8px 12px;
+  color: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 500;
+`;
+
+const SuccessNotice = styled.p`
+  max-width: 390px;
+  margin: 22px 0 0;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 10px;
+  line-height: 1.8;
+  animation: ${successText} 0.55s 0.48s ease both;
+`;
+
+const SuccessButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
+  min-height: 47px;
+  margin-top: 28px;
+  padding: 0 25px;
+  color: #142b49;
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  animation: ${successText} 0.55s 0.52s ease both;
+
+  &:hover {
+    background: #eaf1fa;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.13);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.65);
+    outline-offset: 4px;
+  }
+`;
+
+function CalendarIcon() {
+  return (
+    <svg
+      width="19"
+      height="19"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect
+        x="3.5"
+        y="5"
+        width="17"
+        height="16"
+        rx="2.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M7.5 3.5V7M16.5 3.5V7M4 9.5H20"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg
+      width="19"
+      height="19"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M12 7V12L15.5 14"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function VideoIcon() {
+  return (
+    <svg
+      width="19"
+      height="19"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect
+        x="3"
+        y="6"
+        width="12"
+        height="12"
+        rx="2.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M15 10L21 7V17L15 14V10Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function LargeCheckIcon() {
+  return (
+    <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      <path
+        d="M9 22.5L18 31L35 13"
+        stroke="currentColor"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M6 6L18 18M18 6L6 18"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
 export default function FormComponent({ onCancel }: FormComponentProps) {
-  const [step, setStep] = useState<FormStep>("intro");
-  const [route, setRoute] = useState<Route | null>(null);
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
-  const [organisation, setOrganisation] = useState("");
-
+  const [step, setStep] = useState<FormStep>("overview");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [reference, setReference] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [privacyOpen, setPrivacyOpen] = useState(false);
 
-  const selectRoute = (selectedRoute: Route) => {
-    setRoute(selectedRoute);
-    setSubmitError("");
-    setStep("contact");
+  const [values, setValues] = useState<FormValues>({
+    fullName: "",
+    email: "",
+    referralSource: "",
+    consent: false,
+  });
+
+  useEffect(() => {
+    if (step !== "success") return;
+
+    const redirectTimer = window.setTimeout(() => {
+      window.location.href = ZOOM_LINK;
+    }, REDIRECT_DELAY);
+
+    return () => {
+      window.clearTimeout(redirectTimer);
+    };
+  }, [step]);
+
+  const updateField = <K extends keyof FormValues>(
+    field: K,
+    value: FormValues[K]
+  ) => {
+    setValues((current) => ({
+      ...current,
+      [field]: value,
+    }));
   };
 
-  const goBackFromContact = () => {
-    if (submitting) return;
-
-    setSubmitError("");
-    setStep("routes");
-  };
-
-  const handleRegistrationSubmit = (event: FormEvent<HTMLFormElement>) => {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!route || submitting) return;
+    if (loading) return;
 
-    setSubmitError("");
-    setPrivacyOpen(true);
-  };
+    setError("");
 
-  const submitRegistration = async (preferences: PrivacyPreferences) => {
-    if (!route || submitting) return;
-    if (!preferences.personalDataConsent) return;
-
-    const endpoint =
-      process.env.NEXT_PUBLIC_REGISTRATION_SHEET_ENDPOINT?.trim();
-
-    if (!endpoint) {
-      setPrivacyOpen(false);
-      setSubmitError(
-        "Registration is temporarily unavailable. Please try again later."
-      );
-      console.error("NEXT_PUBLIC_REGISTRATION_SHEET_ENDPOINT is missing.");
+    if (!values.consent) {
+      setError("Please confirm your consent before continuing.");
       return;
     }
 
-    setSubmitting(true);
-    setSubmitError("");
+    const endpoint =
+      "https://script.google.com/macros/s/AKfycbwvjwTggsA0ZuJRLQBtfSQDG68RFU8D6xJ9tIzHC6zday1n5GDMmcJ-Zjwf5PnSUH4H/exec";
 
-    const newReference = generateReference();
+    if (!endpoint) {
+      setError(
+        "Registration is not configured yet. Please contact the event organiser."
+      );
+      return;
+    }
+
+    setLoading(true);
+
+    const registrationReference = `OPEX-${Date.now().toString().slice(-8)}`;
 
     const payload = {
-      ref: newReference,
-      submittedAt: new Date().toISOString(),
-      name: name.trim(),
-      email: email.trim(),
-      role: role.trim(),
-      organisation: organisation.trim(),
-      route: route.title,
-      session: route.session,
-      score: 0,
-      maxScore: 0,
-      pct: 0,
-      band: "Not assessed",
-      priority: "Nurture",
-      flags: 0,
-      answers: [],
-      privacyConsent: preferences.personalDataConsent,
-      marketingConsent: preferences.marketingConsent,
+      fullName: values.fullName.trim(),
+      email: values.email.trim(),
+      referralSource: values.referralSource,
     };
 
     try {
@@ -165,1575 +1161,364 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
         body: JSON.stringify(payload),
       });
 
-      setReference(newReference);
-      setPrivacyOpen(false);
+      setReference(registrationReference);
       setStep("success");
-    } catch (error) {
-      console.error("Registration submission failed:", error);
-
-      setPrivacyOpen(false);
-      setSubmitError(
-        "We could not send your registration. Please check your connection and try again."
+    } catch {
+      setError(
+        "We could not submit your registration. Please check your connection and try again."
       );
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
-  };
-
-  /* INTRO SCREEN */
-
-  if (step === "intro") {
-    return (
-      <FormShell>
-        <Page>
-          <Header>
-            <Logo src="/images/opexwhite.webp" alt="OPEX" />
-
-            <HeaderRight>
-              <CancelButton type="button" onClick={onCancel}>
-                Cancel
-              </CancelButton>
-            </HeaderRight>
-          </Header>
-
-          <Main $intro>
-            <IntroLayout>
-              <IntroContent>
-                <IntroTitle>
-                  THE END OF
-                  <br />
-                  <IntroTitleBlue>MANUAL</IntroTitleBlue>
-                </IntroTitle>
-
-                <IntroDescription>
-                  AI, Connected Systems and the Future of Financial Reporting
-                  and Compliance
-                </IntroDescription>
-
-                <IntroMeta>
-                  <span>Wednesday 21 October 2026</span>
-                  <IntroDot />
-                  <span>The Wheatbaker, Ikoyi</span>
-                </IntroMeta>
-
-                <IntroNote>
-                  Choose the workshop session most relevant to your role and
-                  priorities.
-                </IntroNote>
-
-                {/* Desktop: normal position.
-                    Mobile: fixed to the bottom of the viewport. */}
-                <IntroButtonBar>
-                  <BeginButton type="button" onClick={() => setStep("routes")}>
-                    Begin registration
-                  </BeginButton>
-                </IntroButtonBar>
-              </IntroContent>
-
-              <FlyerWrap>
-                <Flyer
-                  src="/images/newflierupdate.jpeg"
-                  alt="REGTECH365 Executive Workshop"
-                />
-              </FlyerWrap>
-            </IntroLayout>
-          </Main>
-        </Page>
-      </FormShell>
-    );
   }
 
-  /* SESSION SELECTION SCREEN */
+  return (
+    <>
+      <GlobalStyles />
 
-  if (step === "routes") {
-    return (
-      <FormShell>
-        <Page>
-          <Header>
-            <Logo src="/images/opexwhite.webp" alt="OPEX" />
+      <Overlay
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget && !loading) {
+            onCancel();
+          }
+        }}
+      >
+        {step === "success" ? (
+          <SuccessScreen
+            role="status"
+            aria-live="polite"
+            aria-label="Registration confirmation"
+          >
+            <SuccessBrand>OPEX CONSULTING</SuccessBrand>
 
-            <HeaderRight>
-              <HeaderText>Executive Workshop</HeaderText>
+            <SuccessClose
+              type="button"
+              onClick={onCancel}
+              aria-label="Close confirmation"
+            >
+              <CloseIcon />
+            </SuccessClose>
 
-              <CancelButton type="button" onClick={onCancel}>
-                Cancel
-              </CancelButton>
-            </HeaderRight>
-          </Header>
+            <SuccessContent>
+              <SuccessMark>
+                <LargeCheckIcon />
+              </SuccessMark>
 
-          <Main>
-            <RouteContent>
-              <RouteTitle>
-                Choose the conversation
-                <br />
-                that matters most.
-              </RouteTitle>
+              <SuccessEyebrow>Registration submitted</SuccessEyebrow>
 
-              <RouteIntro>
-                Select the workshop session most relevant to your role and
-                priorities.
-              </RouteIntro>
+              <SuccessHeading>You’re on the list.</SuccessHeading>
 
-              <RouteList>
-                <SessionHeading>
-                  <SessionHeadingTitle>Morning Session</SessionHeadingTitle>
-                  <SessionHeadingTime>
-                    8:00 AM – 11:00 AM WAT
-                  </SessionHeadingTime>
-                </SessionHeading>
+              <SuccessDescription>
+                Thank you for your interest in the OPEX webinar. Keep your
+                registration reference for your records.
+              </SuccessDescription>
 
-                {ROUTES.filter((item) => item.session === "breakfast").map(
-                  (item) => (
-                    <RouteItem
-                      key={item.key}
-                      type="button"
-                      onClick={() => selectRoute(item)}
-                    >
-                      <RouteLetter>{item.letter}</RouteLetter>
+              <SuccessReference>
+                <SuccessReferenceLabel>
+                  Your registration reference
+                </SuccessReferenceLabel>
 
-                      <RouteText>
-                        <RouteName>{item.title}</RouteName>
-                        <RouteDescription>{item.description}</RouteDescription>
-                        <RouteSession>
-                          MORNING SESSION · 8AM–11AM WAT
-                        </RouteSession>
-                      </RouteText>
+                <SuccessReferenceValue>{reference}</SuccessReferenceValue>
+              </SuccessReference>
 
-                      <Arrow aria-hidden="true">→</Arrow>
-                    </RouteItem>
-                  )
-                )}
+              <SuccessEvent>
+                <SuccessPill>
+                  <CalendarIcon />
+                  {EVENT.date}
+                </SuccessPill>
 
-                <SessionHeading $afternoon>
-                  <SessionHeadingTitle>
-                    Afternoon C-Level Technical Summit
-                  </SessionHeadingTitle>
+                <SuccessPill>
+                  <ClockIcon />
+                  {EVENT.time}
+                </SuccessPill>
 
-                  <SessionHeadingTime>
-                    11:30 AM – 4:00 PM WAT
-                  </SessionHeadingTime>
-                </SessionHeading>
+                <SuccessPill>
+                  <VideoIcon />
+                  {EVENT.venue}
+                </SuccessPill>
+              </SuccessEvent>
 
-                {ROUTES.filter((item) => item.session === "summit").map(
-                  (item) => (
-                    <RouteItem
-                      key={item.key}
-                      type="button"
-                      onClick={() => selectRoute(item)}
-                    >
-                      <RouteLetter>{item.letter}</RouteLetter>
+              <SuccessNotice>
+                You will be redirected to the Zoom webinar in five seconds. If
+                you are not redirected automatically, click Join webinar to
+                continue.
+              </SuccessNotice>
 
-                      <RouteText>
-                        <RouteName>{item.title}</RouteName>
-                        <RouteDescription>{item.description}</RouteDescription>
-                        <RouteSession>
-                          AFTERNOON SUMMIT · 11:30AM–4PM WAT
-                        </RouteSession>
-                      </RouteText>
-
-                      <Arrow aria-hidden="true">→</Arrow>
-                    </RouteItem>
-                  )
-                )}
-              </RouteList>
-            </RouteContent>
-          </Main>
-        </Page>
-      </FormShell>
-    );
-  }
-
-  /* CONTACT FORM SCREEN */
-
-  if (step === "contact" && route) {
-    const session = SESSION_DETAILS[route.session];
-
-    return (
-      <FormShell>
-        <Page>
-          <Header>
-            <Logo src="/images/opexwhite.webp" alt="OPEX" />
-
-            <HeaderRight>
-              <HeaderText>{route.title}</HeaderText>
-
-              <CancelButton
+              <SuccessButton
                 type="button"
-                onClick={onCancel}
-                disabled={submitting}
+                onClick={() => {
+                  window.location.href = ZOOM_LINK;
+                }}
               >
-                Cancel
-              </CancelButton>
-            </HeaderRight>
-          </Header>
+                Join webinar
+              </SuccessButton>
+            </SuccessContent>
+          </SuccessScreen>
+        ) : (
+          <Modal
+            role="dialog"
+            aria-modal="true"
+            aria-label="OPEX webinar registration"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <Header>
+              <Logo
+                src={EVENT.logo}
+                alt="OPEX Consulting"
+                width={88}
+                height={32}
+                priority
+              />
 
-          <Main>
-            <ContactContent>
-              <ContactTitle>
-                Tell us who
-                <br />
-                we&apos;re meeting.
-              </ContactTitle>
+              <CloseButton
+                type="button"
+                onClick={() => {
+                  if (!loading) onCancel();
+                }}
+                disabled={loading}
+                aria-label="Close registration"
+              >
+                <CloseIcon />
+              </CloseButton>
+            </Header>
 
-              <ContactDescription>
-                These details are used to confirm your registration and prepare
-                for the workshop.
-              </ContactDescription>
+            <Content>
+              <MainPanel>
+                {step === "overview" ? (
+                  <>
+                    <Heading>{EVENT.title}</Heading>
 
-              <SelectedSession>
-                <SelectedSessionLabel>
-                  YOUR SELECTED SESSION
-                </SelectedSessionLabel>
+                    <Description>{EVENT.description}</Description>
 
-                <SelectedSessionTitle>{route.title}</SelectedSessionTitle>
+                    <MetaList>
+                      <MetaItem>
+                        <IconBox>
+                          <CalendarIcon />
+                        </IconBox>
 
-                <SelectedSessionTime>
-                  {session.title} · {session.time}
-                </SelectedSessionTime>
-              </SelectedSession>
+                        <MetaCopy>
+                          <MetaLabel>Date</MetaLabel>
+                          <MetaValue>{EVENT.date}</MetaValue>
+                        </MetaCopy>
+                      </MetaItem>
 
-              <form onSubmit={handleRegistrationSubmit}>
-                <Fields>
-                  <FieldGroup>
-                    <FieldLabel htmlFor="name">Full name</FieldLabel>
+                      <MetaItem>
+                        <IconBox>
+                          <ClockIcon />
+                        </IconBox>
 
-                    <FieldInput
-                      id="name"
-                      name="name"
-                      type="text"
-                      value={name}
-                      onChange={(event) => setName(event.target.value)}
-                      autoComplete="name"
-                      placeholder="Your full name"
-                      required
-                      disabled={submitting}
-                    />
-                  </FieldGroup>
+                        <MetaCopy>
+                          <MetaLabel>Time</MetaLabel>
+                          <MetaValue>{EVENT.time}</MetaValue>
+                        </MetaCopy>
+                      </MetaItem>
 
-                  <FieldGroup>
-                    <FieldLabel htmlFor="email">Work email</FieldLabel>
+                      <MetaItem>
+                        <IconBox>
+                          <VideoIcon />
+                        </IconBox>
 
-                    <FieldInput
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      autoComplete="email"
-                      placeholder="name@organisation.com"
-                      required
-                      disabled={submitting}
-                    />
-                  </FieldGroup>
+                        <MetaCopy>
+                          <MetaLabel>Location</MetaLabel>
+                          <MetaValue>{EVENT.venue}</MetaValue>
+                        </MetaCopy>
+                      </MetaItem>
+                    </MetaList>
 
-                  <FieldGroup>
-                    <FieldLabel htmlFor="role">Role</FieldLabel>
+                    <Divider />
 
-                    <FieldInput
-                      id="role"
-                      name="role"
-                      type="text"
-                      value={role}
-                      onChange={(event) => setRole(event.target.value)}
-                      autoComplete="organization-title"
-                      placeholder="Your role"
-                      required
-                      disabled={submitting}
-                    />
-                  </FieldGroup>
+                    <Description
+                      style={{
+                        marginTop: 0,
+                        fontSize: 12,
+                      }}
+                    >
+                      Join us to explore a more intelligent approach to
+                      enterprise risk management.
+                    </Description>
 
-                  <FieldGroup>
-                    <FieldLabel htmlFor="organisation">Organisation</FieldLabel>
+                    <ButtonRow>
+                      <PrimaryButton
+                        type="button"
+                        onClick={() => setStep("details")}
+                      >
+                        Register for the webinar
+                      </PrimaryButton>
 
-                    <FieldInput
-                      id="organisation"
-                      name="organisation"
-                      type="text"
-                      value={organisation}
-                      onChange={(event) => setOrganisation(event.target.value)}
-                      autoComplete="organization"
-                      placeholder="Organisation name"
-                      required
-                      disabled={submitting}
-                    />
-                  </FieldGroup>
-                </Fields>
+                      <SecondaryButton type="button" onClick={onCancel}>
+                        Cancel
+                      </SecondaryButton>
+                    </ButtonRow>
+                  </>
+                ) : (
+                  <>
+                    <FormTitle>Your details</FormTitle>
 
-                {submitError && (
-                  <ErrorMessage role="alert">{submitError}</ErrorMessage>
+                    <FormDescription>
+                      Complete your details below to register for the OPEX
+                      webinar.
+                    </FormDescription>
+
+                    <form onSubmit={handleSubmit}>
+                      <Fields>
+                        <Field>
+                          Full name
+                          <Input
+                            type="text"
+                            name="fullName"
+                            placeholder="Enter your full name"
+                            autoComplete="name"
+                            value={values.fullName}
+                            onChange={(event) =>
+                              updateField("fullName", event.target.value)
+                            }
+                            minLength={2}
+                            required
+                            disabled={loading}
+                          />
+                        </Field>
+
+                        <Field>
+                          Email address
+                          <Input
+                            type="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            autoComplete="email"
+                            value={values.email}
+                            onChange={(event) =>
+                              updateField("email", event.target.value)
+                            }
+                            required
+                            disabled={loading}
+                          />
+                        </Field>
+
+                        <Field>
+                          How did you hear about this event?
+                          <Select
+                            name="referralSource"
+                            value={values.referralSource}
+                            onChange={(event) =>
+                              updateField("referralSource", event.target.value)
+                            }
+                            required
+                            disabled={loading}
+                          >
+                            <option value="" disabled>
+                              Select an option
+                            </option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="Email">Email invitation</option>
+                            <option value="Colleague">
+                              Colleague or referral
+                            </option>
+                            <option value="Website">OPEX website</option>
+                            <option value="Other">Other</option>
+                          </Select>
+                        </Field>
+                      </Fields>
+
+                      <ConsentRow>
+                        <input
+                          type="checkbox"
+                          checked={values.consent}
+                          onChange={(event) =>
+                            updateField("consent", event.target.checked)
+                          }
+                          required
+                          disabled={loading}
+                        />
+
+                        <span>
+                          I agree to be contacted by OPEX Consulting about this
+                          webinar and related event information.
+                        </span>
+                      </ConsentRow>
+
+                      {error && (
+                        <ErrorMessage role="alert">{error}</ErrorMessage>
+                      )}
+
+                      <ButtonRow>
+                        <PrimaryButton
+                          type="submit"
+                          disabled={loading}
+                          aria-busy={loading}
+                        >
+                          {loading ? (
+                            <>
+                              <Spinner aria-hidden="true" />
+                              <span>Submitting registration...</span>
+                            </>
+                          ) : (
+                            "Complete registration"
+                          )}
+                        </PrimaryButton>
+
+                        <SecondaryButton
+                          type="button"
+                          onClick={() => {
+                            setError("");
+                            setStep("overview");
+                          }}
+                          disabled={loading}
+                        >
+                          Back
+                        </SecondaryButton>
+                      </ButtonRow>
+                    </form>
+                  </>
                 )}
+              </MainPanel>
 
-                <ContactActions>
-                  <BackButton
-                    type="button"
-                    onClick={goBackFromContact}
-                    disabled={submitting}
-                  >
-                    Back to selection
-                  </BackButton>
+              <SidePanel>
+                <FlyerFrame>
+                  <Image
+                    src={EVENT.flyer}
+                    alt="OPEX webinar flyer"
+                    fill
+                    sizes="(max-width: 760px) 90vw, 420px"
+                    priority
+                  />
+                </FlyerFrame>
 
-                  <NextButton type="submit" disabled={submitting}>
-                    Confirm registration
-                  </NextButton>
-                </ContactActions>
-              </form>
-            </ContactContent>
-          </Main>
-        </Page>
+                <PillRow>
+                  <Pill $variant="dark" $delay={100}>
+                    <CalendarIcon />
+                    19 NOV 2026
+                  </Pill>
 
-        <PrivacyModal
-          isOpen={privacyOpen}
-          onClose={() => {
-            if (!submitting) setPrivacyOpen(false);
-          }}
-          onSave={(preferences) => {
-            void submitRegistration(preferences);
-          }}
-        />
-      </FormShell>
-    );
-  }
+                  <Pill $variant="light" $delay={180}>
+                    <ClockIcon />
+                    11:00 AM
+                  </Pill>
 
-  /* SUCCESS TICKET */
+                  <Pill $variant="light" $delay={260}>
+                    <LiveDot />
+                    Live webinar
+                  </Pill>
+                </PillRow>
 
-  if (step === "success" && route) {
-    const session = SESSION_DETAILS[route.session];
+                <SideHeading>
+                  A more intelligent way to manage risk.
+                </SideHeading>
 
-    return (
-      <FormShell>
-        <ReceiptPage>
-          <Ticket>
-            <TicketTop>
-              <TicketLogo src="/images/opexwhite.webp" alt="OPEX" />
-              <TicketStatus>REGISTRATION REQUEST SENT</TicketStatus>
-            </TicketTop>
+                <SideDescription>
+                  Discover how AI can help financial institutions move beyond
+                  manual risk assessment towards smarter, more connected risk
+                  operations.
+                </SideDescription>
 
-            <TicketMain>
-              <TicketEyebrow>REGTECH365 · EXECUTIVE WORKSHOP</TicketEyebrow>
-
-              <TicketTitle>You&apos;re on the list.</TicketTitle>
-
-              <TicketText>
-                Your registration request has been submitted. Please keep your
-                reference for your records.
-              </TicketText>
-
-              <TicketDetails>
-                <TicketDetail>
-                  <TicketLabel>REFERENCE</TicketLabel>
-                  <TicketValue>{reference}</TicketValue>
-                </TicketDetail>
-
-                <TicketDetail>
-                  <TicketLabel>SESSION</TicketLabel>
-                  <TicketValue>{session.title}</TicketValue>
-                </TicketDetail>
-
-                <TicketDetail>
-                  <TicketLabel>TIME</TicketLabel>
-                  <TicketValue>{session.time}</TicketValue>
-                </TicketDetail>
-
-                <TicketDetail>
-                  <TicketLabel>WORKSHOP</TicketLabel>
-                  <TicketValue>{route.title}</TicketValue>
-                </TicketDetail>
-
-                <TicketDetail>
-                  <TicketLabel>PARTICIPANT</TicketLabel>
-                  <TicketValue>{name}</TicketValue>
-                </TicketDetail>
-              </TicketDetails>
-            </TicketMain>
-
-            <TicketDivider>
-              <TicketNotch $position="left" />
-              <TicketDashed />
-              <TicketNotch $position="right" />
-            </TicketDivider>
-
-            <TicketBottom>
-              <TicketEvent>
-                <TicketEventDate>21</TicketEventDate>
-
-                <TicketEventInfo>
-                  <strong>OCTOBER 2026</strong>
-                  <span>The Wheatbaker · Ikoyi</span>
-                </TicketEventInfo>
-              </TicketEvent>
-
-              <DoneButton type="button" onClick={onCancel}>
-                Done
-              </DoneButton>
-            </TicketBottom>
-          </Ticket>
-        </ReceiptPage>
-      </FormShell>
-    );
-  }
-
-  return null;
+                <SideFooter>
+                  <CalendarIcon />
+                  <span>Thursday, 19 November 2026 · 11:00 AM</span>
+                </SideFooter>
+              </SidePanel>
+            </Content>
+          </Modal>
+        )}
+      </Overlay>
+    </>
+  );
 }
-
-/* ANIMATIONS */
-
-const pageIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-const receiptIn = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(32px) scale(.94);
-  }
-
-  55% {
-    opacity: 1;
-    transform: translateY(-5px) scale(1.008);
-  }
-
-  75% {
-    transform: translateY(2px) scale(.998);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-`;
-
-const flyerIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateX(24px) scale(.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-`;
-
-/* MAIN LAYOUT */
-
-const FormShell = styled.main`
-  position: relative;
-  width: 100%;
-  min-height: 100dvh;
-  background: #ffffff;
-  color: #111111;
-  font-family: "Mont", Arial, sans-serif;
-`;
-
-const Page = styled.section`
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  animation: ${pageIn} 0.45s ease both;
-`;
-
-const Header = styled.header`
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  min-height: 82px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 42px 0;
-
-  @media (max-width: 700px) {
-    min-height: 68px;
-    padding: 8px 20px 0;
-  }
-
-  @media (max-width: 430px) {
-    min-height: 62px;
-    padding: 6px 16px 0;
-  }
-`;
-
-const Logo = styled.img`
-  width: 82px;
-  height: auto;
-  display: block;
-  filter: brightness(0) contrast(1.05);
-  transform: translateY(6px);
-
-  @media (max-width: 700px) {
-    width: 70px;
-    transform: translateY(4px);
-  }
-
-  @media (max-width: 430px) {
-    width: 64px;
-  }
-`;
-
-const HeaderRight = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 18px;
-
-  @media (max-width: 700px) {
-    gap: 8px;
-  }
-`;
-
-const HeaderText = styled.span`
-  max-width: 420px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 12px;
-  color: #666666;
-
-  @media (max-width: 700px) {
-    display: none;
-  }
-`;
-
-const CancelButton = styled.button`
-  appearance: none;
-  border: 1px solid #d9dfe5;
-  border-radius: 999px;
-  background: #ffffff;
-  color: #083672;
-  padding: 8px 14px;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease,
-    transform 0.25s ease;
-
-  &:hover:not(:disabled) {
-    color: #0067d4;
-    border-color: #aebfd1;
-    background: #f7faff;
-    transform: translateY(-1px);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  @media (max-width: 700px) {
-    padding: 7px 12px;
-    font-size: 10px;
-  }
-`;
-
-const Main = styled.div<{ $intro?: boolean }>`
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 42px 34px;
-
-  @media (max-width: 900px) {
-    padding: 10px 30px 28px;
-  }
-
-  @media (max-width: 700px) {
-    align-items: ${({ $intro }) => ($intro ? "center" : "flex-start")};
-    padding: ${({ $intro }) => ($intro ? "24px 22px 130px" : "5px 20px 24px")};
-  }
-
-  @media (max-width: 430px) {
-    padding: ${({ $intro }) => ($intro ? "28px 20px 125px" : "4px 16px 20px")};
-  }
-`;
-
-const Content = styled.div`
-  width: min(760px, 100%);
-  margin: 0 auto;
-`;
-
-/* INTRO SCREEN */
-
-const IntroLayout = styled.div`
-  width: min(1160px, 100%);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 430px);
-  align-items: center;
-  gap: clamp(40px, 7vw, 100px);
-  margin: 0 auto;
-
-  @media (max-width: 900px) {
-    grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
-    gap: 32px;
-  }
-
-  @media (max-width: 700px) {
-    display: block;
-    width: 100%;
-  }
-`;
-
-const IntroContent = styled(Content)`
-  width: 100%;
-  transform: translateY(-8px);
-
-  @media (max-width: 700px) {
-    transform: none;
-    text-align: left;
-  }
-`;
-
-const IntroTitle = styled.h1`
-  margin: 0;
-  max-width: 900px;
-  font-size: clamp(58px, 7vw, 92px);
-  line-height: 0.9;
-  font-weight: 200;
-  letter-spacing: -0.065em;
-
-  @media (max-width: 900px) {
-    font-size: clamp(48px, 6.5vw, 72px);
-  }
-
-  @media (max-width: 700px) {
-    font-size: clamp(54px, 12vw, 76px);
-    line-height: 0.9;
-    letter-spacing: -0.06em;
-  }
-
-  @media (max-width: 430px) {
-    font-size: clamp(46px, 12.5vw, 58px);
-    line-height: 0.92;
-  }
-
-  @media (max-width: 360px) {
-    font-size: 44px;
-  }
-`;
-
-const IntroTitleBlue = styled.span`
-  color: #083672;
-`;
-
-const IntroDescription = styled.p`
-  margin: 27px 0 30px;
-  max-width: 690px;
-  font-size: 19px;
-  line-height: 1.55;
-  color: #555555;
-
-  @media (max-width: 700px) {
-    margin: 22px 0 24px;
-    max-width: 540px;
-    font-size: 17px;
-    line-height: 1.55;
-  }
-
-  @media (max-width: 430px) {
-    margin: 20px 0 23px;
-    font-size: 16px;
-    line-height: 1.55;
-  }
-`;
-
-const IntroMeta = styled.div`
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 26px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #111111;
-
-  @media (max-width: 700px) {
-    gap: 9px;
-    margin-bottom: 20px;
-    font-size: 13px;
-  }
-
-  @media (max-width: 430px) {
-    gap: 8px;
-    margin-bottom: 19px;
-    font-size: 12px;
-  }
-`;
-
-const IntroDot = styled.span`
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #0067d4;
-  flex-shrink: 0;
-`;
-
-const IntroNote = styled.p`
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.7;
-  color: #777777;
-
-  @media (max-width: 700px) {
-    max-width: 420px;
-    font-size: 13px;
-    line-height: 1.7;
-  }
-
-  @media (max-width: 430px) {
-    font-size: 12px;
-    line-height: 1.75;
-  }
-`;
-
-/*
- * Desktop: this bar remains in normal document flow.
- * Mobile: it becomes a fixed bottom footer.
- */
-const IntroButtonBar = styled.div`
-  position: static;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  width: 100%;
-  margin-top: 28px;
-
-  @media (max-width: 700px) {
-    position: fixed;
-    z-index: 100;
-    right: 0;
-    bottom: 0;
-    left: 0;
-
-    justify-content: center;
-    width: auto;
-    margin-top: 0;
-    padding: 12px 22px calc(12px + env(safe-area-inset-bottom));
-
-    border-top: 1px solid rgba(220, 225, 230, 0.8);
-    background: rgba(255, 255, 255, 0.94);
-
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-  }
-
-  @media (max-width: 430px) {
-    padding: 10px 20px calc(10px + env(safe-area-inset-bottom));
-  }
-`;
-
-const BeginButton = styled.button`
-  appearance: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: auto;
-  min-width: 220px;
-  min-height: 54px;
-  padding: 0 24px;
-
-  border: 1px solid #083672;
-  border-radius: 14px;
-  background: #083672;
-  color: #ffffff;
-
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  text-align: center;
-  cursor: pointer;
-
-  box-shadow: 0 4px 12px rgba(8, 54, 114, 0.08);
-
-  transition: background 0.22s ease, border-color 0.22s ease,
-    transform 0.22s ease, box-shadow 0.22s ease;
-
-  &:hover {
-    background: #0067d4;
-    border-color: #0067d4;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(8, 54, 114, 0.16);
-  }
-
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(8, 54, 114, 0.1);
-  }
-
-  &:focus-visible {
-    outline: 3px solid rgba(0, 103, 212, 0.3);
-    outline-offset: 4px;
-  }
-
-  @media (max-width: 700px) {
-    width: 100%;
-    max-width: 420px;
-    min-width: 0;
-    min-height: 52px;
-    padding: 0 20px;
-    border-radius: 13px;
-  }
-
-  @media (max-width: 430px) {
-    max-width: none;
-    min-height: 50px;
-    padding: 0 18px;
-    border-radius: 12px;
-  }
-`;
-
-const FlyerWrap = styled.div`
-  width: 100%;
-  max-width: 430px;
-  justify-self: end;
-  animation: ${flyerIn} 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
-
-  @media (max-width: 900px) {
-    max-width: 340px;
-  }
-
-  @media (max-width: 700px) {
-    display: none;
-  }
-`;
-
-const Flyer = styled.img`
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: min(67vh, 620px);
-  object-fit: contain;
-  border-radius: 12px;
-  box-shadow: 0 24px 70px rgba(8, 54, 114, 0.12);
-`;
-
-/* SESSION SELECTION */
-
-const RouteContent = styled(Content)`
-  width: min(900px, 100%);
-  padding: 20px 0;
-  margin: auto;
-
-  @media (max-width: 700px) {
-    padding: 8px 0;
-  }
-`;
-
-const RouteTitle = styled.h1`
-  margin: 0;
-  max-width: 680px;
-  font-size: clamp(36px, 5vw, 60px);
-  font-weight: 200;
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-
-  @media (max-width: 700px) {
-    font-size: clamp(34px, 9vw, 46px);
-  }
-`;
-
-const RouteIntro = styled.p`
-  margin: 19px 0 28px;
-  max-width: 620px;
-  font-size: 15px;
-  line-height: 1.55;
-  color: #555555;
-
-  @media (max-width: 700px) {
-    margin: 15px 0 20px;
-    font-size: 13px;
-  }
-`;
-
-const RouteList = styled.div`
-  width: 100%;
-`;
-
-const SessionHeading = styled.div<{ $afternoon?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-
-  padding: ${({ $afternoon }) =>
-    $afternoon ? "30px 4px 12px" : "4px 4px 12px"};
-
-  border-bottom: 1px solid #dce3eb;
-
-  @media (max-width: 700px) {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 5px;
-
-    padding: ${({ $afternoon }) =>
-      $afternoon ? "24px 2px 10px" : "4px 2px 10px"};
-  }
-`;
-
-const SessionHeadingTitle = styled.h2`
-  margin: 0;
-  color: #083672;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-
-  @media (max-width: 700px) {
-    font-size: 11px;
-  }
-`;
-
-const SessionHeadingTime = styled.span`
-  color: #777777;
-  font-size: 10px;
-  white-space: nowrap;
-
-  @media (max-width: 700px) {
-    font-size: 9px;
-    white-space: normal;
-  }
-`;
-
-const RouteItem = styled.button`
-  width: 100%;
-  appearance: none;
-  border: 0;
-  border-top: 1px solid #e5e5e5;
-  background: transparent;
-
-  padding: 22px 4px;
-
-  display: grid;
-  grid-template-columns: 28px minmax(0, 1fr) 20px;
-  align-items: start;
-  gap: 14px;
-
-  text-align: left;
-  cursor: pointer;
-  font-family: inherit;
-
-  transition: padding 0.25s ease, background 0.25s ease, border-color 0.25s ease;
-
-  &:last-child {
-    border-bottom: 1px solid #e5e5e5;
-  }
-
-  &:hover {
-    padding-left: 12px;
-    padding-right: 12px;
-    background: #f7faff;
-    border-color: #cbd6e1;
-    border-radius: 8px;
-  }
-
-  &:focus-visible {
-    outline: 2px solid #0067d4;
-    outline-offset: 3px;
-  }
-
-  @media (max-width: 700px) {
-    grid-template-columns: 20px minmax(0, 1fr) 16px;
-    gap: 9px;
-    padding: 18px 2px;
-  }
-
-  @media (max-width: 430px) {
-    gap: 7px;
-    padding: 16px 1px;
-  }
-`;
-
-const RouteLetter = styled.span`
-  font-size: 13px;
-  color: #0067d4;
-  padding-top: 2px;
-
-  @media (max-width: 700px) {
-    font-size: 11px;
-  }
-`;
-
-const RouteText = styled.span`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  min-width: 0;
-`;
-
-const RouteName = styled.span`
-  display: block;
-  color: #111111;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-
-  @media (max-width: 700px) {
-    font-size: 14px;
-  }
-
-  @media (max-width: 430px) {
-    font-size: 13px;
-  }
-`;
-
-const RouteDescription = styled.span`
-  display: block;
-  max-width: 680px;
-  color: #687587;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.8;
-  overflow-wrap: anywhere;
-
-  @media (max-width: 700px) {
-    font-size: 11px;
-    line-height: 1.7;
-  }
-
-  @media (max-width: 430px) {
-    font-size: 10px;
-    line-height: 1.65;
-  }
-`;
-
-const RouteSession = styled.span`
-  display: inline-block;
-  margin-top: 3px;
-  color: #0067d4;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.07em;
-  line-height: 1.6;
-
-  @media (max-width: 430px) {
-    font-size: 8px;
-    letter-spacing: 0.04em;
-  }
-`;
-
-const Arrow = styled.span`
-  font-size: 20px;
-  color: #083672;
-  transition: transform 0.25s ease;
-  justify-self: end;
-
-  ${RouteItem}:hover & {
-    transform: translateX(4px);
-  }
-`;
-
-/* CONTACT FORM */
-
-const ContactContent = styled(Content)`
-  width: min(620px, 100%);
-  padding: 12px 0;
-`;
-
-const ContactTitle = styled.h1`
-  margin: 0;
-  font-size: clamp(32px, 4.5vw, 50px);
-  line-height: 1;
-  font-weight: 200;
-  letter-spacing: -0.04em;
-
-  @media (max-width: 700px) {
-    font-size: clamp(31px, 9vw, 42px);
-  }
-`;
-
-const ContactDescription = styled.p`
-  margin: 13px 0 21px;
-  color: #555555;
-  font-size: 14px;
-  line-height: 1.5;
-
-  @media (max-width: 700px) {
-    margin: 12px 0 17px;
-    font-size: 12px;
-  }
-`;
-
-const SelectedSession = styled.div`
-  margin-bottom: 16px;
-  padding: 13px 15px;
-  border: 1px solid #dce6f1;
-  border-radius: 12px;
-  background: #f7faff;
-`;
-
-const SelectedSessionLabel = styled.span`
-  display: block;
-  margin-bottom: 6px;
-  color: #0067d4;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-`;
-
-const SelectedSessionTitle = styled.p`
-  margin: 0;
-  color: #111111;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.5;
-`;
-
-const SelectedSessionTime = styled.p`
-  margin: 5px 0 0;
-  color: #687587;
-  font-size: 11px;
-  line-height: 1.5;
-`;
-
-const Fields = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-
-  @media (max-width: 520px) {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
-  }
-`;
-
-const FieldGroup = styled.div`
-  position: relative;
-  width: 100%;
-  min-height: 60px;
-  padding: 8px 14px 5px;
-  border: 1px solid #dcdcdc;
-  border-radius: 12px;
-  background: #ffffff;
-
-  transition: border-color 0.3s ease, box-shadow 0.35s ease,
-    transform 0.35s ease;
-
-  &::after {
-    content: "";
-    position: absolute;
-    left: 14px;
-    right: 14px;
-    bottom: -1px;
-    height: 2px;
-    border-radius: 2px;
-    background: #0067d4;
-    opacity: 0;
-    transform: scaleX(0);
-    transition: transform 0.35s ease, opacity 0.25s ease;
-  }
-
-  &:focus-within {
-    border-color: #aebfd1;
-    box-shadow: 0 7px 25px rgba(8, 54, 114, 0.06);
-    transform: translateY(-1px);
-  }
-
-  &:focus-within::after {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-
-  @media (max-width: 700px) {
-    min-height: 55px;
-    padding: 6px 13px 4px;
-  }
-`;
-
-const FieldLabel = styled.label`
-  display: block;
-  margin-bottom: 2px;
-  font-size: 10px;
-  color: #666666;
-
-  ${FieldGroup}:focus-within & {
-    color: #0067d4;
-  }
-
-  @media (max-width: 700px) {
-    font-size: 9px;
-  }
-`;
-
-const FieldInput = styled.input`
-  display: block;
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  padding: 0;
-  background: transparent;
-  color: #111111;
-  font-family: inherit;
-  font-size: 16px;
-  line-height: 1.4;
-  height: 25px;
-  -webkit-appearance: none;
-  appearance: none;
-
-  &::placeholder {
-    color: #a0a0a0;
-    opacity: 1;
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  @media (max-width: 700px) {
-    font-size: 16px;
-    height: 24px;
-  }
-`;
-
-const ErrorMessage = styled.p`
-  margin: 12px 0 0;
-  color: #b42318;
-  font-size: 12px;
-  line-height: 1.5;
-`;
-
-const ContactActions = styled.div`
-  margin-top: 22px;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-
-  @media (max-width: 700px) {
-    margin-top: 18px;
-  }
-
-  @media (max-width: 430px) {
-    flex-direction: column-reverse;
-  }
-`;
-
-const BackButton = styled.button`
-  appearance: none;
-  min-height: 44px;
-  padding: 0 18px;
-  border: 1px solid #d9dfe5;
-  border-radius: 999px;
-  background: #ffffff;
-  color: #083672;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-
-  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
-
-  &:hover:not(:disabled) {
-    background: #f1f7fd;
-    transform: translateY(-1px);
-    box-shadow: 0 5px 18px rgba(8, 54, 114, 0.06);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  @media (max-width: 700px) {
-    min-height: 42px;
-    padding: 0 14px;
-    font-size: 11px;
-  }
-`;
-
-const NextButton = styled.button`
-  appearance: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 0 20px;
-  border: 0;
-  border-radius: 999px;
-  background: #083672;
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 12px;
-  cursor: pointer;
-
-  transition: background 0.25s ease, transform 0.25s ease, opacity 0.25s ease,
-    box-shadow 0.25s ease;
-
-  &:hover:not(:disabled) {
-    background: #0067d4;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(0, 103, 212, 0.16);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  @media (max-width: 700px) {
-    min-height: 42px;
-    padding: 0 16px;
-    font-size: 11px;
-  }
-`;
-
-/* SUCCESS TICKET */
-
-const ReceiptPage = styled.div`
-  width: 100%;
-  min-height: 100dvh;
-  background: #f5f7fa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-
-  @media (max-width: 700px) {
-    padding: 16px;
-  }
-`;
-
-const Ticket = styled.div`
-  position: relative;
-  width: min(540px, 100%);
-  background: #ffffff;
-  border-radius: 18px;
-  box-shadow: 0 30px 90px rgba(8, 54, 114, 0.12), 0 4px 18px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
-  animation: ${receiptIn} 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
-`;
-
-const TicketTop = styled.div`
-  min-height: 76px;
-  padding: 0 32px;
-  background: #083672;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-
-  @media (max-width: 700px) {
-    min-height: 64px;
-    padding: 0 22px;
-  }
-`;
-
-const TicketLogo = styled.img`
-  width: 72px;
-  height: auto;
-  display: block;
-  filter: brightness(0) invert(1);
-
-  @media (max-width: 700px) {
-    width: 62px;
-  }
-`;
-
-const TicketStatus = styled.span`
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  color: #c6e3fb;
-  text-align: right;
-
-  @media (max-width: 700px) {
-    font-size: 8px;
-  }
-`;
-
-const TicketMain = styled.div`
-  padding: 34px 38px 30px;
-
-  @media (max-width: 700px) {
-    padding: 27px 23px 25px;
-  }
-`;
-
-const TicketEyebrow = styled.div`
-  margin-bottom: 13px;
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  color: #0067d4;
-
-  @media (max-width: 700px) {
-    font-size: 8px;
-  }
-`;
-
-const TicketTitle = styled.h1`
-  margin: 0;
-  font-size: clamp(32px, 5vw, 46px);
-  line-height: 0.98;
-  font-weight: 200;
-  letter-spacing: -0.045em;
-  color: #111111;
-`;
-
-const TicketText = styled.p`
-  max-width: 390px;
-  margin: 14px 0 27px;
-  font-size: 13px;
-  line-height: 1.55;
-  color: #666666;
-
-  @media (max-width: 700px) {
-    font-size: 12px;
-    margin: 11px 0 22px;
-  }
-`;
-
-const TicketDetails = styled.div`
-  border-top: 1px solid #e5e5e5;
-`;
-
-const TicketDetail = styled.div`
-  min-height: 46px;
-  padding: 10px 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  border-bottom: 1px solid #e5e5e5;
-
-  @media (max-width: 700px) {
-    min-height: 42px;
-    padding: 8px 0;
-  }
-`;
-
-const TicketLabel = styled.span`
-  flex-shrink: 0;
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  color: #888888;
-
-  @media (max-width: 700px) {
-    font-size: 8px;
-  }
-`;
-
-const TicketValue = styled.span`
-  max-width: 65%;
-  text-align: right;
-  overflow-wrap: anywhere;
-  font-size: 12px;
-  line-height: 1.5;
-  color: #111111;
-
-  @media (max-width: 700px) {
-    font-size: 10px;
-  }
-`;
-
-const TicketDivider = styled.div`
-  position: relative;
-  height: 1px;
-  display: flex;
-  align-items: center;
-`;
-
-const TicketDashed = styled.div`
-  width: 100%;
-  border-top: 1px dashed #cfd5db;
-`;
-
-const TicketNotch = styled.span<{
-  $position: "left" | "right";
-}>`
-  position: absolute;
-  z-index: 2;
-  width: 22px;
-  height: 22px;
-  top: 50%;
-  transform: translateY(-50%);
-  border-radius: 50%;
-  background: #f5f7fa;
-
-  ${({ $position }) =>
-    $position === "left" ? "left: -11px;" : "right: -11px;"}
-
-  @media (max-width: 700px) {
-    width: 20px;
-    height: 20px;
-
-    ${({ $position }) =>
-      $position === "left" ? "left: -10px;" : "right: -10px;"}
-  }
-`;
-
-const TicketBottom = styled.div`
-  padding: 24px 38px 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-
-  @media (max-width: 700px) {
-    padding: 20px 23px 24px;
-    align-items: stretch;
-    flex-direction: column;
-  }
-`;
-
-const TicketEvent = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
-
-const TicketEventDate = styled.div`
-  font-size: 29px;
-  line-height: 1;
-  font-weight: 200;
-  color: #083672;
-`;
-
-const TicketEventInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  strong {
-    font-size: 9px;
-    letter-spacing: 0.08em;
-    font-weight: 400;
-    color: #111111;
-  }
-
-  span {
-    font-size: 10px;
-    color: #777777;
-  }
-`;
-
-const DoneButton = styled.button`
-  min-width: 105px;
-  height: 42px;
-  border: 0;
-  border-radius: 999px;
-  background: #083672;
-  color: #ffffff;
-  font-family: inherit;
-  font-size: 11px;
-  cursor: pointer;
-  transition: background 0.25s ease, transform 0.25s ease;
-
-  &:hover {
-    background: #0067d4;
-    transform: translateY(-1px);
-  }
-
-  @media (max-width: 700px) {
-    width: 100%;
-    height: 43px;
-  }
-`;

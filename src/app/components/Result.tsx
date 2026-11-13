@@ -7,21 +7,25 @@ const outcomes = [
     number: "01",
     title: "See the risk.",
     text: "Understand where manual reporting creates regulatory, audit and operational exposure.",
+    type: "featured",
   },
   {
     number: "02",
     title: "Connect the data.",
-    text: "See how leading institutions are connecting finance, risk and compliance information.",
+    text: "Connect finance, risk and compliance information for a clearer view.",
+    type: "connect",
   },
   {
     number: "03",
     title: "Understand AI.",
-    text: "Get a practical view of what AI can and cannot do in reporting and compliance today.",
+    text: "Discover how AI can support reporting and compliance today.",
+    type: "ai",
   },
   {
     number: "04",
     title: "Think continuously.",
-    text: "Explore how reporting changes when systems become connected, intelligent and continuous.",
+    text: "Explore a future of connected, intelligent and continuous reporting.",
+    type: "wide",
   },
 ];
 
@@ -30,48 +34,65 @@ export default function Result() {
     <Section id="results">
       <Container>
         <Header>
-          <div>
-            <Eyebrow>WHAT YOU&apos;LL LEARN</Eyebrow>
-
-            <Heading>
-              What changes
-              <br />
-              when <span>manual ends.</span>
-            </Heading>
-          </div>
+          <Heading>
+            What changes
+            <br />
+            when <Accent>manual ends.</Accent>
+          </Heading>
 
           <Description>
-            A practical executive conversation designed to help leaders
-            understand the risks, opportunities and decisions that come with
-            connected and intelligent reporting.
+            Four practical takeaways for leaders navigating the future of risk,
+            reporting and compliance.
           </Description>
         </Header>
 
-        <Stack>
-          <StackShadow />
-
+        <BentoGrid>
           {outcomes.map((outcome) => (
-            <Card key={outcome.number}>
-              <CardLeft>
-                <Number>{outcome.number}</Number>
+            <Card key={outcome.number} $type={outcome.type}>
+              <CardTop>
+                <Number $featured={outcome.type === "featured"}>
+                  {outcome.number}
+                </Number>
 
-                <CardContent>
-                  <CardTitle>{outcome.title}</CardTitle>
-                  <CardText>{outcome.text}</CardText>
-                </CardContent>
-              </CardLeft>
+                <CardIndicator $featured={outcome.type === "featured"}>
+                  <span />
+                </CardIndicator>
+              </CardTop>
+
+              <CardContent>
+                <CardTitle $featured={outcome.type === "featured"}>
+                  {outcome.title}
+                </CardTitle>
+
+                <CardText $featured={outcome.type === "featured"}>
+                  {outcome.text}
+                </CardText>
+              </CardContent>
+
+              {outcome.type === "featured" && (
+                <FeatureAccent aria-hidden="true">
+                  <AccentOrb />
+                </FeatureAccent>
+              )}
+
+              {outcome.type === "wide" && (
+                <WideAccent aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
+                </WideAccent>
+              )}
             </Card>
           ))}
-        </Stack>
+        </BentoGrid>
 
         <BottomStatement>
-          <StatementLabel>THE OUTCOME</StatementLabel>
-
           <Statement>
-            From <span>manual processes</span> to connected,
-            <br />
-            intelligent reporting.
+            From manual processes to{" "}
+            <StatementAccent>intelligent reporting.</StatementAccent>
           </Statement>
+
+          <StatementLine />
         </BottomStatement>
       </Container>
     </Section>
@@ -79,13 +100,15 @@ export default function Result() {
 }
 
 const Section = styled.section`
-  position: relative;
-  padding: 120px 0 130px;
-  background: #ffffff;
+  width: 100%;
+  padding: 76px 0 80px;
   overflow: hidden;
+  background: #ffffff;
+  color: #083672;
+  font-family: "Montserrat", sans-serif;
 
   @media (max-width: 700px) {
-    padding: 85px 0 95px;
+    padding: 54px 0 58px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -94,276 +117,365 @@ const Section = styled.section`
 `;
 
 const Container = styled.div`
-  width: min(1120px, 90vw);
+  width: min(1080px, calc(100% - 64px));
   margin: 0 auto;
-`;
 
-const Header = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 0.65fr;
-  align-items: end;
-  gap: 70px;
-  margin-bottom: 65px;
-
-  @media (max-width: 800px) {
-    grid-template-columns: 1fr;
-    gap: 22px;
-    margin-bottom: 45px;
+  @media (max-width: 600px) {
+    width: calc(100% - 36px);
   }
 `;
 
-const Eyebrow = styled.div`
-  margin-bottom: 16px;
-  color: #0067d4;
-  font-family: "Chillen", sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+const Header = styled.header`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 36px;
+  margin-bottom: 30px;
+
+  @media (max-width: 760px) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 25px;
+  }
 `;
 
 const Heading = styled.h2`
-  max-width: 760px;
   margin: 0;
   color: #083672;
-  font-family: "Chillen", sans-serif;
-  font-size: clamp(46px, 6vw, 76px);
-  line-height: 0.92;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(38px, 5.4vw, 64px);
+  font-weight: 600;
+  line-height: 1.08;
   letter-spacing: -0.065em;
-  font-weight: 400;
 
-  span {
-    color: #0067d4;
+  @media (max-width: 600px) {
+    font-size: clamp(34px, 9vw, 48px);
+    letter-spacing: -0.055em;
   }
+`;
 
-  @media (max-width: 700px) {
-    font-size: clamp(42px, 13vw, 60px);
-  }
+const Accent = styled.span`
+  color: #0879d9;
 `;
 
 const Description = styled.p`
-  max-width: 420px;
-  margin: 0;
-  color: #555555;
-  font-family: "Mont", sans-serif;
-  font-size: 14px;
-  line-height: 1.7;
-  letter-spacing: -0.015em;
-  font-weight: 200;
+  max-width: 320px;
+  margin: 0 0 4px;
+  color: #68788d;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.8;
 
-  @media (max-width: 700px) {
-    max-width: 100%;
-    font-size: 13px;
-    line-height: 1.65;
+  @media (max-width: 760px) {
+    max-width: 430px;
+    font-size: 12px;
   }
 `;
 
-const Stack = styled.div`
-  position: relative;
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 0 45px;
+const BentoGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "featured featured connect"
+    "ai wide wide";
+  grid-auto-rows: minmax(190px, auto);
+  gap: 12px;
 
-  @media (max-width: 700px) {
-    padding: 0 8px;
+  @media (max-width: 760px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "featured featured"
+      "connect ai"
+      "wide wide";
+    grid-auto-rows: minmax(170px, auto);
+    gap: 10px;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "featured"
+      "connect"
+      "ai"
+      "wide";
+    grid-auto-rows: auto;
   }
 `;
 
-const Card = styled.article`
+const Card = styled.article<{ $type: string }>`
   position: relative;
-  z-index: 1;
-  min-height: 150px;
   display: flex;
-  align-items: center;
-  padding: 28px 34px;
-  margin-bottom: 12px;
-  background: #f7faff;
-  border: 1px solid #c6e3fb;
-  border-radius: 24px;
-  box-shadow: 0 2px 8px rgba(8, 54, 114, 0.025),
-    0 12px 30px rgba(8, 54, 114, 0.018);
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    background 0.5s ease, border-color 0.5s ease,
-    box-shadow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  min-width: 0;
+  min-height: 190px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 23px;
+  overflow: hidden;
+  border: 1px solid #e8edf3;
+  border-radius: 17px;
+  background: #f8fafc;
+  transition: transform 250ms ease, border-color 250ms ease,
+    background 250ms ease;
+
+  ${({ $type }) => {
+    switch ($type) {
+      case "featured":
+        return `
+          grid-area: featured;
+          min-height: 235px;
+          padding: 27px;
+          background: #083672;
+          border-color: #083672;
+        `;
+      case "connect":
+        return `grid-area: connect;`;
+      case "ai":
+        return `grid-area: ai;`;
+      case "wide":
+        return `
+          grid-area: wide;
+          flex-direction: row;
+          align-items: flex-end;
+          gap: 20px;
+          background: #f1f6fc;
+        `;
+      default:
+        return "";
+    }
+  }}
 
   &:hover {
-    background: #ffffff;
-    border-color: #0067d4;
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(8, 54, 114, 0.045),
-      0 24px 60px rgba(8, 54, 114, 0.055);
+    transform: translateY(-3px);
+    border-color: ${({ $type }) =>
+      $type === "featured" ? "#083672" : "#c6d9ed"};
+    background: ${({ $type }) =>
+      $type === "featured"
+        ? "#083672"
+        : $type === "wide"
+        ? "#edf4fc"
+        : "#ffffff"};
   }
 
-  &:active {
-    transform: translateY(-2px);
+  @media (max-width: 760px) {
+    min-height: 175px;
+    padding: 19px;
+
+    ${({ $type }) =>
+      $type === "featured" &&
+      `
+        min-height: 215px;
+        padding: 23px;
+      `}
   }
 
-  @media (max-width: 700px) {
-    min-height: 150px;
-    padding: 23px 21px;
-    border-radius: 20px;
+  @media (max-width: 480px) {
+    min-height: 160px;
+
+    ${({ $type }) =>
+      $type === "featured" &&
+      `
+        min-height: 205px;
+      `}
+
+    ${({ $type }) =>
+      $type === "wide" &&
+      `
+        min-height: 165px;
+      `}
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
 
     &:hover {
-      transform: translateY(-3px);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    &:hover,
-    &:active {
       transform: none;
     }
   }
 `;
 
-const CardLeft = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 24px;
-  min-width: 0;
-
-  @media (max-width: 700px) {
-    gap: 14px;
-  }
-`;
-
-const Number = styled.div`
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+const CardTop = styled.div`
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+`;
+
+const Number = styled.span<{ $featured: boolean }>`
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
   justify-content: center;
+  border: 1px solid
+    ${({ $featured }) => ($featured ? "rgba(255,255,255,0.22)" : "#e0e7ef")};
   border-radius: 50%;
-  background: #083672;
-  color: #ffffff;
-  font-family: "Chillen", sans-serif;
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    background 0.4s ease;
+  color: ${({ $featured }) => ($featured ? "#ffffff" : "#0879d9")};
+  font-family: "Montserrat", sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+`;
 
-  ${Card}:hover & {
-    transform: scale(1.06);
-    background: #0067d4;
-  }
+const CardIndicator = styled.span<{ $featured: boolean }>`
+  display: flex;
+  width: 27px;
+  height: 27px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid
+    ${({ $featured }) => ($featured ? "rgba(255,255,255,0.2)" : "#e0e7ef")};
+  border-radius: 50%;
 
-  @media (max-width: 700px) {
-    width: 32px;
-    height: 32px;
-    font-size: 8px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    ${Card}:hover & {
-      transform: none;
-    }
+  span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: ${({ $featured }) => ($featured ? "#8dcfff" : "#0879d9")};
   }
 `;
 
 const CardContent = styled.div`
-  min-width: 0;
+  position: relative;
+  z-index: 2;
+  max-width: 390px;
 `;
 
-const CardTitle = styled.h3`
+const CardTitle = styled.h3<{ $featured: boolean }>`
   margin: 0;
-  color: #083672;
-  font-family: "Chillen", sans-serif;
-  font-size: clamp(23px, 3vw, 35px);
-  line-height: 1;
+  color: ${({ $featured }) => ($featured ? "#ffffff" : "#083672")};
+  font-family: "Montserrat", sans-serif;
+  font-size: ${({ $featured }) =>
+    $featured ? "clamp(27px, 3.4vw, 39px)" : "clamp(19px, 2.1vw, 24px)"};
+  font-weight: 600;
+  line-height: 1.2;
   letter-spacing: -0.055em;
+`;
+
+const CardText = styled.p<{ $featured: boolean }>`
+  max-width: 350px;
+  margin: 9px 0 0;
+  color: ${({ $featured }) => ($featured ? "#d5e4f6" : "#68788d")};
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
   font-weight: 400;
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  line-height: 1.8;
 
-  ${Card}:hover & {
-    transform: translateX(2px);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    ${Card}:hover & {
-      transform: none;
-    }
-  }
+  ${({ $featured }) =>
+    $featured &&
+    `
+      max-width: 370px;
+      font-size: 13px;
+    `}
 `;
 
-const CardText = styled.p`
-  max-width: 560px;
-  margin: 11px 0 0;
-  color: #555555;
-  font-family: "Mont", sans-serif;
-  font-size: 14px;
-  line-height: 1.65;
-  letter-spacing: -0.005em;
-  font-weight: 200;
-
-  @media (max-width: 700px) {
-    margin-top: 9px;
-    font-size: 13px;
-    line-height: 1.6;
-  }
-`;
-
-const StackShadow = styled.div`
+const FeatureAccent = styled.div`
   position: absolute;
-  left: 70px;
-  right: 70px;
-  bottom: -10px;
-  height: 40px;
-  background: rgba(0, 103, 212, 0.06);
+  right: 45px;
+  top: 60px;
+  width: 82px;
+  height: 82px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50%;
-  filter: blur(20px);
-  z-index: 0;
   pointer-events: none;
 
-  @media (max-width: 700px) {
-    left: 30px;
-    right: 30px;
+  &::before {
+    position: absolute;
+    content: "";
+    inset: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+  }
+
+  @media (max-width: 600px) {
+    right: 24px;
+    top: 63px;
+    width: 65px;
+    height: 65px;
+  }
+`;
+
+const AccentOrb = styled.span`
+  position: absolute;
+  top: 8px;
+  right: 7px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #8dcfff;
+  box-shadow: 0 0 0 5px rgba(141, 207, 255, 0.12);
+`;
+
+const WideAccent = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 42px;
+  flex-shrink: 0;
+  padding-bottom: 2px;
+
+  span {
+    display: block;
+    width: 5px;
+    border-radius: 5px;
+    background: #0879d9;
+  }
+
+  span:nth-child(1) {
+    height: 16px;
+    opacity: 0.35;
+  }
+
+  span:nth-child(2) {
+    height: 27px;
+    opacity: 0.65;
+  }
+
+  span:nth-child(3) {
+    height: 39px;
+  }
+
+  @media (max-width: 480px) {
+    display: none;
   }
 `;
 
 const BottomStatement = styled.div`
-  display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
+  display: flex;
   align-items: center;
-  gap: 50px;
-  margin-top: 85px;
-  padding-top: 30px;
-  border-top: 1px solid #c6e3fb;
+  gap: 25px;
+  margin-top: 25px;
 
-  @media (max-width: 700px) {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    margin-top: 65px;
+  @media (max-width: 600px) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
   }
-`;
-
-const StatementLabel = styled.div`
-  color: #0067d4;
-  font-family: "Chillen", sans-serif;
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.17em;
-  text-transform: uppercase;
 `;
 
 const Statement = styled.p`
   max-width: 650px;
   margin: 0;
   color: #083672;
-  font-family: "Chillen", sans-serif;
-  font-size: clamp(22px, 3vw, 34px);
-  line-height: 1.02;
-  letter-spacing: -0.055em;
-  font-weight: 400;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(18px, 2.5vw, 27px);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.045em;
+`;
 
-  span {
-    color: #0067d4;
+const StatementAccent = styled.span`
+  color: #0879d9;
+`;
+
+const StatementLine = styled.div`
+  height: 1px;
+  flex: 1;
+  background: #e5ebf2;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    flex: none;
   }
 `;

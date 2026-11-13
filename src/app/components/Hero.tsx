@@ -1,6 +1,8 @@
 "use client";
+
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Montserrat } from "next/font/google";
+import { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import Navbar from "./Navbar.component";
 
@@ -8,876 +10,671 @@ type HeroProps = {
   onReserve: () => void;
 };
 
+type CardName = "daniel" | "simeon";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
 const fadeIn = keyframes`
   from {
     opacity: 0;
+    transform: translateY(18px);
   }
 
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 `;
 
-const modalIn = keyframes`
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-`;
-
-const qrFloatAnimation = keyframes`
+const particleDrift = keyframes`
   0% {
-    transform: translateY(0) rotate(0deg);
-  }
-
-  8% {
-    transform: translateY(-2px) rotate(-3deg);
-  }
-
-  16% {
-    transform: translateY(1px) rotate(3deg);
-  }
-
-  24% {
-    transform: translateY(-2px) rotate(-2.5deg);
-  }
-
-  32% {
-    transform: translateY(1px) rotate(2.5deg);
-  }
-
-  40% {
-    transform: translateY(-2px) rotate(-2deg);
-  }
-
-  48% {
-    transform: translateY(-7px) rotate(0deg);
-  }
-
-  60% {
-    transform: translateY(-3px) rotate(0deg);
-  }
-
-  72% {
-    transform: translateY(0) rotate(0deg);
+    background-position:
+      0 0,
+      30px 50px,
+      70px 10px,
+      100px 80px;
   }
 
   100% {
-    transform: translateY(0) rotate(0deg);
+    background-position:
+      90px -110px,
+      -30px -70px,
+      150px -120px,
+      20px -40px;
   }
 `;
 
-const qrGlowAnimation = keyframes`
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scale(0.92);
-  }
+/* Hero section */
 
-  50% {
-    opacity: 0.8;
-    transform: scale(1.08);
-  }
-`;
-
-export default function Hero({ onReserve }: HeroProps) {
-  const [qrOpen, setQrOpen] = useState(false);
-
-  useEffect(() => {
-    document.body.style.overflow = qrOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [qrOpen]);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setQrOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
-  const handleReserve = () => {
-    setQrOpen(false);
-    onReserve();
-  };
-
-  return (
-    <Container id="top">
-      <Navbar onReserve={onReserve} />
-
-      <HeroComponent>
-        <BackgroundImage
-          src="/images/eventImg.jpeg"
-          alt="OPEX Executive Workshop and Summit"
-          fill
-          priority
-          quality={75}
-          sizes="100vw"
-        />
-
-        <Overlay />
-
-        <HeroContent>
-          <Headline>
-            <HeadlineTop>
-              <HeadlineLight>The End of</HeadlineLight>
-            </HeadlineTop>
-
-            <HeadlineBrand>
-              <Accent>Manual.</Accent>
-            </HeadlineBrand>
-          </Headline>
-
-          <Subheadline>
-            AI, connected systems and the future of financial reporting and
-            compliance
-          </Subheadline>
-
-          <ValueText>
-            How Nigeria&apos;s leading financial institutions are building
-            reporting and compliance that regulators, boards and partners can
-            trust.
-          </ValueText>
-
-          <EventDetails>
-            <Detail>
-              <DetailLabel>DATE</DetailLabel>
-              <DetailValue>Wednesday, 21 October 2026</DetailValue>
-            </Detail>
-
-            <Detail>
-              <DetailLabel>VENUE</DetailLabel>
-              <DetailValue>The Wheatbaker, Ikoyi, Lagos</DetailValue>
-            </Detail>
-          </EventDetails>
-
-          <Actions>
-            <PrimaryButton type="button" onClick={onReserve}>
-              Reserve your seat
-            </PrimaryButton>
-
-            <SecondaryButton href="/agenda">View the agenda</SecondaryButton>
-          </Actions>
-        </HeroContent>
-      </HeroComponent>
-    </Container>
-  );
-}
-
-const Container = styled.main`
+const HeroSection = styled.section`
   position: relative;
-  width: 100%;
-  min-height: 100vh;
-  background: #000000;
-`;
-
-const HeroComponent = styled.section`
-  position: relative;
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  align-items: center;
+  isolation: isolate;
+  min-height: 100svh;
   overflow: hidden;
-  background: #050505;
+  background: #07152f;
+  color: #fff;
 `;
 
-const BackgroundImage = styled(Image)`
-  position: absolute !important;
-  inset: 0;
-  z-index: 0;
-
-  width: 100%;
-  height: 100%;
-
-  object-fit: cover;
-  object-position: center center;
-
-  transform: scale(1.01);
-`;
-
-const Overlay = styled.div`
+const BackgroundImage = styled.div`
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: -2;
+  pointer-events: none;
 
-  /*
-    Deep OPEX blue foundation.
-    The left side is darker for text readability,
-    while the right side allows the image to breathe.
-  */
+  img {
+    object-fit: cover;
+    object-position: center;
+  }
+`;
+
+const BackgroundShade = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
 
   background: linear-gradient(
-      90deg,
-      rgba(3, 20, 48, 0.96) 0%,
-      rgba(5, 31, 69, 0.88) 24%,
-      rgba(7, 45, 88, 0.66) 48%,
-      rgba(5, 38, 78, 0.42) 72%,
-      rgba(2, 15, 35, 0.52) 100%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(3, 18, 40, 0.42) 0%,
-      rgba(0, 48, 105, 0.12) 45%,
-      rgba(0, 8, 22, 0.78) 100%
-    );
+    90deg,
+    rgba(4, 15, 37, 0.94) 0%,
+    rgba(4, 15, 37, 0.83) 42%,
+    rgba(4, 15, 37, 0.48) 100%
+  );
 
-  /*
-    Very subtle blue atmospheric wash.
-    This makes the photography feel part of the
-    OPEX visual system without flattening it.
-  */
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    background: radial-gradient(
-        circle at 72% 42%,
-        rgba(0, 103, 212, 0.22) 0%,
-        rgba(0, 103, 212, 0.08) 28%,
-        rgba(0, 103, 212, 0) 60%
-      ),
-      linear-gradient(
-        90deg,
-        rgba(0, 103, 212, 0.08) 0%,
-        rgba(0, 103, 212, 0) 65%
-      );
-
-    pointer-events: none;
-  }
-
-  @media (max-width: 700px) {
+  @media (max-width: 800px) {
     background: linear-gradient(
-        90deg,
-        rgba(3, 20, 48, 0.97) 0%,
-        rgba(5, 31, 69, 0.9) 42%,
-        rgba(5, 38, 78, 0.68) 75%,
-        rgba(2, 15, 35, 0.64) 100%
-      ),
-      linear-gradient(
-        180deg,
-        rgba(3, 18, 40, 0.5) 0%,
-        rgba(0, 48, 105, 0.12) 45%,
-        rgba(0, 8, 22, 0.82) 100%
-      );
-
-    &::after {
-      background: radial-gradient(
-          circle at 75% 40%,
-          rgba(0, 103, 212, 0.16) 0%,
-          rgba(0, 103, 212, 0) 55%
-        ),
-        linear-gradient(
-          90deg,
-          rgba(0, 103, 212, 0.06) 0%,
-          rgba(0, 103, 212, 0) 70%
-        );
-    }
+      180deg,
+      rgba(4, 15, 37, 0.82) 0%,
+      rgba(4, 15, 37, 0.88) 60%,
+      rgba(4, 15, 37, 0.96) 100%
+    );
   }
 `;
 
 const HeroContent = styled.div`
   position: relative;
-  z-index: 2;
+  z-index: 1;
 
-  width: min(900px, 90vw);
+  width: 100%;
+  max-width: 1440px;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: clamp(100px, 13vh, 132px) 6% 48px;
 
-  margin-left: clamp(30px, 8vw, 130px);
-  padding-top: 100px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(350px, 0.9fr);
+  align-items: center;
+  gap: 48px;
 
-  color: #ffffff;
+  @media (max-width: 1000px) {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.8fr);
+    gap: 24px;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
 
-  @media (max-width: 700px) {
-    width: calc(100% - 40px);
-    margin: 0 20px;
-    padding-top: 80px;
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 105px 5% 48px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 96px 20px 36px;
+    gap: 30px;
   }
 `;
 
-const Headline = styled.h1`
+const Copy = styled.div`
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  animation: ${fadeIn} 0.8s ease both;
+
+  @media (max-width: 800px) {
+    max-width: 650px;
+  }
+`;
+
+const Heading = styled.h1`
   margin: 0;
+  max-width: 760px;
+  font-size: clamp(42px, 5.4vw, 76px);
+  line-height: 1.04;
+  font-weight: 700;
+  letter-spacing: -0.065em;
 
-  color: #ffffff;
+  > span {
+    display: block;
+  }
 
-  letter-spacing: -0.075em;
+  .accent {
+    color: #54dff4;
+  }
 
-  @media (max-width: 700px) {
-    letter-spacing: -0.065em;
+  @media (max-width: 800px) {
+    max-width: 650px;
+    font-size: clamp(44px, 8.4vw, 70px);
+  }
+
+  @media (max-width: 480px) {
+    font-size: clamp(39px, 10vw, 52px);
+    letter-spacing: -0.055em;
+    line-height: 1.08;
   }
 `;
 
-const HeadlineTop = styled.span`
-  display: block;
-
-  white-space: nowrap;
-
-  font-family: "Mont", sans-serif;
-  font-size: clamp(48px, 6.5vw, 98px);
-  line-height: 0.9;
-  font-weight: 200;
-  letter-spacing: -0.075em;
-
-  @media (max-width: 700px) {
-    font-size: clamp(40px, 11vw, 72px);
-  }
-`;
-
-const HeadlineLight = styled.span`
-  font-family: "Mont", sans-serif;
-  font-weight: 200;
-`;
-
-const HeadlineBrand = styled.span`
-  display: block;
-
-  margin-top: 8px;
-
-  font-family: "Chillen", sans-serif;
-  font-size: clamp(100px, 13vw, 190px);
-  line-height: 0.78;
-  font-weight: 400;
-  letter-spacing: -0.085em;
-
-  @media (max-width: 700px) {
-    margin-top: 8px;
-    font-size: clamp(78px, 21vw, 140px);
-    line-height: 0.8;
-  }
-`;
-
-const Accent = styled.span`
-  color: #0067d4;
-`;
-
-const Subheadline = styled.p`
-  max-width: 590px;
-
-  margin-top: 36px;
-
-  color: #f1f1f1;
-
-  font-family: "Chillen", sans-serif;
-  font-size: clamp(16px, 1.5vw, 21px);
-  line-height: 1.4;
-  letter-spacing: -0.025em;
+const Description = styled.p`
+  max-width: 490px;
+  margin: 25px 0 0;
+  color: #c4cfe0;
+  font-size: 15px;
+  line-height: 1.85;
   font-weight: 400;
 
-  @media (max-width: 700px) {
-    margin-top: 28px;
-    font-size: 15px;
-  }
-`;
-
-const ValueText = styled.p`
-  max-width: 520px;
-
-  margin-top: 18px;
-
-  color: #c6e3fb;
-
-  font-family: "Mont", sans-serif;
-  font-size: 12px;
-  line-height: 1.65;
-  letter-spacing: -0.01em;
-  font-weight: 200;
-
-  @media (max-width: 700px) {
-    font-size: 11px;
+  @media (max-width: 480px) {
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.75;
   }
 `;
 
 const EventDetails = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px 22px;
+  margin-top: 28px;
 
-  gap: 48px;
-
-  margin-top: 34px;
-
-  @media (max-width: 600px) {
-    flex-direction: column;
-    gap: 16px;
+  @media (max-width: 480px) {
+    gap: 13px 18px;
+    margin-top: 24px;
   }
 `;
 
 const Detail = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 7px;
-`;
-
-const DetailLabel = styled.span`
-  color: #0067d4;
-
-  font-family: "Chillen", sans-serif;
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.16em;
-`;
-
-const DetailValue = styled.span`
-  color: #f5f5f5;
-
-  font-family: "Mont", sans-serif;
+  align-items: center;
+  gap: 9px;
+  color: #e0e8f4;
   font-size: 12px;
-  font-weight: 200;
-  letter-spacing: -0.01em;
+  font-weight: 500;
+
+  svg {
+    flex-shrink: 0;
+    color: #54dff4;
+  }
 `;
 
 const Actions = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 24px;
+  margin-top: 34px;
 
-  gap: 14px;
-
-  margin-top: 36px;
-
-  @media (max-width: 600px) {
-    flex-direction: column;
-    align-items: flex-start;
+  @media (max-width: 480px) {
+    gap: 18px;
+    margin-top: 28px;
   }
 `;
 
 const PrimaryButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  min-height: 54px;
-
-  padding: 0 28px;
-
-  border: 0;
-  border-radius: 100px;
-
-  background: #c6e3fb;
-  color: #083672;
-
-  font-family: "Mont", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-
+  min-height: 50px;
+  padding: 0 25px;
+  border: 1px solid #fff;
+  border-radius: 999px;
+  background: #fff;
+  color: #07152f;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
 
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
 
   &:hover {
-    transform: translateY(-3px);
-
-    background: #ffffff;
-
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25),
-      0 0 0 1px rgba(198, 227, 251, 0.25);
-  }
-
-  &:focus-visible {
-    outline: 3px solid #c6e3fb;
-    outline-offset: 4px;
-  }
-
-  @media (max-width: 600px) {
-    min-height: 52px;
-    padding: 0 25px;
-
-    font-size: 14px;
-  }
-`;
-
-const SecondaryButton = styled.a`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  min-height: 48px;
-
-  padding: 0 20px;
-
-  border-radius: 100px;
-
-  color: #eeeeee;
-
-  font-family: "Mont", sans-serif;
-  font-size: 11px;
-  font-weight: 400;
-
-  text-decoration: none;
-
-  transition: color 0.25s ease, transform 0.25s ease;
-
-  &:hover {
-    color: #c6e3fb;
+    background: #54dff4;
+    border-color: #54dff4;
     transform: translateY(-2px);
   }
 
   &:focus-visible {
-    outline: 3px solid #c6e3fb;
+    outline: 2px solid #54dff4;
     outline-offset: 4px;
   }
 `;
 
-const QRCodeCard = styled.button`
-  position: absolute;
-  z-index: 4;
-
-  right: clamp(24px, 5vw, 70px);
-  bottom: 32px;
-
-  width: 108px;
-  height: 108px;
-
-  display: flex;
-  flex-direction: column;
+const TextLink = styled.a`
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-
-  padding: 10px;
-
-  cursor: pointer;
-
-  border: 0;
-  border-radius: 18px;
-
-  background: #ffffff;
-
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
-
-  animation: ${qrFloatAnimation} 2.2s ease-in-out infinite;
-
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  color: #e1e9f5;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
 
   &:hover {
-    animation-play-state: paused;
-
-    transform: translateY(-5px) scale(1.04);
-
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.32),
-      0 0 0 1px rgba(198, 227, 251, 0.35);
+    color: #54dff4;
   }
 
   &:focus-visible {
-    outline: 3px solid #c6e3fb;
+    outline: 2px solid #54dff4;
     outline-offset: 5px;
-  }
-
-  @media (max-width: 600px) {
-    right: 20px;
-    bottom: 20px;
-
-    width: 88px;
-    height: 88px;
-
-    padding: 8px;
-
-    border-radius: 14px;
   }
 `;
 
-const QRGlow = styled.div`
+/* Speaker cards */
+
+const SpeakersArea = styled.div`
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 470px;
+  animation: ${fadeIn} 0.9s ease 0.15s both;
+
+  @media (max-width: 800px) {
+    min-height: 390px;
+    margin-top: 2px;
+  }
+
+  @media (max-width: 480px) {
+    min-height: 330px;
+  }
+`;
+
+const CardDeck = styled.div`
+  position: relative;
+  width: min(100%, 510px);
+  height: 420px;
+  perspective: 1200px;
+
+  @media (max-width: 800px) {
+    width: min(100%, 460px);
+    height: 360px;
+  }
+
+  @media (max-width: 480px) {
+    height: 310px;
+  }
+`;
+
+const SpeakerCard = styled.article<{
+  $person: CardName;
+  $active: boolean;
+}>`
   position: absolute;
-
-  inset: -10px;
-
-  z-index: -1;
-
+  top: 50%;
+  left: 50%;
+  width: clamp(210px, 22vw, 275px);
+  height: clamp(310px, 32vw, 370px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 24px;
+  background: #101d34;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  outline: none;
+  isolation: isolate;
 
-  background: radial-gradient(
-    circle,
-    rgba(0, 103, 212, 0.38) 0%,
-    rgba(0, 103, 212, 0) 70%
-  );
+  transform: ${({ $person, $active }) => {
+    if ($person === "daniel") {
+      return $active
+        ? "translate(-76%, -53%) rotate(-5deg)"
+        : "translate(-91%, -50%) rotate(-8deg)";
+    }
 
-  filter: blur(8px);
+    return $active
+      ? "translate(-24%, -53%) rotate(5deg)"
+      : "translate(-9%, -50%) rotate(8deg)";
+  }};
 
-  animation: ${qrGlowAnimation} 3s ease-in-out infinite;
+  z-index: ${({ $active }) => ($active ? 5 : 2)};
 
+  transition: transform 450ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    box-shadow 350ms ease;
+
+  &:hover,
+  &:focus-visible {
+    box-shadow: 0 32px 75px rgba(0, 0, 0, 0.4);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.75);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 800px) {
+    width: clamp(190px, 35vw, 245px);
+    height: clamp(280px, 48vw, 330px);
+
+    transform: ${({ $person, $active }) => {
+      if ($person === "daniel") {
+        return $active
+          ? "translate(-76%, -53%) rotate(-4deg)"
+          : "translate(-88%, -50%) rotate(-7deg)";
+      }
+
+      return $active
+        ? "translate(-24%, -53%) rotate(4deg)"
+        : "translate(-12%, -50%) rotate(7deg)";
+    }};
+  }
+
+  @media (max-width: 480px) {
+    width: clamp(165px, 48vw, 205px);
+    height: clamp(245px, 70vw, 285px);
+    border-radius: 20px;
+
+    transform: ${({ $person, $active }) => {
+      if ($person === "daniel") {
+        return $active
+          ? "translate(-76%, -53%) rotate(-3deg)"
+          : "translate(-85%, -50%) rotate(-6deg)";
+      }
+
+      return $active
+        ? "translate(-24%, -53%) rotate(3deg)"
+        : "translate(-15%, -50%) rotate(6deg)";
+    }};
+  }
+`;
+
+const SpeakerImage = styled(Image)`
+  object-fit: cover;
+  object-position: center 25%;
+  user-select: none;
   pointer-events: none;
 `;
 
-const QRImage = styled(Image)`
-  position: relative;
+const ParticleLayer = styled.div`
+  position: absolute;
   z-index: 1;
-
-  width: 72px;
-  height: 72px;
-
-  object-fit: contain;
-
-  @media (max-width: 600px) {
-    width: 58px;
-    height: 58px;
-  }
-`;
-
-const QRText = styled.span`
-  position: relative;
-  z-index: 1;
-
-  margin-top: 4px;
-
-  color: #083672;
-
-  font-family: "Chillen", sans-serif;
-  font-size: 6px;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-
-  @media (max-width: 600px) {
-    font-size: 5px;
-  }
-`;
-
-const QRModalOverlay = styled.div`
-  position: fixed;
-
   inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.3;
 
-  z-index: 9999;
+  background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.95) 0 0.8px,
+      transparent 1.5px
+    ),
+    radial-gradient(circle, rgba(84, 223, 244, 0.9) 0 1px, transparent 1.7px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.8) 0 0.6px, transparent 1.4px),
+    radial-gradient(circle, rgba(84, 223, 244, 0.7) 0 0.8px, transparent 1.5px);
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-size: 110px 130px, 150px 170px, 90px 110px, 180px 140px;
 
-  padding: 20px;
+  animation: ${particleDrift} 22s linear infinite;
 
-  background: rgba(0, 0, 0, 0.78);
-
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
-  animation: ${fadeIn} 0.25s ease;
-`;
-
-const QRModal = styled.div`
-  position: relative;
-
-  width: min(390px, 100%);
-  max-height: 90vh;
-
-  padding: 34px 30px 28px;
-
-  overflow-y: auto;
-
-  border-radius: 24px;
-
-  background: #083672;
-
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45), 0 8px 30px rgba(0, 0, 0, 0.25);
-
-  animation: ${modalIn} 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-
-  @media (max-width: 600px) {
-    width: min(350px, 100%);
-
-    padding: 30px 22px 24px;
-
-    border-radius: 22px;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 `;
 
-const CloseButton = styled.button`
+const CardGradient = styled.div`
   position: absolute;
+  z-index: 2;
+  inset: 30% 0 0;
+  pointer-events: none;
 
-  top: 16px;
-  right: 16px;
-
-  width: 34px;
-  height: 34px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-
-  border: 0;
-  border-radius: 50%;
-
-  background: rgba(198, 227, 251, 0.14);
-
-  transition: background 0.25s ease, transform 0.25s ease;
-
-  &:hover {
-    background: rgba(198, 227, 251, 0.24);
-    transform: rotate(90deg);
-  }
-
-  &:focus-visible {
-    outline: 3px solid #c6e3fb;
-    outline-offset: 3px;
-  }
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(4, 10, 22, 0.12) 25%,
+    rgba(4, 10, 22, 0.9) 100%
+  );
 `;
 
-const CloseLine = styled.span`
+const SpeakerInfo = styled.div`
   position: absolute;
+  z-index: 3;
+  right: 20px;
+  bottom: 21px;
+  left: 20px;
 
-  width: 13px;
-  height: 1px;
-
-  background: #ffffff;
-
-  &:first-child {
-    transform: rotate(45deg);
+  .role {
+    margin: 0 0 7px;
+    color: #8deafa;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
   }
 
-  &:last-child {
-    transform: rotate(-45deg);
+  h2 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(19px, 2vw, 25px);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.04em;
   }
-`;
 
-const ModalEyebrow = styled.div`
-  margin-bottom: 14px;
+  p {
+    margin: 7px 0 0;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 11px;
+    line-height: 1.5;
+  }
 
-  padding-right: 35px;
+  @media (max-width: 480px) {
+    right: 14px;
+    bottom: 16px;
+    left: 14px;
 
-  color: #c6e3fb;
+    .role {
+      font-size: 8px;
+    }
 
-  font-family: "Chillen", sans-serif;
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.16em;
+    h2 {
+      font-size: 18px;
+    }
 
-  text-transform: uppercase;
-`;
-
-const ModalTitle = styled.h2`
-  margin: 0;
-
-  color: #ffffff;
-
-  font-family: "Chillen", sans-serif;
-  font-size: clamp(34px, 6vw, 46px);
-  line-height: 0.94;
-  letter-spacing: -0.055em;
-  font-weight: 400;
-`;
-
-const ModalAccent = styled.span`
-  color: #0067d4;
-`;
-
-const ModalDescription = styled.p`
-  max-width: 320px;
-
-  margin: 18px 0 24px;
-
-  color: #c6e3fb;
-
-  font-family: "Mont", sans-serif;
-  font-size: 11px;
-  line-height: 1.6;
-  letter-spacing: -0.01em;
-  font-weight: 200;
-`;
-
-const LargeQRWrapper = styled.div`
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 205px;
-  height: 205px;
-
-  margin: 0 auto 18px;
-
-  padding: 12px;
-
-  border-radius: 18px;
-
-  background: #ffffff;
-
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-
-  @media (max-width: 600px) {
-    width: 190px;
-    height: 190px;
+    p {
+      font-size: 10px;
+    }
   }
 `;
 
-const LargeQR = styled(Image)`
-  display: block;
+/* Hero component */
 
-  width: 100%;
-  height: 100%;
+export default function Hero({ onReserve }: HeroProps) {
+  const [activeCard, setActiveCard] = useState<CardName>("daniel");
 
-  object-fit: contain;
-`;
+  return (
+    <>
+      {/* Navbar is outside the isolated hero stacking context */}
+      <Navbar onReserve={onReserve} />
 
-const ModalHint = styled.div`
-  margin-bottom: 20px;
+      <HeroSection className={montserrat.className}>
+        <BackgroundImage>
+          <Image
+            src="/images/webinartheme.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+          />
+        </BackgroundImage>
 
-  color: #c6e3fb;
+        <BackgroundShade />
 
-  font-family: "Chillen", sans-serif;
-  font-size: 8px;
-  font-weight: 400;
-  letter-spacing: 0.16em;
+        <HeroContent>
+          <Copy>
+            <Heading>
+              <span>From Manual</span>
+              <span>Risk Assessment</span>
+              <span>
+                to <span className="accent">Intelligent</span>
+              </span>
+              <span className="accent">Risk Operations.</span>
+            </Heading>
 
-  text-align: center;
-`;
+            <Description>
+              Explore how AI is transforming enterprise risk management in
+              financial institutions.
+            </Description>
 
-const ModalLink = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+            <EventDetails>
+              <Detail>
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <rect
+                    x="3"
+                    y="5"
+                    width="18"
+                    height="16"
+                    rx="2"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                  />
+                  <path
+                    d="M16 3v4M8 3v4M3 10h18"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                Thursday, 19 November 2026
+              </Detail>
 
-  gap: 8px;
+              <Detail>
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                  />
+                  <path
+                    d="M12 7v5l3 2"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                11:00 AM
+              </Detail>
 
-  width: 100%;
-  height: 44px;
+              <Detail>
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <rect
+                    x="3"
+                    y="6"
+                    width="18"
+                    height="13"
+                    rx="2"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                  />
+                  <path
+                    d="M8 10h8M8 14h4"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                Live on Zoom
+              </Detail>
+            </EventDetails>
 
-  border: 0;
-  border-radius: 100px;
+            <Actions>
+              <PrimaryButton type="button" onClick={onReserve}>
+                Reserve your spot
+              </PrimaryButton>
 
-  background: #c6e3fb;
-  color: #083672;
+              <TextLink href="#speakers">Meet the speakers</TextLink>
+            </Actions>
+          </Copy>
 
-  font-family: "Chillen", sans-serif;
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+          <SpeakersArea>
+            <CardDeck
+              onMouseLeave={() => setActiveCard("daniel")}
+              aria-label="Webinar speakers"
+            >
+              <SpeakerCard
+                $person="daniel"
+                $active={activeCard === "daniel"}
+                onMouseEnter={() => setActiveCard("daniel")}
+                onFocus={() => setActiveCard("daniel")}
+                onClick={() => setActiveCard("daniel")}
+                tabIndex={0}
+                aria-label="Daniel Simon, Product Marketing Lead at RegTech365"
+              >
+                <SpeakerImage
+                  src="/images/invitees/daniel.png"
+                  alt="Daniel Simon"
+                  fill
+                  sizes="(max-width: 480px) 48vw, 275px"
+                  draggable={false}
+                />
 
-  text-decoration: none;
+                <ParticleLayer />
+                <CardGradient />
 
-  cursor: pointer;
+                <SpeakerInfo>
+                  <p className="role">Host</p>
+                  <h2>Daniel Simon</h2>
+                  <p>Product Marketing Lead, RegTech365</p>
+                </SpeakerInfo>
+              </SpeakerCard>
 
-  transition: transform 0.25s ease, background 0.25s ease;
+              <SpeakerCard
+                $person="simeon"
+                $active={activeCard === "simeon"}
+                onMouseEnter={() => setActiveCard("simeon")}
+                onFocus={() => setActiveCard("simeon")}
+                onClick={() => setActiveCard("simeon")}
+                tabIndex={0}
+                aria-label="Simeon, webinar speaker"
+              >
+                <SpeakerImage
+                  src="/images/invitees/simeon.png"
+                  alt="Simeon"
+                  fill
+                  sizes="(max-width: 480px) 48vw, 275px"
+                  draggable={false}
+                />
 
-  &:hover {
-    transform: translateY(-2px);
-    background: #ffffff;
-  }
+                <ParticleLayer />
+                <CardGradient />
 
-  &:focus-visible {
-    outline: 3px solid #c6e3fb;
-    outline-offset: 4px;
-  }
-`;
-
-const ModalArrow = styled.span`
-  font-size: 15px;
-
-  transition: transform 0.25s ease;
-
-  ${ModalLink}:hover & {
-    transform: translate(2px, -2px);
-  }
-`;
+                <SpeakerInfo>
+                  <p className="role">Guest Speaker</p>
+                  <h2>Ayomide Osuntoye</h2>
+                  <p>RegTech365</p>
+                </SpeakerInfo>
+              </SpeakerCard>
+            </CardDeck>
+          </SpeakersArea>
+        </HeroContent>
+      </HeroSection>
+    </>
+  );
+}

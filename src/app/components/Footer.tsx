@@ -7,7 +7,22 @@ type FooterProps = {
   onReserve: () => void;
 };
 
+const navigationLinks = [
+  { label: "About", href: "#about" },
+  { label: "Speakers", href: "#speakers" },
+  { label: "FAQ", href: "#faq" },
+];
+
 export default function Footer({ onReserve }: FooterProps) {
+  const handleBackToTop = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <Section id="footer">
       <Container>
@@ -17,43 +32,75 @@ export default function Footer({ onReserve }: FooterProps) {
               <Image
                 src="/images/opexwhite.webp"
                 alt="OPEX Consulting"
-                width={78}
-                height={31}
+                width={100}
+                height={40}
               />
             </LogoWrapper>
 
+            <Eyebrow>OPEX EXECUTIVE WORKSHOP & SUMMIT 2026</Eyebrow>
+
             <Heading>
-              <HeadlineLight>The End</HeadlineLight>
+              From Manual
               <br />
-              <HeadlineBrand>
-                of <Accent>Manual.</Accent>
-              </HeadlineBrand>
+              <Accent>Risk Assessment</Accent>
+              <br />
+              to Intelligent
+              <br />
+              Risk Operations.
             </Heading>
 
             <Description>
-              AI, connected systems and the future of financial reporting and
-              compliance.
+              Explore how AI is transforming enterprise risk management in
+              financial institutions.
             </Description>
           </BrandSide>
 
           <ActionSide>
-            <ActionLabel>OPEX EXECUTIVE WORKSHOP & SUMMIT 2026</ActionLabel>
+            <LiveBadge>
+              <StatusDot />
+              LIVE ON ZOOM
+            </LiveBadge>
 
             <EventDate>
-              Wednesday
+              Thursday
               <br />
-              <strong>21 October 2026</strong>
+              <strong>19 November 2026</strong>
             </EventDate>
 
+            <EventTime>
+              <TimeIcon viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                />
+                <path
+                  d="M12 7v5l3 2"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </TimeIcon>
+              11:00 AM WAT
+            </EventTime>
+
             <Venue>
-              The Wheatbaker
+              Online event
               <br />
-              Ikoyi, Lagos
+              Join from anywhere.
             </Venue>
 
             <ReserveButton type="button" onClick={onReserve}>
-              Reserve your seat
+              Register for the event
+              <ButtonArrow aria-hidden="true">↗</ButtonArrow>
             </ReserveButton>
+
+            <ButtonNote>
+              Registration is required to join the meeting.
+            </ButtonNote>
           </ActionSide>
         </Top>
 
@@ -62,11 +109,11 @@ export default function Footer({ onReserve }: FooterProps) {
             <NavTitle>EXPLORE</NavTitle>
 
             <NavLinks>
-              <NavLink href="#about">About</NavLink>
-              <NavLink href="#agenda">Agenda</NavLink>
-              <NavLink href="#sessions">Sessions</NavLink>
-              <NavLink href="#invitees">Invitees</NavLink>
-              <NavLink href="#faq">FAQ</NavLink>
+              {navigationLinks.map((link) => (
+                <NavLink key={link.href} href={link.href}>
+                  {link.label}
+                </NavLink>
+              ))}
             </NavLinks>
           </Navigation>
 
@@ -90,25 +137,15 @@ export default function Footer({ onReserve }: FooterProps) {
         </Middle>
 
         <Bottom>
-          <Copyright>© 2026 OPEX Consulting LTD</Copyright>
+          <Copyright>
+            © {new Date().getFullYear()} OPEX Consulting LTD
+          </Copyright>
 
-          <Hosted>
-            HOSTED BY <strong>OPEX CONSULTING LTD</strong>
-          </Hosted>
+          <Hosted>AN OPEX CONSULTING LTD EVENT</Hosted>
 
-          <BackToTop
-            href="#top"
-            onClick={(event) => {
-              event.preventDefault();
-
-              window.scrollTo({
-                top: 0,
-                behavior: "smooth",
-              });
-            }}
-          >
+          <BackToTop href="#top" onClick={handleBackToTop}>
             Back to top
-            <TopArrow>↑</TopArrow>
+            <TopArrow aria-hidden="true">↑</TopArrow>
           </BackToTop>
         </Bottom>
       </Container>
@@ -117,161 +154,93 @@ export default function Footer({ onReserve }: FooterProps) {
 }
 
 const Section = styled.footer`
-  position: relative;
-
   width: 100%;
-
+  overflow: hidden;
+  position: relative;
+  isolation: isolate;
+  padding: 100px 0 24px;
   background: #083672;
   color: #ffffff;
-
-  padding: 110px 0 30px;
-
-  overflow: hidden;
-
-  &::before {
-    content: "";
-
-    position: absolute;
-
-    width: 600px;
-    height: 600px;
-
-    top: -350px;
-    right: -200px;
-
-    border-radius: 50%;
-
-    background: radial-gradient(
-      circle,
-      rgba(0, 103, 212, 0.2),
-      transparent 65%
-    );
-
-    pointer-events: none;
-  }
-
-  &::after {
-    content: "";
-
-    position: absolute;
-
-    width: 450px;
-    height: 450px;
-
-    bottom: -300px;
-    left: -200px;
-
-    border-radius: 50%;
-
-    background: radial-gradient(
-      circle,
-      rgba(198, 227, 251, 0.08),
-      transparent 65%
-    );
-
-    pointer-events: none;
-  }
+  font-family: "Montserrat", sans-serif;
 
   @media (max-width: 700px) {
-    padding: 80px 0 25px;
+    padding: 72px 0 24px;
   }
 `;
 
 const Container = styled.div`
-  width: min(1200px, 90vw);
-
-  margin: 0 auto;
-
   position: relative;
-
   z-index: 1;
+  width: min(1200px, 90vw);
+  margin: 0 auto;
 `;
 
 const Top = styled.div`
   display: grid;
-
   grid-template-columns: 1.2fr 0.8fr;
+  align-items: center;
+  gap: 80px;
+  padding-bottom: 85px;
+  border-bottom: 1px solid rgba(198, 227, 251, 0.2);
 
-  gap: 100px;
-
-  padding-bottom: 100px;
-
-  border-bottom: 1px solid rgba(198, 227, 251, 0.16);
-
-  @media (max-width: 850px) {
+  @media (max-width: 900px) {
     grid-template-columns: 1fr;
+    gap: 55px;
+    padding-bottom: 60px;
+  }
 
-    gap: 65px;
-
-    padding-bottom: 70px;
+  @media (max-width: 480px) {
+    gap: 42px;
   }
 `;
 
 const BrandSide = styled.div`
   display: flex;
-
   flex-direction: column;
-
   align-items: flex-start;
 `;
 
 const LogoWrapper = styled.div`
-  width: 78px;
-
-  margin-bottom: 42px;
-
-  opacity: 0.95;
+  width: 88px;
+  margin-bottom: 38px;
 
   img {
+    display: block;
     width: 100%;
     height: auto;
-
-    display: block;
-
     object-fit: contain;
   }
 
   @media (max-width: 700px) {
-    width: 72px;
-
-    margin-bottom: 36px;
+    width: 76px;
+    margin-bottom: 30px;
   }
+`;
+
+const Eyebrow = styled.p`
+  margin: 0 0 22px;
+  color: #c6e3fb;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.8;
+  letter-spacing: 0.13em;
 `;
 
 const Heading = styled.h2`
+  max-width: 760px;
   margin: 0;
-
   color: #ffffff;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(35px, 5vw, 65px);
+  font-weight: 500;
+  line-height: 1.13;
+  letter-spacing: -0.065em;
 
-  letter-spacing: -0.08em;
-
-  line-height: 0.84;
-
-  @media (max-width: 700px) {
-    line-height: 0.86;
+  @media (max-width: 480px) {
+    font-size: clamp(32px, 8.5vw, 43px);
+    line-height: 1.2;
+    letter-spacing: -0.055em;
   }
-`;
-
-const HeadlineLight = styled.span`
-  font-family: "Mont", sans-serif;
-
-  font-size: clamp(52px, 6vw, 86px);
-
-  font-weight: 200;
-
-  letter-spacing: -0.075em;
-`;
-
-const HeadlineBrand = styled.span`
-  font-family: "Chillen", sans-serif;
-
-  font-size: clamp(78px, 9vw, 132px);
-
-  font-weight: 400;
-
-  line-height: 0.78;
-
-  letter-spacing: -0.08em;
 `;
 
 const Accent = styled.span`
@@ -279,82 +248,72 @@ const Accent = styled.span`
 `;
 
 const Description = styled.p`
-  max-width: 430px;
-
-  margin-top: 35px;
-
-  color: #c6e3fb;
-
-  font-family: "Mont", sans-serif;
-
-  font-size: 15px;
-
-  font-weight: 200;
-
-  line-height: 1.65;
-
-  letter-spacing: -0.015em;
+  max-width: 450px;
+  margin: 26px 0 0;
+  color: rgba(255, 255, 255, 0.76);
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.9;
 
   @media (max-width: 700px) {
-    font-size: 14px;
-
-    margin-top: 30px;
+    margin-top: 22px;
+    font-size: 13px;
   }
 `;
 
 const ActionSide = styled.div`
   display: flex;
-
   flex-direction: column;
-
-  justify-content: flex-end;
-
   align-items: flex-start;
+  justify-content: center;
+  padding-top: 10px;
 
-  padding-bottom: 4px;
+  @media (max-width: 900px) {
+    padding-top: 0;
+  }
 `;
 
-const ActionLabel = styled.span`
-  margin-bottom: 25px;
-
+const LiveBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  padding: 10px 13px;
+  border: 1px solid rgba(198, 227, 251, 0.3);
+  border-radius: 999px;
   color: #c6e3fb;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+`;
 
-  font-family: "Mont", sans-serif;
-
-  font-size: 10px;
-
-  font-weight: 200;
-
-  letter-spacing: 0.14em;
-
-  line-height: 1.5;
+const StatusDot = styled.span`
+  width: 7px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #c6e3fb;
 `;
 
 const EventDate = styled.div`
   color: #ffffff;
-
-  font-family: "Mont", sans-serif;
-
-  font-size: 26px;
-
-  font-weight: 200;
-
-  line-height: 1.15;
-
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.55;
   letter-spacing: -0.04em;
 
   strong {
-    font-family: "Chillen", sans-serif;
-
-    font-size: 27px;
-
-    font-weight: 400;
-
-    letter-spacing: -0.02em;
+    display: inline-block;
+    margin-top: 3px;
+    font-size: clamp(23px, 2.7vw, 30px);
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.055em;
   }
 
-  @media (max-width: 700px) {
-    font-size: 23px;
+  @media (max-width: 480px) {
+    font-size: 19px;
 
     strong {
       font-size: 24px;
@@ -362,275 +321,212 @@ const EventDate = styled.div`
   }
 `;
 
-const Venue = styled.p`
-  margin-top: 22px;
-
+const EventTime = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
   color: #c6e3fb;
+  font-size: 13px;
+  font-weight: 500;
+`;
 
-  font-family: "Mont", sans-serif;
+const TimeIcon = styled.svg`
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+`;
 
-  font-size: 14px;
-
-  font-weight: 200;
-
-  line-height: 1.6;
+const Venue = styled.p`
+  margin: 18px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.9;
 `;
 
 const ReserveButton = styled.button`
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
-
-  margin-top: 35px;
-
-  min-height: 52px;
-
-  padding: 0 28px;
-
-  border: 0;
-
+  gap: 18px;
+  min-height: 54px;
+  margin-top: 30px;
+  padding: 0 23px;
+  border: 1px solid #c6e3fb;
   border-radius: 999px;
-
   background: #c6e3fb;
-
   color: #083672;
-
-  font-family: "Chillen", sans-serif;
-
-  font-size: 16px;
-
-  font-weight: 400;
-
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
-
-  box-shadow: 0 10px 30px rgba(0, 103, 212, 0.18);
-
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.4s ease, background 0.3s ease;
+  transition: background 200ms ease, color 200ms ease, border-color 200ms ease,
+    transform 200ms ease;
 
   &:hover {
-    transform: translateY(-4px);
-
+    transform: translateY(-2px);
+    border-color: #ffffff;
     background: #ffffff;
-
-    box-shadow: 0 18px 45px rgba(0, 103, 212, 0.25),
-      0 4px 12px rgba(0, 0, 0, 0.12);
   }
 
   &:active {
-    transform: translateY(-1px) scale(0.99);
+    transform: translateY(0);
   }
 
   &:focus-visible {
-    outline: 3px solid #c6e3fb;
-
+    outline: 2px solid #ffffff;
     outline-offset: 4px;
   }
 
-  @media (max-width: 700px) {
-    min-height: 50px;
-
-    padding: 0 26px;
-
-    font-size: 15px;
+  @media (max-width: 480px) {
+    min-height: 51px;
+    padding: 0 19px;
+    font-size: 11px;
   }
+`;
+
+const ButtonArrow = styled.span`
+  font-size: 16px;
+  font-weight: 400;
+  transition: transform 200ms ease;
+
+  ${ReserveButton}:hover & {
+    transform: translate(2px, -2px);
+  }
+`;
+
+const ButtonNote = styled.p`
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.7;
 `;
 
 const Middle = styled.div`
   display: grid;
-
   grid-template-columns: 1fr 1fr;
-
-  gap: 100px;
-
-  padding: 65px 0;
-
-  border-bottom: 1px solid rgba(198, 227, 251, 0.16);
+  gap: 80px;
+  padding: 55px 0;
+  border-bottom: 1px solid rgba(198, 227, 251, 0.2);
 
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
-
-    gap: 50px;
-
-    padding: 55px 0;
+    gap: 42px;
+    padding: 45px 0;
   }
 `;
 
 const Navigation = styled.div`
   display: flex;
-
   flex-direction: column;
-
-  gap: 24px;
+  align-items: flex-start;
+  gap: 22px;
 `;
 
-const NavTitle = styled.span`
+const NavTitle = styled.p`
+  margin: 0;
   color: #c6e3fb;
-
-  font-family: "Mont", sans-serif;
-
-  font-size: 10px;
-
-  font-weight: 200;
-
+  font-size: 9px;
+  font-weight: 600;
   letter-spacing: 0.14em;
 `;
 
-const NavLinks = styled.div`
+const NavLinks = styled.nav`
   display: flex;
-
   flex-wrap: wrap;
-
-  gap: 12px 28px;
+  gap: 16px 27px;
 `;
 
 const NavLink = styled.a`
   color: rgba(255, 255, 255, 0.78);
-
-  font-family: "Mont", sans-serif;
-
-  font-size: 14px;
-
-  font-weight: 200;
-
-  letter-spacing: 0.01em;
-
+  font-size: 12px;
+  font-weight: 400;
   text-decoration: none;
-
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: color 180ms ease;
 
   &:hover {
     color: #c6e3fb;
-
-    transform: translateX(3px);
   }
 
   &:focus-visible {
     outline: 2px solid #c6e3fb;
-
     outline-offset: 4px;
-
     border-radius: 2px;
   }
 `;
 
 const Contact = styled.div`
   display: flex;
-
   flex-direction: column;
-
-  gap: 24px;
+  align-items: flex-start;
+  gap: 22px;
 `;
 
-const ContactTitle = styled.span`
+const ContactTitle = styled.p`
+  margin: 0;
   color: #c6e3fb;
-
-  font-family: "Mont", sans-serif;
-
-  font-size: 10px;
-
-  font-weight: 200;
-
+  font-size: 9px;
+  font-weight: 600;
   letter-spacing: 0.14em;
 `;
 
 const ContactLinks = styled.div`
   display: flex;
-
   flex-direction: column;
-
-  gap: 11px;
+  align-items: flex-start;
+  gap: 13px;
 `;
 
 const ContactLink = styled.a`
-  width: fit-content;
-
   color: rgba(255, 255, 255, 0.78);
-
-  font-family: "Mont", sans-serif;
-
-  font-size: 14px;
-
-  font-weight: 200;
-
-  letter-spacing: 0.01em;
-
+  font-size: 12px;
+  font-weight: 400;
   text-decoration: none;
-
-  transition: color 0.3s ease, transform 0.3s ease;
+  overflow-wrap: anywhere;
+  transition: color 180ms ease;
 
   &:hover {
-    color: #ffffff;
-
-    transform: translateX(3px);
+    color: #c6e3fb;
   }
 
   &:focus-visible {
     outline: 2px solid #c6e3fb;
-
     outline-offset: 4px;
-
     border-radius: 2px;
   }
 `;
 
 const Bottom = styled.div`
   display: grid;
-
   grid-template-columns: 1fr 1fr 1fr;
-
   align-items: center;
-
-  min-height: 80px;
-
-  gap: 30px;
+  gap: 20px;
+  min-height: 76px;
 
   @media (max-width: 700px) {
     display: flex;
-
     flex-direction: column;
-
     align-items: flex-start;
-
-    gap: 18px;
-
+    gap: 17px;
     padding: 25px 0 5px;
   }
 `;
 
 const Copyright = styled.span`
-  color: rgba(198, 227, 251, 0.68);
-
-  font-family: "Mont", sans-serif;
-
+  color: rgba(255, 255, 255, 0.57);
   font-size: 10px;
-
-  font-weight: 200;
-
-  letter-spacing: 0.03em;
+  font-weight: 400;
+  line-height: 1.7;
 `;
 
 const Hosted = styled.span`
-  color: rgba(198, 227, 251, 0.68);
-
-  font-family: "Mont", sans-serif;
-
+  color: rgba(255, 255, 255, 0.57);
   font-size: 9px;
-
-  font-weight: 200;
-
-  letter-spacing: 0.08em;
-
+  font-weight: 500;
+  letter-spacing: 0.07em;
   text-align: center;
-
-  strong {
-    color: #c6e3fb;
-
-    font-family: "Chillen", sans-serif;
-
-    font-weight: 400;
-  }
 
   @media (max-width: 700px) {
     text-align: left;
@@ -638,37 +534,23 @@ const Hosted = styled.span`
 `;
 
 const BackToTop = styled.a`
-  justify-self: end;
-
   display: inline-flex;
-
   align-items: center;
-
+  justify-self: end;
   gap: 10px;
-
   color: #c6e3fb;
-
-  font-family: "Mont", sans-serif;
-
   font-size: 11px;
-
-  font-weight: 200;
-
+  font-weight: 500;
   text-decoration: none;
-
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: color 180ms ease;
 
   &:hover {
     color: #ffffff;
-
-    transform: translateY(-2px);
   }
 
   &:focus-visible {
     outline: 2px solid #c6e3fb;
-
     outline-offset: 4px;
-
     border-radius: 3px;
   }
 
@@ -678,19 +560,11 @@ const BackToTop = styled.a`
 `;
 
 const TopArrow = styled.span`
-  color: #c6e3fb;
-
-  font-family: "Mont", sans-serif;
-
-  font-size: 15px;
-
-  font-weight: 200;
-
-  transition: transform 0.3s ease, color 0.3s ease;
+  font-size: 16px;
+  font-weight: 400;
+  transition: transform 180ms ease;
 
   ${BackToTop}:hover & {
     transform: translateY(-3px);
-
-    color: #ffffff;
   }
 `;

@@ -1,209 +1,79 @@
-/**
- * OPEX Executive Workshop registration endpoint.
- *
- * Paste this entire file into a standalone Apps Script project created under
- * the Google Workspace account that must send the confirmation emails.
- * Configure the values under Project Settings > Script properties:
- *
- * SPREADSHEET_ID  = the ID of the existing registration spreadsheet
- * EMAIL_FROM_NAME = OPEX Consulting
- * EMAIL_REPLY_TO  = events@yourcompany.com
- * EMAIL_CC        = logistics@yourcompany.com
- */
+const SPREADSHEET_ID = "YOUR_GOOGLE_SHEET_ID";
+const SHEET_NAME = "WebinarResponses";
 
-const TAB_NAME = "Responses";
+function doPost(e) {
+  const lock = LockService.getScriptLock();
 
-function setup() {
-  const sheet = getSheet();
+  try {
+    lock.waitLock(10000);
 
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      "Submitted At",
-      "Name",
-      "Email",
-      "Role",
-      "Organisation",
-      "Route",
-      "Session",
-      "Score",
-      "Readiness Band",
-      "Priority",
-      "Answers",
-    ]);
+    if (!e || !e.postData || !e.postData.contents) {
+      throw new Error("No registration data was received.");
+    }
+
+    const data = JSON.parse(e.postData.contents);
+
+    const fullName = String(data.fullName || "").trim();
+    const email = String(data.email || "").trim();
+    const referralSource = String(data.referralSource || "").trim();
+
+    if (!fullName || !email || !referralSource) {
+      throw new Error("Full name, email, and referral source are required.");
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(email)) {
+      throw new Error("Please provide a valid email address.");
+    }
+
+    const sheet = getResponseSheet();
+
+    sheet.appendRow([fullName, email, referralSource]);
+
+    return jsonResponse({
+      success: true,
+      message: "Registration submitted successfully.",
+    });
+  } catch (error) {
+    return jsonResponse({
+      success: false,
+      message: error.message || "Registration failed.",
+    });
+  } finally {
+    if (lock.hasLock()) {
+      lock.releaseLock();
+    }
   }
 }
 
 function doGet() {
-  return json({ ok: true, service: "OPEX registration" });
+  return jsonResponse({
+    success: true,
+    message: "OPEX webinar registration endpoint is running.",
+  });
 }
 
-function doPost(e) {
-  const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
+function getResponseSheet() {
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
 
-  try {
-    if (!e || !e.postData || !e.postData.contents) {
-      return json({ ok: false, error: "Missing request body" });
-    }
+  let sheet = spreadsheet.getSheetByName(SHEET_NAME);
 
-    const data = JSON.parse(e.postData.contents);
-    validateRegistration(data);
-
-    const sheet = getSheet();
-    sheet.appendRow([
-      new Date(),
-      clean(data.name),
-      clean(data.email),
-      clean(data.role),
-      clean(data.organisation),
-      clean(data.route),
-      clean(data.session),
-      data.pct ?? "",
-      clean(data.band),
-      clean(data.priority),
-      JSON.stringify(data.answers || {}),
-    ]);
-
-    let emailSent = false;
-    try {
-      sendConfirmationEmail(data);
-      emailSent = true;
-    } catch (error) {
-      console.error(`Confirmation email failed: ${error.message}`);
-    }
-
-    return json({ ok: true, emailSent });
-  } catch (error) {
-    console.error(error);
-    return json({ ok: false, error: error.message });
-  } finally {
-    lock.releaseLock();
-  }
-}
-
-function sendConfirmationEmail(data) {
-  const properties = PropertiesService.getScriptProperties();
-  const fromName =
-    properties.getProperty("EMAIL_FROM_NAME") || "OPEX Consulting";
-  const replyTo = properties.getProperty("EMAIL_REPLY_TO");
-  const cc = properties.getProperty("EMAIL_CC") || "";
-
-  if (!replyTo) {
-    throw new Error("EMAIL_REPLY_TO is not configured");
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(SHEET_NAME);
   }
 
-  const recipientName = clean(data.name);
-  const session = clean(data.session);
-  const sessionTimes = {
-    "Breakfast briefing": "8am - 11am",
-    "Main summit": "11:30am - 4pm",
-    "Full day": "8am - 4pm",
-  };
-  const sessionTime = sessionTimes[session] || "";
-  const safeName = escapeHtml(recipientName);
-  const safeSession = escapeHtml(session);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["Full Name", "Email", "Referral Source"]);
 
-  const subject = "Your OPEX Executive Workshop registration is confirmed";
-
-  const textBody = `Dear ${recipientName},
-
-Thank you for registering for the OPEX Executive Workshop.
-
-Your place is confirmed:
-
-Session: ${session}
-Time: ${sessionTime}
-Date: Wednesday 21 October 2026
-Venue: The Wheatbaker, Ikoyi
-
-Please arrive 15 minutes before your session begins.
-
-If you have any questions, reply to this email or contact ${replyTo}.
-
-We look forward to welcoming you.
-
-Regards,
-${fromName}`;
-
-  const htmlBody = `
-    <div style="background:#f6f8fb;padding:32px 16px;font-family:Arial,sans-serif;color:#15213b;">
-      <div style="max-width:600px;margin:0 auto;background:#ffffff;border:1px solid #d9e1ec;border-radius:10px;overflow:hidden;">
-        <div style="background:#0e1b38;padding:28px 32px;color:#ffffff;">
-          <div style="font-size:11px;letter-spacing:1.5px;color:#60a5fa;font-weight:bold;">OPEX CONSULTING</div>
-          <h1 style="font-family:Georgia,serif;font-size:32px;line-height:1.1;font-weight:normal;margin:16px 0 0;">Registration confirmed</h1>
-        </div>
-        <div style="padding:30px 32px;font-size:15px;line-height:1.6;">
-          <p>Dear ${safeName},</p>
-          <p>Thank you for registering for the OPEX Executive Workshop. Your place is confirmed.</p>
-          <div style="background:#eff6ff;border:1px solid #d9e1ec;border-radius:8px;padding:18px 20px;margin:24px 0;">
-            <div style="font-size:11px;letter-spacing:1px;color:#2563eb;font-weight:bold;margin-bottom:8px;">YOUR SESSION</div>
-            <strong style="font-size:20px;">${safeSession}</strong>
-            <div style="margin-top:8px;">${sessionTime}</div>
-            <div>Wednesday 21 October 2026</div>
-            <div>The Wheatbaker, Ikoyi</div>
-          </div>
-          <p>Please arrive 15 minutes before your session begins.</p>
-          <p>If you have any questions, reply to this email or contact <a href="mailto:${escapeHtml(
-            replyTo
-          )}">${escapeHtml(replyTo)}</a>.</p>
-          <p>We look forward to welcoming you.</p>
-          <p>Regards,<br>${escapeHtml(fromName)}</p>
-        </div>
-      </div>
-    </div>`;
-
-  const message = {
-    to: clean(data.email),
-    subject,
-    body: textBody,
-    htmlBody,
-    name: fromName,
-    replyTo,
-  };
-
-  if (cc) message.cc = cc;
-  MailApp.sendEmail(message);
-}
-
-function getSheet() {
-  const spreadsheetId =
-    PropertiesService.getScriptProperties().getProperty("SPREADSHEET_ID");
-  const spreadsheet = spreadsheetId
-    ? SpreadsheetApp.openById(spreadsheetId)
-    : SpreadsheetApp.getActiveSpreadsheet();
-
-  if (!spreadsheet) {
-    throw new Error("SPREADSHEET_ID is not configured");
+    sheet.setFrozenRows(1);
   }
 
-  const sheet = spreadsheet.getSheetByName(TAB_NAME);
-  if (!sheet) throw new Error(`Missing sheet tab: ${TAB_NAME}`);
   return sheet;
 }
 
-function validateRegistration(data) {
-  const required = ["name", "email", "role", "organisation", "session"];
-  const missing = required.filter((key) => !clean(data[key]));
-  if (missing.length) throw new Error(`Missing fields: ${missing.join(", ")}`);
-  if (!/^\S+@\S+\.\S+$/.test(clean(data.email)))
-    throw new Error("Invalid email address");
-}
-
-function clean(value) {
-  return String(value ?? "").trim();
-}
-
-function escapeHtml(value) {
-  return clean(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-function json(value) {
-  return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(
+function jsonResponse(data) {
+  return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(
     ContentService.MimeType.JSON
   );
 }

@@ -17,7 +17,7 @@ type AgendaItem = {
 const morningAgenda: AgendaItem[] = [
   {
     time: "09:15 – 09:30",
-    title: "Registration, Breakfast and Executive Networking",
+    title: "Registration, Breakfast & Networking",
     type: "Networking",
   },
   {
@@ -27,41 +27,38 @@ const morningAgenda: AgendaItem[] = [
   {
     time: "09:40 – 10:00",
     title:
-      "From Digitisation to Trust: Building AI-Enabled Reporting and Compliance for the Future",
+      "From Digitisation to Trust: Building AI-Enabled Reporting and Compliance",
   },
   {
     time: "10:00 – 10:20",
-    title:
-      "Reporting Integrity, Governance and Assurance Readiness in the New Compliance Environment",
+    title: "Reporting Integrity, Governance & Assurance Readiness",
   },
   {
     time: "10:20 – 10:40",
-    title: "ESG and Disclosure Management",
+    title: "ESG & Disclosure Management",
     description:
-      "A solution showcase exploring how technology can simplify sustainability reporting, disclosure management, and access to reliable ESG data.",
+      "A solution showcase on simplifying sustainability reporting and disclosure management.",
     type: "Solution showcase",
   },
   {
     time: "10:40 – 11:00",
-    title:
-      "Sustainability Disclosure: From Regulatory Expectations to Decision-Grade Data",
+    title: "Sustainability Disclosure & Decision-Grade Data",
   },
   {
     time: "11:00 – 11:20",
     title: "Finnivo Financial Consolidation",
     description:
-      "A solution showcase demonstrating how financial consolidation can be streamlined through connected data, automated workflows, and more reliable reporting.",
+      "See how connected data and automated workflows can improve financial consolidation.",
     type: "Solution showcase",
   },
   {
     time: "11:20 – 11:50",
-    title:
-      "CFO Panel: Is Your Finance Function Ready for the Next Reporting Cycle?",
+    title: "CFO Panel: Is Your Finance Function Ready?",
     type: "Executive panel",
   },
   {
     time: "11:50 – 12:00",
-    title: "Closing Remarks and Next Steps",
+    title: "Closing Remarks & Next Steps",
   },
 ];
 
@@ -72,13 +69,11 @@ const afternoonAgenda: AgendaItem[] = [
   },
   {
     time: "12:10 – 12:30",
-    title:
-      "From Reform to Results: Why Nigeria’s Next Phase of Growth Depends on Intelligent, Transparent Enterprises",
+    title: "From Reform to Results: Intelligent, Transparent Enterprises",
   },
   {
     time: "12:30 – 13:00",
-    title:
-      "From Data to Intelligence: The Infrastructure Powering the Enterprise of Tomorrow",
+    title: "From Data to Intelligence: The Enterprise of Tomorrow",
   },
   {
     time: "13:00 – 13:20",
@@ -88,7 +83,7 @@ const afternoonAgenda: AgendaItem[] = [
     time: "13:20 – 13:45",
     title: "Unitellas Edge Cloud Solution",
     description:
-      "An introduction to edge cloud capabilities and how modern infrastructure can support secure, connected, and intelligent enterprise operations.",
+      "Explore secure, connected infrastructure for intelligent enterprise operations.",
     type: "Solution showcase",
   },
   {
@@ -97,21 +92,19 @@ const afternoonAgenda: AgendaItem[] = [
   },
   {
     time: "14:05 – 14:30",
-    title:
-      "From Fragmented IT GRC to Connected Governance and Continuous Regulatory Readiness",
+    title: "Connected IT GRC & Continuous Regulatory Readiness",
     description:
-      "A live demonstration of how connected governance, risk, and compliance processes can improve visibility and regulatory readiness.",
+      "A live demonstration of connected governance, risk and compliance processes.",
     type: "Live demonstration",
   },
   {
     time: "14:30 – 14:45",
-    title: "Networking and Refreshment Break",
+    title: "Networking & Refreshment Break",
     type: "Networking",
   },
   {
     time: "14:45 – 15:05",
-    title:
-      "Technology, Integrity and Investor Protection in Capital Market 2.0",
+    title: "Technology, Integrity & Investor Protection",
   },
   {
     time: "15:05 – 15:25",
@@ -119,19 +112,18 @@ const afternoonAgenda: AgendaItem[] = [
   },
   {
     time: "15:35 – 15:55",
-    title:
-      "Connected Compliance: Governing AI and Autonomous Systems in a Real-Time Regulatory Environment",
+    title: "Governing AI & Autonomous Systems",
   },
   {
     time: "15:55 – 16:00",
-    title: "Executive Action Points and Closing",
+    title: "Executive Action Points & Closing",
   },
 ];
 
-const fadeUp = keyframes`
+const reveal = keyframes`
   from {
     opacity: 0;
-    transform: translateY(22px);
+    transform: translateY(16px);
   }
 
   to {
@@ -140,40 +132,163 @@ const fadeUp = keyframes`
   }
 `;
 
-const softReveal = keyframes`
-  from {
-    opacity: 0;
-    filter: blur(5px);
-    transform: translateY(14px);
-  }
+export default function Agenda({ onReserve }: AgendaProps) {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
-  to {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateY(0);
-  }
-`;
+  useEffect(() => {
+    const section = sectionRef.current;
 
-const AgendaSection = styled.section`
-  position: relative;
-  isolation: isolate;
+    if (!section) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.05 }
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <Section id="agenda" ref={sectionRef}>
+      <Container>
+        <Header $visible={isVisible}>
+          <HeaderMain>
+            <Heading>
+              A day of ideas.
+              <br />
+              <Accent>A clearer way forward.</Accent>
+            </Heading>
+          </HeaderMain>
+
+          <HeaderSide>
+            <EventDate>21 OCTOBER 2026</EventDate>
+            <Description>
+              One conversation bringing finance, sustainability, technology and
+              compliance together.
+            </Description>
+          </HeaderSide>
+        </Header>
+
+        <ProgrammeIntro $visible={isVisible}>
+          <IntroTitle>Explore the programme</IntroTitle>
+          <IntroNote>OPEX Executive Workshop &amp; Summit 2026</IntroNote>
+        </ProgrammeIntro>
+
+        <Programme $visible={isVisible}>
+          <ProgrammeHeader>
+            <ProgrammeHeading>
+              <TimeDot />
+              <div>
+                <ProgrammeTitle>Finance &amp; Sustainability</ProgrammeTitle>
+                <ProgrammeDescription>Morning programme</ProgrammeDescription>
+              </div>
+            </ProgrammeHeading>
+
+            <ProgrammeTime>09:15 – 12:00</ProgrammeTime>
+          </ProgrammeHeader>
+
+          <AgendaGrid>
+            {morningAgenda.map((item, index) => (
+              <SessionCard
+                key={`${item.time}-${item.title}`}
+                $delay={index * 45}
+              >
+                <SessionTop>
+                  <SessionTime>{item.time}</SessionTime>
+                  {item.type && <SessionTag>{item.type}</SessionTag>}
+                </SessionTop>
+
+                <SessionTitle>{item.title}</SessionTitle>
+
+                {item.description && (
+                  <SessionDescription>{item.description}</SessionDescription>
+                )}
+              </SessionCard>
+            ))}
+          </AgendaGrid>
+        </Programme>
+
+        <Programme $visible={isVisible}>
+          <ProgrammeHeader>
+            <ProgrammeHeading>
+              <TimeDot />
+              <div>
+                <ProgrammeTitle>Technology &amp; Governance</ProgrammeTitle>
+                <ProgrammeDescription>Afternoon programme</ProgrammeDescription>
+              </div>
+            </ProgrammeHeading>
+
+            <ProgrammeTime>12:00 – 16:00</ProgrammeTime>
+          </ProgrammeHeader>
+
+          <AgendaGrid>
+            {afternoonAgenda.map((item, index) => (
+              <SessionCard
+                key={`${item.time}-${item.title}`}
+                $delay={index * 45}
+              >
+                <SessionTop>
+                  <SessionTime>{item.time}</SessionTime>
+                  {item.type && <SessionTag>{item.type}</SessionTag>}
+                </SessionTop>
+
+                <SessionTitle>{item.title}</SessionTitle>
+
+                {item.description && (
+                  <SessionDescription>{item.description}</SessionDescription>
+                )}
+              </SessionCard>
+            ))}
+          </AgendaGrid>
+        </Programme>
+
+        <RegistrationCard $visible={isVisible}>
+          <RegistrationCopy>
+            <RegistrationTitle>The future won’t wait.</RegistrationTitle>
+            <RegistrationDescription>
+              Join the conversation shaping the next chapter of reporting,
+              compliance and enterprise technology.
+            </RegistrationDescription>
+          </RegistrationCopy>
+
+          <ReserveButton type="button" onClick={onReserve}>
+            Reserve your seat
+            <ButtonArrow aria-hidden="true">↗</ButtonArrow>
+          </ReserveButton>
+        </RegistrationCard>
+      </Container>
+    </Section>
+  );
+}
+
+const Section = styled.section`
+  width: 100%;
+  padding: 82px 0 88px;
   overflow: hidden;
-  padding: 108px 24px 110px;
-  background: #f5f7fa;
+  background: #ffffff;
   color: #083672;
-  font-family: "Mont", sans-serif;
+  font-family: "Montserrat", sans-serif;
 
   &,
   & * {
     box-sizing: border-box;
   }
 
-  @media (max-width: 768px) {
-    padding: 76px 18px 82px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 60px 15px 66px;
+  @media (max-width: 700px) {
+    padding: 56px 0 64px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -181,35 +296,35 @@ const AgendaSection = styled.section`
   }
 `;
 
-const AgendaContainer = styled.div`
-  width: 100%;
-  max-width: 1160px;
+const Container = styled.div`
+  width: min(1120px, calc(100% - 64px));
   margin: 0 auto;
+
+  @media (max-width: 600px) {
+    width: calc(100% - 36px);
+  }
 `;
 
-const RevealBlock = styled.div<{ $visible: boolean; $delay?: number }>`
+const Header = styled.header<{ $visible: boolean }>`
+  display: grid;
+  grid-template-columns: 1.25fr 0.65fr;
+  align-items: end;
+  gap: 48px;
+  padding-bottom: 38px;
+  border-bottom: 1px solid #e8edf3;
+
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  animation: ${({ $visible }) => ($visible ? softReveal : "none")} 0.75s
-    cubic-bezier(0.2, 0.65, 0.3, 1) both;
-  animation-delay: ${({ $delay = 0 }) => `${$delay}ms`};
+  animation: ${({ $visible }) => ($visible ? reveal : "none")} 700ms ease both;
+
+  @media (max-width: 800px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding-bottom: 28px;
+  }
 
   @media (prefers-reduced-motion: reduce) {
     opacity: 1;
     animation: none;
-  }
-`;
-
-const SectionHeader = styled.div`
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.65fr);
-  align-items: end;
-  gap: 36px;
-  margin-bottom: 50px;
-
-  @media (max-width: 760px) {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-bottom: 34px;
   }
 `;
 
@@ -217,194 +332,204 @@ const HeaderMain = styled.div`
   min-width: 0;
 `;
 
-const Eyebrow = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 18px;
-  color: #0067d4;
-  font-family: "Mont", sans-serif;
-  font-size: 0.73rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-
-  &::before {
-    width: 22px;
-    height: 1px;
-    background: #0067d4;
-    content: "";
-  }
-`;
-
-const SectionTitle = styled.h2`
-  max-width: 680px;
+const Heading = styled.h2`
   margin: 0;
-  color: #102d50;
-  font-family: "Chillen", "Mont", sans-serif;
-  font-size: clamp(2.7rem, 5.2vw, 4.25rem);
+  color: #083672;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(38px, 5.5vw, 68px);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.065em;
+
+  @media (max-width: 600px) {
+    font-size: clamp(34px, 9vw, 48px);
+    letter-spacing: -0.055em;
+  }
+`;
+
+const Accent = styled.span`
+  color: #0879d9;
+`;
+
+const HeaderSide = styled.div`
+  max-width: 350px;
+  justify-self: end;
+
+  @media (max-width: 800px) {
+    justify-self: start;
+  }
+`;
+
+const EventDate = styled.p`
+  margin: 0 0 10px;
+  color: #0879d9;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+`;
+
+const Description = styled.p`
+  margin: 0;
+  color: #65758a;
+  font-size: 13px;
   font-weight: 400;
-  line-height: 1.1;
+  line-height: 1.85;
+`;
+
+const ProgrammeIntro = styled.div<{ $visible: boolean }>`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 35px 0 23px;
+
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  animation: ${({ $visible }) => ($visible ? reveal : "none")} 700ms ease both;
+
+  @media (max-width: 600px) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 27px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    opacity: 1;
+    animation: none;
+  }
+`;
+
+const IntroTitle = styled.h3`
+  margin: 0;
+  color: #083672;
+  font-size: 19px;
+  font-weight: 600;
   letter-spacing: -0.045em;
-
-  span {
-    color: #0067d4;
-  }
-
-  @media (max-width: 760px) {
-    font-size: clamp(2.4rem, 8vw, 3.3rem);
-  }
 `;
 
-const SectionDescription = styled.p`
-  max-width: 450px;
-  margin: 0 0 5px;
-  color: #697789;
-  font-family: "Mont", sans-serif;
-  font-size: 0.94rem;
+const IntroNote = styled.p`
+  margin: 0;
+  color: #8793a2;
+  font-size: 11px;
   font-weight: 400;
-  line-height: 1.9;
-
-  @media (max-width: 760px) {
-    max-width: 620px;
-    font-size: 0.9rem;
-    line-height: 1.8;
-  }
 `;
 
-const ProgrammeSection = styled.section`
-  margin-top: 48px;
+const Programme = styled.div<{ $visible: boolean }>`
+  margin-top: 38px;
 
   &:first-of-type {
     margin-top: 0;
+  }
+
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  animation: ${({ $visible }) => ($visible ? reveal : "none")} 650ms ease both;
+
+  @media (max-width: 700px) {
+    margin-top: 30px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    opacity: 1;
+    animation: none;
   }
 `;
 
 const ProgrammeHeader = styled.div`
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 22px;
-  margin-bottom: 21px;
+  gap: 18px;
+  margin-bottom: 17px;
 
-  @media (max-width: 560px) {
+  @media (max-width: 520px) {
     align-items: flex-start;
     flex-direction: column;
     gap: 12px;
   }
 `;
 
-const ProgrammeHeaderMain = styled.div`
-  min-width: 0;
+const ProgrammeHeading = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
 `;
 
-const ProgrammeLabel = styled.span`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 9px;
-  color: #0067d4;
-  font-family: "Mont", sans-serif;
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-
-  &::before {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #0067d4;
-    content: "";
-  }
+const TimeDot = styled.span`
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #0879d9;
+  box-shadow: 0 0 0 4px #eaf4ff;
 `;
 
 const ProgrammeTitle = styled.h3`
   margin: 0;
-  color: #102d50;
-  font-family: "Chillen", "Mont", sans-serif;
-  font-size: clamp(1.7rem, 3vw, 2.15rem);
-  font-weight: 400;
-  line-height: 1.3;
-  letter-spacing: -0.03em;
+  color: #12395f;
+  font-size: clamp(17px, 2.1vw, 21px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
 `;
 
-const ProgrammeSubtitle = styled.p`
-  max-width: 600px;
-  margin: 7px 0 0;
-  color: #748195;
-  font-family: "Mont", sans-serif;
-  font-size: 0.85rem;
+const ProgrammeDescription = styled.p`
+  margin: 5px 0 0;
+  color: #8995a5;
+  font-size: 11px;
   font-weight: 400;
-  line-height: 1.8;
 `;
 
 const ProgrammeTime = styled.span`
-  flex-shrink: 0;
   padding: 8px 11px;
-  border: 1px solid #e2e9f1;
+  border: 1px solid #e7edf4;
   border-radius: 8px;
   background: #ffffff;
-  color: #53718f;
-  font-family: "Mont", sans-serif;
-  font-size: 0.73rem;
+  color: #647991;
+  font-size: 11px;
   font-weight: 500;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 `;
 
 const AgendaGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: stretch;
-  gap: 15px;
+  gap: 11px;
 
-  @media (max-width: 960px) {
+  @media (max-width: 900px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 13px;
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 580px) {
     grid-template-columns: 1fr;
-    gap: 11px;
+    gap: 9px;
   }
 `;
 
 const SessionCard = styled.article<{ $delay: number }>`
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  min-width: 0;
-  min-height: 188px;
-  padding: 21px;
-  border: 1px solid rgba(17, 48, 82, 0.09);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 1px 2px rgba(16, 45, 80, 0.02),
-    0 4px 16px rgba(16, 45, 80, 0.025);
-  opacity: 0;
-  animation: ${fadeUp} 0.65s cubic-bezier(0.2, 0.65, 0.3, 1) forwards;
-  animation-delay: ${({ $delay }) => `${$delay}ms`};
-  transition: border-color 0.28s ease, box-shadow 0.28s ease,
-    transform 0.28s cubic-bezier(0.2, 0.65, 0.3, 1), background 0.28s ease;
+  padding: 18px;
+  border: 1px solid #e9eef4;
+  border-radius: 13px;
+  background: #f8fafc;
+  transition: transform 220ms ease, border-color 220ms ease,
+    background 220ms ease, box-shadow 220ms ease;
 
   &:hover {
-    border-color: rgba(0, 103, 212, 0.25);
+    transform: translateY(-3px);
+    border-color: #cbdff3;
     background: #ffffff;
-    box-shadow: 0 3px 8px rgba(16, 45, 80, 0.035),
-      0 12px 30px rgba(16, 45, 80, 0.06);
-    transform: translateY(-4px);
+    box-shadow: 0 8px 22px rgba(8, 54, 114, 0.045);
   }
 
-  @media (max-width: 600px) {
-    min-height: 0;
-    padding: 19px;
-    border-radius: 12px;
+  @media (max-width: 580px) {
+    padding: 17px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    opacity: 1;
-    animation: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: none;
 
     &:hover {
       transform: none;
@@ -412,139 +537,135 @@ const SessionCard = styled.article<{ $delay: number }>`
   }
 `;
 
+const SessionTop = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 13px;
+`;
+
 const SessionTime = styled.span`
   display: inline-flex;
   align-items: center;
-  width: fit-content;
-  margin-bottom: 15px;
-  padding: 6px 9px;
-  border: 1px solid #e3edf8;
-  border-radius: 7px;
-  background: #f3f8fe;
-  color: #386c9f;
-  font-family: "Mont", sans-serif;
-  font-size: 0.7rem;
-  font-weight: 500;
-  line-height: 1.5;
+  min-height: 25px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: #edf5ff;
+  color: #2367a8;
+  font-size: 10px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
+`;
+
+const SessionTag = styled.span`
+  display: inline-flex;
+  align-items: center;
+  min-height: 25px;
+  padding: 5px 8px;
+  border: 1px solid #e5ebf2;
+  border-radius: 6px;
+  color: #708096;
+  font-size: 9px;
+  font-weight: 500;
 `;
 
 const SessionTitle = styled.h4`
   margin: 0;
-  color: #29435f;
-  font-family: "Mont", sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  line-height: 1.75;
-  letter-spacing: -0.012em;
+  color: #203d5b;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.7;
+  letter-spacing: -0.025em;
   overflow-wrap: anywhere;
-  transition: color 0.25s ease;
 
   ${SessionCard}:hover & {
-    color: #0067d4;
+    color: #0879d9;
   }
 `;
 
 const SessionDescription = styled.p`
-  margin: 10px 0 0;
-  color: #748195;
-  font-family: "Mont", sans-serif;
-  font-size: 0.8rem;
+  margin: 9px 0 0;
+  color: #718096;
+  font-size: 11px;
   font-weight: 400;
-  line-height: 1.85;
-  overflow-wrap: anywhere;
+  line-height: 1.75;
 `;
 
-const SessionType = styled.span`
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  max-width: 100%;
-  margin-top: 15px;
-  padding: 5px 8px;
-  border: 1px solid #e4eaf2;
-  border-radius: 6px;
-  background: #f8fafc;
-  color: #617991;
-  font-family: "Mont", sans-serif;
-  font-size: 0.65rem;
-  font-weight: 400;
-  line-height: 1.5;
-`;
-
-const AgendaFooter = styled.div`
+const RegistrationCard = styled.div<{ $visible: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 28px;
-  margin-top: 42px;
-  padding: 30px;
-  border: 1px solid #dce7f3;
-  border-radius: 14px;
-  background: #edf5fd;
-  box-shadow: 0 3px 14px rgba(16, 45, 80, 0.025);
+  margin-top: 35px;
+  padding: 27px 29px;
+  border-radius: 16px;
+  background: #083672;
+  color: #ffffff;
+
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  animation: ${({ $visible }) => ($visible ? reveal : "none")} 700ms ease both;
 
   @media (max-width: 680px) {
-    align-items: stretch;
+    align-items: flex-start;
     flex-direction: column;
-    gap: 21px;
-    padding: 23px 20px;
-    border-radius: 12px;
+    gap: 20px;
+    padding: 24px 21px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    opacity: 1;
+    animation: none;
   }
 `;
 
-const FooterText = styled.div`
-  min-width: 0;
+const RegistrationCopy = styled.div`
+  max-width: 570px;
+`;
 
-  h3 {
-    margin: 0 0 8px;
-    color: #102d50;
-    font-family: "Chillen", "Mont", sans-serif;
-    font-size: clamp(1.55rem, 2.5vw, 1.9rem);
-    font-weight: 400;
-    line-height: 1.35;
-    letter-spacing: -0.025em;
-  }
+const RegistrationTitle = styled.h3`
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(22px, 3vw, 29px);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.055em;
+`;
 
-  p {
-    max-width: 620px;
-    margin: 0;
-    color: #5e7288;
-    font-family: "Mont", sans-serif;
-    font-size: 0.87rem;
-    font-weight: 400;
-    line-height: 1.85;
-  }
+const RegistrationDescription = styled.p`
+  margin: 9px 0 0;
+  color: #d5e4f6;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.8;
 `;
 
 const ReserveButton = styled.button`
   display: inline-flex;
-  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  min-height: 46px;
-  padding: 13px 22px;
-  border: 1px solid #083672;
+  gap: 18px;
+  min-height: 45px;
+  flex-shrink: 0;
+  padding: 0 17px;
+  border: 1px solid #ffffff;
   border-radius: 9px;
-  background: #083672;
-  color: #ffffff;
-  font-family: "Mont", sans-serif;
-  font-size: 0.83rem;
-  font-weight: 500;
+  background: #ffffff;
+  color: #083672;
+  font-family: "Montserrat", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.25s ease, border-color 0.25s ease,
-    box-shadow 0.25s ease, transform 0.25s ease;
+  transition: background 200ms ease, color 200ms ease, transform 200ms ease;
 
   &:hover {
-    border-color: #0067d4;
-    background: #0067d4;
-    box-shadow: 0 5px 14px rgba(0, 103, 212, 0.16);
     transform: translateY(-2px);
+    background: #edf5ff;
   }
 
   &:focus-visible {
-    outline: 3px solid #91c7fa;
-    outline-offset: 3px;
+    outline: 3px solid #8dcfff;
+    outline-offset: 4px;
   }
 
   &:active {
@@ -565,144 +686,7 @@ const ReserveButton = styled.button`
   }
 `;
 
-function AgendaCards({
-  items,
-  startDelay = 0,
-}: {
-  items: AgendaItem[];
-  startDelay?: number;
-}) {
-  return (
-    <AgendaGrid>
-      {items.map((item, index) => (
-        <SessionCard
-          key={`${item.time}-${item.title}`}
-          $delay={startDelay + index * 65}
-        >
-          <SessionTime>{item.time}</SessionTime>
-
-          <SessionTitle>{item.title}</SessionTitle>
-
-          {item.description && (
-            <SessionDescription>{item.description}</SessionDescription>
-          )}
-
-          {item.type && <SessionType>{item.type}</SessionType>}
-        </SessionCard>
-      ))}
-    </AgendaGrid>
-  );
-}
-
-export default function Agenda({ onReserve }: AgendaProps) {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) return;
-
-    if (typeof window !== "undefined" && !("IntersectionObserver" in window)) {
-      setIsVisible(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      {
-        threshold: 0.05,
-        rootMargin: "0px 0px 40px 0px",
-      }
-    );
-
-    observer.observe(section);
-
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <AgendaSection id="agenda" ref={sectionRef}>
-      <AgendaContainer>
-        <RevealBlock $visible={isVisible}>
-          <SectionHeader>
-            <HeaderMain>
-              <Eyebrow>Agenda</Eyebrow>
-
-              <SectionTitle>
-                A day built around <span>what comes next.</span>
-              </SectionTitle>
-            </HeaderMain>
-
-            <SectionDescription>
-              Explore the programme for the OPEX Executive Workshop &amp; Summit
-              2026, with conversations spanning finance, sustainability,
-              governance, compliance, and intelligent enterprise technology.
-            </SectionDescription>
-          </SectionHeader>
-        </RevealBlock>
-
-        <ProgrammeSection>
-          <RevealBlock $visible={isVisible}>
-            <ProgrammeHeader>
-              <ProgrammeHeaderMain>
-                <ProgrammeLabel>Morning programme</ProgrammeLabel>
-                <ProgrammeTitle>Finance &amp; Sustainability</ProgrammeTitle>
-                <ProgrammeSubtitle>
-                  Reporting, disclosure and the changing role of finance.
-                </ProgrammeSubtitle>
-              </ProgrammeHeaderMain>
-
-              <ProgrammeTime>09:15 – 12:00</ProgrammeTime>
-            </ProgrammeHeader>
-          </RevealBlock>
-
-          <AgendaCards items={morningAgenda} startDelay={isVisible ? 80 : 0} />
-        </ProgrammeSection>
-
-        <ProgrammeSection>
-          <RevealBlock $visible={isVisible} $delay={120}>
-            <ProgrammeHeader>
-              <ProgrammeHeaderMain>
-                <ProgrammeLabel>Afternoon programme</ProgrammeLabel>
-                <ProgrammeTitle>Technology &amp; Governance</ProgrammeTitle>
-                <ProgrammeSubtitle>
-                  Connected systems, intelligent operations and continuous
-                  compliance.
-                </ProgrammeSubtitle>
-              </ProgrammeHeaderMain>
-
-              <ProgrammeTime>12:00 – 16:00</ProgrammeTime>
-            </ProgrammeHeader>
-          </RevealBlock>
-
-          <AgendaCards
-            items={afternoonAgenda}
-            startDelay={isVisible ? 250 : 0}
-          />
-        </ProgrammeSection>
-
-        <RevealBlock $visible={isVisible} $delay={180}>
-          <AgendaFooter>
-            <FooterText>
-              <h3>Be part of the conversation.</h3>
-              <p>
-                Join business leaders and decision-makers exploring the future
-                of reporting, compliance and enterprise technology.
-              </p>
-            </FooterText>
-
-            <ReserveButton type="button" onClick={onReserve}>
-              Reserve your seat
-            </ReserveButton>
-          </AgendaFooter>
-        </RevealBlock>
-      </AgendaContainer>
-    </AgendaSection>
-  );
-}
+const ButtonArrow = styled.span`
+  font-size: 15px;
+  line-height: 1;
+`;

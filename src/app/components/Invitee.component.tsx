@@ -1,298 +1,330 @@
 "use client";
 
 import Image from "next/image";
+import { Montserrat } from "next/font/google";
 import styled from "styled-components";
 
-const invitees = [
-  { name: "Central Bank of Nigeria", logo: "/images/invitees/cbn.png" },
-  { name: "FCDC", logo: "/images/invitees/fcdc.jpg" },
-  { name: "Financial Reporting Council", logo: "/images/invitees/frc.png" },
-  { name: "NDPC", logo: "/images/invitees/ndpc.png" },
-  { name: "NRS", logo: "/images/invitees/nrs.png" },
-  { name: "SEC", logo: "/images/invitees/sec.png" },
-  { name: "NITDA", logo: "/images/invitees/nitda.png" },
-  { name: "FirstBank", logo: "/images/invitees/fbn.jpeg" },
-  { name: "Letshego", logo: "/images/invitees/letshego.png" },
-  { name: "Moniepoint", logo: "/images/invitees/moniepoint.png" },
-  { name: "Smartcash", logo: "/images/invitees/smartcash.png" },
-  { name: "REGTECH365", logo: "/images/invitees/regtech365.jpeg" },
-  { name: "Access Bank", logo: "/images/invitees/access.jpeg" },
-  { name: "Coronation Bank", logo: "/images/invitees/coronation.png" },
-  { name: "FCMB", logo: "/images/invitees/fcmb.jpeg" },
-  { name: "Fidelity Bank", logo: "/images/invitees/fidelity.jpeg" },
-  { name: "Greenwich", logo: "/images/invitees/greenwich.jpeg" },
-  { name: "Sterling Bank", logo: "/images/invitees/sterling.png" },
-  { name: "TeamApt", logo: "/images/invitees/teamapt.png" },
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const NAVY = "#07152F";
+const MUTED_NAVY = "#315Caa";
+
+const speakers = [
+  {
+    name: "Daniel Simeon",
+    role: "Host",
+    image: "/images/invitees/daniel.png",
+    position: "center 25%",
+    number: "01",
+  },
+  {
+    name: "Ayomide Osuntoye",
+    role: "Speakr",
+    image: "/images/invitees/simeon.png",
+    position: "center 25%",
+    number: "02",
+  },
 ];
 
-export default function Invitee() {
+export default function Speakers() {
   return (
-    <Section id="invitees">
+    <Section id="speakers" className={montserrat.className}>
       <Container>
-        <SectionHeader>
-          <Eyebrow>WHO'S IN THE ROOM</Eyebrow>
+        <TopBar>
+          <SectionLabel>
+            <LabelLine />
+            OUR SPEAKERS
+          </SectionLabel>
 
+          <Edition>OPEX SUMMIT 2026</Edition>
+        </TopBar>
+
+        <Intro>
           <Heading>
-            An exclusive gathering of
-            <HeadingAccent> industry leaders.</HeadingAccent>
+            Ideas move
+            <br />
+            <Muted>business forward.</Muted>
           </Heading>
 
-          <Description>
-            Connecting the people shaping the future of operational excellence,
-            financial reporting, compliance, and technology.
-          </Description>
-        </SectionHeader>
+          <IntroText>
+            Meet the voices bringing fresh perspectives, practical experience,
+            and forward-thinking conversations to the OPEX Executive Workshop &
+            Summit.
+          </IntroText>
+        </Intro>
 
-        <LogoGrid>
-          {invitees.map((invitee) => (
-            <LogoCard key={invitee.name}>
-              <LogoWrapper>
-                <Image
-                  src={invitee.logo}
-                  alt={`${invitee.name} logo`}
-                  width={480}
-                  height={200}
-                  sizes="
-                    (max-width: 650px) 90vw,
-                    (max-width: 1100px) 28vw,
-                    22vw
-                  "
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
+        <SpeakersGrid>
+          {speakers.map((speaker) => (
+            <SpeakerCard key={speaker.number}>
+              <ImageFrame>
+                <SpeakerImage
+                  src={speaker.image}
+                  alt={speaker.name}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 50vw"
+                  style={{ objectPosition: speaker.position }}
                 />
-              </LogoWrapper>
-            </LogoCard>
-          ))}
-        </LogoGrid>
 
-        <BottomNote>
-          <NoteLine />
-          <NoteText>
-            Bringing together the institutions and innovators driving change.
-          </NoteText>
-          <NoteLine />
-        </BottomNote>
+                <ImageOverlay />
+
+                <ImageContent>
+                  <SpeakerMeta>
+                    <SpeakerIndex>{speaker.number}</SpeakerIndex>
+                    <SpeakerRole>{speaker.role}</SpeakerRole>
+                  </SpeakerMeta>
+
+                  <SpeakerBottom>
+                    <SpeakerName>{speaker.name}</SpeakerName>
+                    <SpeakerRule />
+                  </SpeakerBottom>
+                </ImageContent>
+              </ImageFrame>
+            </SpeakerCard>
+          ))}
+        </SpeakersGrid>
       </Container>
     </Section>
   );
 }
 
 const Section = styled.section`
-  position: relative;
   width: 100%;
-  max-width: 100%;
+  padding: 110px 28px 100px;
+  background: #f5f5f2;
+  color: ${NAVY};
+  font-family: inherit;
   overflow: hidden;
-  padding: clamp(56px, 8vw, 120px) 0;
-  background: #ffffff;
-  box-sizing: border-box;
 
-  *,
-  *::before,
-  *::after {
+  * {
     box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  @media (max-width: 768px) {
+    padding: 76px 20px 70px;
   }
 `;
 
 const Container = styled.div`
   width: 100%;
-  max-width: 1440px;
+  max-width: 1320px;
   margin: 0 auto;
-  padding-inline: clamp(16px, 4vw, 56px);
 `;
 
-const SectionHeader = styled.div`
-  width: 100%;
-  max-width: 760px;
-  margin: 0 auto clamp(32px, 5vw, 64px);
-  text-align: center;
+const TopBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #d9dfe7;
 `;
 
-const Eyebrow = styled.span`
-  display: inline-block;
-  margin-bottom: clamp(14px, 2vw, 20px);
-  color: #0067d4;
-  font-family: "Mont", sans-serif;
-  font-size: 12px;
+const SectionLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: ${NAVY};
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.16em;
-  line-height: 1.6;
-  text-transform: uppercase;
+  letter-spacing: 0.17em;
+`;
+
+const LabelLine = styled.span`
+  display: inline-block;
+  width: 25px;
+  height: 2px;
+  background: ${MUTED_NAVY};
+`;
+
+const Edition = styled.span`
+  color: ${MUTED_NAVY};
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+
+  @media (max-width: 480px) {
+    font-size: 9px;
+    letter-spacing: 0.07em;
+  }
+`;
+
+const Intro = styled.div`
+  display: grid;
+  grid-template-columns: 1.15fr 0.65fr;
+  align-items: end;
+  gap: 50px;
+  padding: 58px 0 46px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 42px 0 32px;
+  }
 `;
 
 const Heading = styled.h2`
   margin: 0;
-  color: #083672;
-  font-family: "Chillen", sans-serif;
-  font-size: clamp(28px, 4.5vw, 58px);
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.045em;
-  overflow-wrap: break-word;
+  color: ${NAVY};
+  font-size: clamp(43px, 6.7vw, 88px);
+  font-weight: 600;
+  line-height: 0.99;
+  letter-spacing: -0.075em;
 
   @media (max-width: 480px) {
-    font-size: clamp(27px, 7vw, 34px);
-    letter-spacing: -0.035em;
+    font-size: clamp(42px, 12vw, 62px);
   }
 `;
 
-const HeadingAccent = styled.span`
-  color: #0067d4;
+const Muted = styled.span`
+  color: ${MUTED_NAVY};
 `;
 
-const Description = styled.p`
-  width: 100%;
-  max-width: 620px;
-  margin: clamp(14px, 2vw, 22px) auto 0;
-  color: #65748b;
-  font-family: "Mont", sans-serif;
-  font-size: clamp(14px, 1.5vw, 17px);
-  line-height: 1.8;
-  overflow-wrap: break-word;
+const IntroText = styled.p`
+  max-width: 390px;
+  margin: 0 0 6px auto;
+  color: #465875;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.95;
 
-  @media (max-width: 480px) {
-    line-height: 1.7;
+  @media (max-width: 768px) {
+    margin: 0;
+    font-size: 12px;
   }
 `;
 
-const LogoGrid = styled.div`
+const SpeakersGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(10px, 2vw, 22px);
-  width: 100%;
-  min-width: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
 
-  @media (max-width: 1100px) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  @media (max-width: 650px) {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-  }
-
-  @media (max-width: 360px) {
-    gap: 10px;
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
 `;
 
-const LogoCard = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+const SpeakerCard = styled.article`
   min-width: 0;
-  height: clamp(115px, 15vw, 190px);
-  padding: clamp(12px, 2.2vw, 26px);
+`;
+
+const ImageFrame = styled.div`
+  position: relative;
+  width: 100%;
+  aspect-ratio: 0.94 / 1;
   overflow: hidden;
-  background: #ffffff;
-  border: 1px solid #e8edf3;
-  border-radius: clamp(10px, 1.5vw, 18px);
-  box-shadow: 0 4px 18px rgba(8, 54, 114, 0.035);
-  transition: border-color 250ms ease, box-shadow 250ms ease,
-    transform 250ms ease;
+  isolation: isolate;
+  border-radius: 18px;
+  background: #deded9;
+  cursor: pointer;
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      border-color: rgba(0, 103, 212, 0.3);
-      box-shadow: 0 12px 30px rgba(8, 54, 114, 0.09);
-      transform: translateY(-3px);
-    }
+  &:hover img {
+    filter: grayscale(0%);
+    transform: scale(1.055);
   }
 
-  @media (max-width: 650px) {
-    height: 125px;
-    padding: 18px 28px;
+  @media (max-width: 640px) {
+    aspect-ratio: 0.95 / 1;
+    border-radius: 15px;
   }
+`;
 
-  @media (max-width: 360px) {
-    height: 110px;
-    padding: 14px 22px;
-  }
+const SpeakerImage = styled(Image)`
+  object-fit: cover;
+  filter: grayscale(100%);
+  transform: scale(1);
+  transition: filter 650ms ease,
+    transform 900ms cubic-bezier(0.2, 0.65, 0.25, 1);
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
 `;
 
-const LogoWrapper = styled.div`
+const ImageOverlay = styled.div`
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(7, 21, 47, 0.02) 0%,
+    rgba(7, 21, 47, 0) 38%,
+    rgba(7, 21, 47, 0.25) 58%,
+    rgba(7, 21, 47, 0.88) 100%
+  );
+`;
+
+const ImageContent = styled.div`
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 26px;
+  color: #fff;
+  pointer-events: none;
+
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
+`;
+
+const SpeakerMeta = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-
-  img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    max-width: 260px;
-    max-height: 120px;
-    object-fit: contain;
-    object-position: center;
-    filter: grayscale(0.15);
-    opacity: 0.9;
-    transition: filter 250ms ease, opacity 250ms ease, transform 250ms ease;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    ${LogoCard}:hover & img {
-      filter: grayscale(0);
-      opacity: 1;
-      transform: scale(1.04);
-    }
-  }
-
-  @media (max-width: 650px) {
-    img {
-      max-width: 100%;
-      max-height: 95px;
-    }
-  }
-
-  @media (max-width: 360px) {
-    img {
-      max-height: 82px;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    img {
-      transition: none;
-    }
-  }
+  justify-content: space-between;
+  gap: 12px;
 `;
 
-const BottomNote = styled.div`
-  display: flex;
+const SpeakerIndex = styled.span`
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(8px, 2vw, 22px);
+  width: 35px;
+  height: 35px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+`;
+
+const SpeakerRole = styled.span`
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+`;
+
+const SpeakerBottom = styled.div`
   width: 100%;
-  margin-top: clamp(32px, 5vw, 52px);
-
-  @media (max-width: 480px) {
-    gap: 10px;
-  }
 `;
 
-const NoteLine = styled.div`
-  width: clamp(20px, 5vw, 60px);
-  height: 1px;
-  flex-shrink: 0;
-  background: #dbe5f0;
-`;
-
-const NoteText = styled.p`
-  max-width: 500px;
+const SpeakerName = styled.h3`
   margin: 0;
-  color: #8190a5;
-  font-family: "Chillen", sans-serif;
-  font-size: clamp(11px, 1.2vw, 13px);
-  line-height: 1.6;
-  text-align: center;
+  color: #fff;
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 600;
+  letter-spacing: -0.065em;
+  line-height: 1;
+  text-transform: capitalize;
+
+  @media (max-width: 640px) {
+    font-size: 46px;
+  }
+`;
+
+const SpeakerRule = styled.div`
+  width: 100%;
+  height: 1px;
+  margin-top: 19px;
+  background: rgba(255, 255, 255, 0.55);
 `;
