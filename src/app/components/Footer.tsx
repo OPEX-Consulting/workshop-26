@@ -37,8 +37,6 @@ export default function Footer({ onReserve }: FooterProps) {
               />
             </LogoWrapper>
 
-            <Eyebrow>OPEX EXECUTIVE WORKSHOP & SUMMIT 2026</Eyebrow>
-
             <Heading>
               From Manual
               <br />
@@ -64,7 +62,7 @@ export default function Footer({ onReserve }: FooterProps) {
             <EventDate>
               Thursday
               <br />
-              <strong>19 November 2026</strong>
+              <strong>26 November 2026</strong>
             </EventDate>
 
             <EventTime>
@@ -95,12 +93,7 @@ export default function Footer({ onReserve }: FooterProps) {
 
             <ReserveButton type="button" onClick={onReserve}>
               Register for the event
-              <ButtonArrow aria-hidden="true">↗</ButtonArrow>
             </ReserveButton>
-
-            <ButtonNote>
-              Registration is required to join the meeting.
-            </ButtonNote>
           </ActionSide>
         </Top>
 

@@ -547,7 +547,7 @@ export default function Hero({ onReserve }: HeroProps) {
                     strokeLinecap="round"
                   />
                 </svg>
-                Thursday, 19 November 2026
+                Thursday, 26 November 2026
               </Detail>
 
               <Detail>

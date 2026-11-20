@@ -74,7 +74,7 @@ export default function Venue() {
 
               <DetailContent>
                 <DetailLabel>Date</DetailLabel>
-                <DetailValue>Thursday, 19 November 2026</DetailValue>
+                <DetailValue>Thursday, 26 November 2026</DetailValue>
               </DetailContent>
             </Detail>
 
