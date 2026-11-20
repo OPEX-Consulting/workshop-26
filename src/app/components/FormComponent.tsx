@@ -8,7 +8,7 @@ const EVENT = {
   title: "From Manual Risk Assessment to Intelligent Risk Operations",
   description:
     "Explore how AI is transforming enterprise risk management in financial institutions.",
-  date: "Thursday, 19 November 2026",
+  date: "Thursday, 26 November 2026",
   time: "11:00 AM",
   venue: "Live on Zoom",
   flyer: "/images/webinarflyer.jpeg",
@@ -1499,7 +1499,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
                 <PillRow>
                   <Pill $variant="dark" $delay={100}>
                     <CalendarIcon />
-                    19 NOV 2026
+                    26 NOV 2026
                   </Pill>
 
                   <Pill $variant="light" $delay={180}>
@@ -1525,7 +1525,7 @@ export default function FormComponent({ onCancel }: FormComponentProps) {
 
                 <SideFooter>
                   <CalendarIcon />
-                  <span>Thursday, 19 November 2026 · 11:00 AM</span>
+                  <span>Thursday, 26 November 2026 · 11:00 AM</span>
                 </SideFooter>
               </SidePanel>
             </Content>
